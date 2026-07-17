@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Patient {
+  id          String     @id @default(uuid())
+  bedNumber   String
+  nickname    String
+  dx          String?
+  initialNote String?
+  createdAt   DateTime   @default(now())
+  expiresAt   DateTime?  // For auto-purge
+
+  orders      Order[]
+}
+
+model Order {
+  id              String     @id @default(uuid())
+  patientId       String
+  type            String     // "MEDICATION" or "ASSESSMENT"
+  name            String
+  intervalMinutes Int?
+  startTime       DateTime
+  
+  patient         Patient    @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  eventLogs       EventLog[]
+}
+
+model EventLog {
+  id          String   @id @default(uuid())
+  orderId     String
+  doneAt      DateTime @default(now())
+  
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
