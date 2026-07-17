@@ -5,6 +5,7 @@ import { Bell, BellRing, BellOff } from 'lucide-react';
 import { format } from 'date-fns';
 import { getPatients } from '../actions/patient';
 import { computeDueOrders, dueMsFromKey, type DueOrder } from '@/lib/reminders';
+import { subscribeToPush } from '@/lib/pushClient';
 
 const POLL_MS = 30_000;
 const FIRED_KEY = 'lr_fired_reminders';
@@ -156,7 +157,13 @@ export default function ReminderEngine() {
 
       const result = await Notification.requestPermission();
       setPerm(result as Perm);
-      if (result === 'granted') check();
+      if (result === 'granted') {
+        check();
+        // Best-effort: foreground alerts already work without this. If a
+        // push server ends up wired to /api/check-reminders, this device
+        // will also get alerted while locked/backgrounded.
+        subscribeToPush();
+      }
     } catch (e) {
       console.error('enable notifications failed:', e);
     }

@@ -24,21 +24,37 @@ model Patient {
 }
 
 model Order {
-  id              String     @id @default(uuid())
-  patientId       String
-  type            String     // "MEDICATION" or "ASSESSMENT"
-  name            String
-  intervalMinutes Int?
-  startTime       DateTime
-  
-  patient         Patient    @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  eventLogs       EventLog[]
+  id               String     @id @default(uuid())
+  patientId        String
+  type             String     // "MEDICATION" or "ASSESSMENT"
+  name             String
+  intervalMinutes  Int?
+  startTime        DateTime
+  // Server-side push dedup: the due-instance key (see lib/reminders.ts,
+  // `${orderId}@${dueTimeMs}`) that a push was already sent for. Prevents the
+  // cron check from re-pushing the same due-instance on every run; a new
+  // interval produces a new key, so the next due time still alerts.
+  lastNotifiedKey  String?
+
+  patient          Patient    @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  eventLogs        EventLog[]
 }
 
 model EventLog {
   id          String   @id @default(uuid())
   orderId     String
   doneAt      DateTime @default(now())
-  
+
   order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+// One browser/device's Web Push subscription. Solo-user app — no owner FK,
+// just "every device that has ever enabled notifications". `endpoint` is
+// unique per browser install and is how we upsert on re-subscribe.
+model PushSubscription {
+  id        String   @id @default(uuid())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
 }
