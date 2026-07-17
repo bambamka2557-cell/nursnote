@@ -8,9 +8,9 @@ export default function Navbar() {
   const pathname = usePathname();
 
   const navItems = [
-    { href: '/', label: 'เตียง (Beds)', icon: Activity },
-    { href: '/add', label: 'รับใหม่', icon: PlusCircle },
-    { href: '/timeline', label: 'คิวงาน (Timeline)', icon: ListTodo },
+    { href: '/', label: 'เตียง (Beds)', icon: Activity, activeClass: 'text-pink-500' },
+    { href: '/add', label: 'รับใหม่', icon: PlusCircle, activeClass: 'text-sky-400' },
+    { href: '/timeline', label: 'คิวงาน (Timeline)', icon: ListTodo, activeClass: 'text-pink-500' },
   ];
 
   return (
@@ -23,14 +23,14 @@ export default function Navbar() {
           <Link 
             key={item.href} 
             href={item.href} 
-            className={`flex flex-col items-center justify-center gap-1 h-full transition-all duration-200 ${
+            className={`flex flex-col items-center justify-center gap-0.5 h-[80%] my-auto mx-2 rounded-xl transition-all duration-200 ${
               isActive 
-                ? 'text-indigo-600 font-semibold' 
-                : 'text-slate-400 hover:text-slate-600'
+                ? `${item.activeClass} bg-white shadow-[0_4px_12px_rgba(0,0,0,0.04)] font-bold scale-105 border border-slate-100/50` 
+                : 'text-slate-400 hover:text-slate-600 active:scale-95'
             }`}
           >
-            <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
-            <span className="text-[10px] tracking-wide text-center px-1 truncate w-full">{item.label}</span>
+            <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
+            <span className="text-[9px] tracking-wide text-center px-1 truncate w-full">{item.label}</span>
           </Link>
         );
       })}

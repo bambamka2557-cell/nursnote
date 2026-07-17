@@ -83,7 +83,7 @@ export default async function Dashboard() {
             } else {
               cardBorder = 'border-slate-100 bg-white';
               statusBg = 'bg-indigo-50 text-indigo-700';
-              statusLabel = 'กิวต่อไป';
+              statusLabel = 'คิวต่อไป';
             }
           } else {
             cardBorder = 'border-slate-100 bg-white';
@@ -97,7 +97,7 @@ export default async function Dashboard() {
                 <div className="flex justify-between items-start">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs uppercase font-extrabold tracking-wider px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md">
+                      <span className="text-xs uppercase font-extrabold tracking-wider px-2 py-0.5 bg-indigo-100 text-indigo-800 rounded-md border border-indigo-200/50">
                         BED {patient.bedNumber}
                       </span>
                       <span className="font-semibold text-slate-800 text-lg">{patient.nickname}</span>

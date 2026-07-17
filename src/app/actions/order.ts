@@ -13,4 +13,15 @@ export async function logEvent(orderId: string, timestamp: Date) {
   
   revalidatePath('/');
   revalidatePath('/timeline');
+  revalidatePath(`/patient/[id]/report`);
+}
+
+export async function discontinueOrder(orderId: string) {
+  await prisma.order.delete({
+    where: { id: orderId },
+  });
+  
+  revalidatePath('/');
+  revalidatePath('/timeline');
+  revalidatePath(`/patient/[id]/report`);
 }

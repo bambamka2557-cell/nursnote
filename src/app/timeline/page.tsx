@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import { getPatients } from '../actions/patient';
 import { logEvent } from '../actions/order';
-import { Check, AlertTriangle, AlertCircle, Sparkles } from 'lucide-react';
+import { Check, AlertTriangle, AlertCircle, Sparkles, Info } from 'lucide-react';
 import { addMinutes, differenceInMinutes, format } from 'date-fns';
+import { PRESET_MEDICATIONS } from '@/app/utils/drugData';
 
 export default function TimelinePage() {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -96,7 +97,7 @@ export default function TimelinePage() {
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">คิวงานวันนี้</h1>
+        <h1 className="text-3xl font-extrabold text-slate-900">คิวงานวันนี้</h1>
         <p className="text-xs text-slate-500 mt-0.5">รวมประเมินและให้ยาที่ต้องทำภายใน 2 ชั่วโมง</p>
       </div>
 
@@ -136,12 +137,32 @@ export default function TimelinePage() {
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] uppercase font-black px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded-md">
+                    <span className="text-[10px] uppercase font-black px-1.5 py-0.5 bg-indigo-100 text-indigo-800 rounded-md border border-indigo-200/50">
                       เตียง {task.bedNumber}
                     </span>
                     <span className="text-xs font-semibold text-slate-600 truncate">{task.nickname}</span>
                   </div>
-                  <h3 className="font-bold text-slate-800 text-md mt-1.5 truncate">{task.name}</h3>
+                  <h3 className="font-extrabold text-slate-800 text-lg mt-1.5 truncate">{task.name}</h3>
+                  
+                  {/* Collapsible Guideline for high-alert drugs */}
+                  {(() => {
+                    const guide = PRESET_MEDICATIONS.find(m => m.name === task.name);
+                    if (!guide) return null;
+                    return (
+                      <details className="mt-2 group">
+                        <summary className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 cursor-pointer list-none flex items-center gap-1 select-none">
+                          <Info size={12} />
+                          <span>สูตรผสมและวิธีใช้</span>
+                        </summary>
+                        <div className="mt-1.5 p-2.5 bg-slate-50 border border-slate-100 rounded-lg text-[10px] space-y-1 text-slate-500 max-w-sm">
+                          <div><span className="font-bold text-slate-600">โดส:</span> {guide.dose}</div>
+                          <div><span className="font-bold text-slate-600">ผสม:</span> {guide.mix}</div>
+                          <div className="text-rose-600 font-medium"><span className="font-bold">ระวัง:</span> {guide.warning}</div>
+                        </div>
+                      </details>
+                    );
+                  })()}
+
                   <div className="flex items-center gap-2 mt-2">
                     <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${badgeClass}`}>
                       {format(task.dueTime, 'HH:mm')} น.
