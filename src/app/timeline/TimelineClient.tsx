@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { getPatients } from '../actions/patient';
 import { logEvent } from '../actions/order';
-import { Check, AlertTriangle, Sparkles, Info } from 'lucide-react';
+import { Check, AlertTriangle, CheckCircle2, Sparkles, Info } from 'lucide-react';
 import { addMinutes, differenceInMinutes, format } from 'date-fns';
 import { PRESET_MEDICATIONS } from '@/app/utils/drugData';
 
@@ -55,6 +55,17 @@ export default function TimelineClient({ initialPatients }: { initialPatients: a
   const [submittingOrderId, setSubmittingOrderId] = useState<string | null>(null);
   const submittingRef = useRef<string | null>(null);
 
+  // Feedback found missing in testing: marking a task done silently updates
+  // the card's numbers with no confirmation, so a nurse tapping it can't
+  // tell it worked. A brief toast makes the save unambiguous.
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const showToast = (msg: string) => {
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    setToastMsg(msg);
+    toastTimeoutRef.current = setTimeout(() => setToastMsg(null), 2200);
+  };
+
   // Modal states for MgSO4
   const [mgso4ModalOpen, setMgso4ModalOpen] = useState(false);
   const [activeTask, setActiveTask] = useState<any>(null);
@@ -87,6 +98,7 @@ export default function TimelineClient({ initialPatients }: { initialPatients: a
     try {
       await logEvent(task.orderId, new Date());
       await loadTasks();
+      showToast(`บันทึกแล้ว — ${task.name}`);
     } finally {
       submittingRef.current = null;
       setSubmittingOrderId(null);
@@ -114,14 +126,25 @@ export default function TimelineClient({ initialPatients }: { initialPatients: a
     }
 
     setMgso4ModalOpen(false);
+    const doneName = activeTask.name;
     setRr('');
     setUrine('');
     setReflex('');
-    loadTasks();
+    await loadTasks();
+    showToast(`บันทึกแล้ว — ${doneName}`);
   };
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
+      {toastMsg && (
+        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-[200] animate-in fade-in slide-in-from-bottom-2 duration-200">
+          <div className="flex items-center gap-2 bg-slate-900 text-white text-sm font-semibold px-4 py-2.5 rounded-full shadow-xl">
+            <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
+            <span>{toastMsg}</span>
+          </div>
+        </div>
+      )}
+
       <div>
         <h1 className="text-3xl font-extrabold text-slate-900">คิวงานวันนี้</h1>
         <p className="text-xs text-slate-500 mt-0.5">รวมประเมินและให้ยาที่ต้องทำภายใน 2 ชั่วโมง</p>
