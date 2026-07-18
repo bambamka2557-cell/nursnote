@@ -39,11 +39,14 @@ export async function GET(req: NextRequest) {
   });
 
   const due = computeDueOrders(patients);
-  // Only push for due-instances we haven't already notified for.
-  const toNotify = due.filter((d) => {
-    const order = patients.flatMap((p) => p.orders).find((o) => o.id === d.orderId);
-    return order?.lastNotifiedKey !== d.key;
-  });
+  // Re-push every tick (every 5 min, see the workflow's cron schedule) for as
+  // long as an order stays overdue and ungiven — a single brief push is easy
+  // to miss (iOS web push has no custom sound/vibration, just a short default
+  // ping), so this is the actual safety net, not the one-shot notify it used
+  // to be. lastNotifiedKey is still recorded below but no longer gates
+  // sending; sw.js's `renotify: true` is what makes each repeat actually
+  // re-alert instead of silently replacing the prior notification.
+  const toNotify = due;
 
   let subscriptions = await prisma.pushSubscription.findMany();
   let pushesSent = 0;

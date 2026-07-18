@@ -44,6 +44,10 @@ self.addEventListener('push', (event) => {
       tag: payload.tag,
       requireInteraction: true,
       vibrate: [500, 250, 500, 250, 500],
+      // Without this, repeat pushes for the same still-overdue order (same
+      // tag) would silently replace the notification with no new alert —
+      // renotify makes each 5-min repeat actually re-sound/vibrate.
+      renotify: true,
     })
   );
 });

@@ -49,9 +49,17 @@ Deploy จริงแล้วที่ `https://nursnote.vercel.app` (Vercel p
 1. ~~Push repo ขึ้น GitHub~~ ✅ เสร็จแล้ว
 2. ~~Deploy ขึ้น Vercel~~ ✅ เสร็จแล้ว (`nursnote.vercel.app`)
 3. ~~ตั้ง GitHub Actions secrets~~ ✅ เสร็จแล้ว (`CHECK_REMINDERS_URL`, `CRON_SECRET`), manual trigger ทดสอบผ่าน
-4. **ทดสอบบนมือถือจริง** กด "เปิดแจ้งเตือน" → ปิดจอ → รอถึงเวลา order ครบกำหนด → เช็คว่า push เด้งจริง
-   — iOS ต้อง **Add to Home Screen ก่อน** (iOS 16.4+) ถึงจะรับ background push ได้ เปิดผ่าน Safari tab
-   ธรรมดาจะไม่ได้เลย — **ยังไม่เคย verify ข้อนี้ ยังไม่ควรเคลมว่าระบบพร้อมใช้งาน 100% จนกว่าจะทดสอบจริง**
+4. ~~ทดสอบบนมือถือจริง~~ ✅ **verify แล้วบน iPhone จริง** (จอล็อก, ผ่าน Add to Home Screen) — push เด้งจริง
+   ตอนล็อกจอ ยืนยันครบทั้ง 4 ชั้นของระบบแจ้งเตือนแล้ว
+
+**iOS web push — ข้อจำกัดจริงที่ยืนยันแล้ว ไม่ใช่บั๊ก แก้ไม่ได้ด้วยโค้ด:**
+- **เสียง**: iOS ไม่รองรับไฟล์เสียงกำหนดเองสำหรับ web push เลย ใช้เสียง default ของระบบตายตัว (สั้น เบา)
+- **สั่น**: `vibrate` option ใน `showNotification()` ถูก iOS Safari/WebKit เพิกเฉยเสมอ — ที่รู้สึกสั่นได้คือ
+  haptic default ของ iOS เอง ไม่ใช่ pattern ที่โค้ดตั้ง ปรับความยาว/ความแรงไม่ได้
+- **ทางแก้ที่ใช้จริง (2026-07-18)**: เนื่องจากเตือนครั้งเดียวสั้นๆ พลาดง่าย เปลี่ยนจาก "แจ้งครั้งเดียวต่อ
+  due-instance" เป็น **ส่ง push ซ้ำทุก tick ของ cron (ทุก ~5 นาที) ตราบใดที่ order ยังไม่ถูกให้** — ดู
+  `check-reminders/route.ts` (`toNotify = due` ไม่กรองด้วย `lastNotifiedKey` อีกต่อไป) + `sw.js`
+  (`renotify: true` ทำให้แต่ละรอบ re-alert จริง ไม่ใช่แค่ silently update notification เดิม)
 
 **Gotcha ที่เจอจริงตอน deploy (2026-07-18) — Supabase direct connection ใช้จาก Vercel serverless ไม่ได้:**
 `DATABASE_URL` ที่ชี้ direct connection (`db.<ref>.supabase.co:5432`) ใช้ได้ปกติจาก local แต่ทำให้ build
