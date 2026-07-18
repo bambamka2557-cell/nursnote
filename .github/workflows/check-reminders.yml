@@ -1,0 +1,32 @@
+name: Check reminders
+
+# Pings /api/check-reminders on a schedule so due medication/assessment
+# reminders get pushed to subscribed devices even while LR-Helper isn't open.
+# This is the "scheduler" half of the push system in src/app/api/check-reminders
+# — that route does the actual work (find due orders, send Web Push, dedupe);
+# this workflow's only job is to hit it regularly.
+#
+# Every 5 minutes: GitHub does not guarantee scheduled workflows run exactly on
+# time (can be delayed under high platform load), so this isn't a hard
+# real-time guarantee — but it's a 3x safety margin under the shortest
+# medication interval in the system (Bricanyl, 15 min).
+#
+# Inert until two repo secrets are set (Settings > Secrets and variables >
+# Actions), and inert on GitHub's side until this repo has a remote there:
+#   CHECK_REMINDERS_URL  — e.g. https://lr-helper.vercel.app/api/check-reminders
+#   CRON_SECRET          — must match CRON_SECRET in Vercel's env vars
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch: {} # lets you trigger a manual run from the Actions tab to test
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call check-reminders
+        run: |
+          curl --fail --silent --show-error \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ secrets.CHECK_REMINDERS_URL }}"
