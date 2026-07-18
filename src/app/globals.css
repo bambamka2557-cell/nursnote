@@ -45,6 +45,12 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  /* iOS standalone PWA (manifest "display": "standalone") reintroduces the
+     old double-tap-to-zoom gesture recognizer, which delays every tap ~300ms
+     while it waits to see if a second tap is coming — feels like buttons
+     need pressing twice. This disables that gesture so taps register
+     immediately. */
+  touch-action: manipulation;
 }
 
 /* Glassmorphism Navigation with Pink/Strawberry Tint */
