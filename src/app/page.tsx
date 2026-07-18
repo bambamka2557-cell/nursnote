@@ -1,7 +1,15 @@
 import { getPatients } from './actions/patient';
 import Link from 'next/link';
 import { Clock, CheckCircle2, AlertCircle, Plus } from 'lucide-react';
-import { differenceInMinutes, addMinutes, format } from 'date-fns';
+import { differenceInMinutes, addMinutes } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
+
+// This is a Server Component — it runs on Vercel's Node process, which is
+// NOT Asia/Bangkok (Vercel reserves the TZ env var, so it can't be pinned
+// platform-side either). date-fns' format() would render every timestamp in
+// whatever timezone the server happens to be in instead of the nurse's
+// actual local time, so every server-side display must go through this.
+const format = (date: Date | number, fmt: string) => formatInTimeZone(date, 'Asia/Bangkok', fmt);
 
 export const dynamic = 'force-dynamic';
 

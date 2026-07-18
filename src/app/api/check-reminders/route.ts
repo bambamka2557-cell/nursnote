@@ -3,7 +3,13 @@ import { prisma } from '@/lib/prisma';
 import { sendPush } from '@/lib/webpush';
 import { computeDueOrders } from '@/lib/reminders';
 import { purgeExpiredPatients } from '@/app/actions/patient';
-import { format } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
+
+// Server-only route — see src/app/page.tsx for why this can't just be
+// date-fns' format() (Vercel's server isn't in Asia/Bangkok, and TZ is a
+// reserved env var name Vercel won't let us override). Matters here because
+// this formats the time shown inside the push notification text itself.
+const format = (date: Date | number, fmt: string) => formatInTimeZone(date, 'Asia/Bangkok', fmt);
 
 // Host-agnostic reminder tick. Whatever scheduler ends up in front of this
 // (Vercel Cron, an external cron-ping service, a `node-cron` loop on a VPS —

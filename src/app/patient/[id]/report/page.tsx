@@ -2,7 +2,12 @@ import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import { ChevronLeft, Copy, Trash2, UserMinus } from 'lucide-react';
 import { notFound } from 'next/navigation';
-import { format } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
+
+// Server Component — see src/app/page.tsx for why this can't just be
+// date-fns' format() (Vercel's server isn't in Asia/Bangkok, and TZ is a
+// reserved env var name Vercel won't let us override).
+const format = (date: Date | number, fmt: string) => formatInTimeZone(date, 'Asia/Bangkok', fmt);
 import { dischargePatient } from '@/app/actions/patient';
 import { redirect } from 'next/navigation';
 import CopyButton from '@/app/components/CopyButton';
