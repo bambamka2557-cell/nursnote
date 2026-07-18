@@ -44,6 +44,12 @@ model EventLog {
   id          String   @id @default(uuid())
   orderId     String
   doneAt      DateTime @default(now())
+  // MgSO4 toxicity-monitoring checklist values (RR/urine/DTR), captured only
+  // for orders that use that modal — null for every other event type.
+  // Previously entered by the nurse and then discarded (audit finding).
+  rr          Int?
+  urineOutput Int?
+  reflex      String?
 
   order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }

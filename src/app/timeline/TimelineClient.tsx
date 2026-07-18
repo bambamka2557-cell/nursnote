@@ -79,7 +79,11 @@ export default function TimelineClient({ initialPatients }: { initialPatients: a
       alert('กรุณากรอกข้อมูลให้ครบถ้วน');
       return;
     }
-    await logEvent(activeTask.orderId, new Date());
+    await logEvent(activeTask.orderId, new Date(), {
+      rr: parseInt(rr, 10),
+      urineOutput: parseInt(urine, 10),
+      reflex,
+    });
 
     setMgso4ModalOpen(false);
     setRr('');

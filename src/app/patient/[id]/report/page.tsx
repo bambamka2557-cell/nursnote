@@ -34,20 +34,36 @@ export default async function HandoverReport({ params }: { params: Promise<{ id:
   
   reportText += `\n[บันทึกการดูแล/ให้ยาล่าสุด]\n`;
   
-  const allLogs: { name: string; doneAt: Date }[] = [];
+  const allLogs: {
+    name: string;
+    doneAt: Date;
+    rr: number | null;
+    urineOutput: number | null;
+    reflex: string | null;
+  }[] = [];
   patient.orders.forEach(order => {
     order.eventLogs.forEach(log => {
-      allLogs.push({ name: order.name, doneAt: log.doneAt });
+      allLogs.push({
+        name: order.name,
+        doneAt: log.doneAt,
+        rr: log.rr,
+        urineOutput: log.urineOutput,
+        reflex: log.reflex,
+      });
     });
   });
-  
+
   allLogs.sort((a, b) => b.doneAt.getTime() - a.doneAt.getTime()); // newest first for handover notes
-  
+
   if (allLogs.length === 0) {
     reportText += `- ยังไม่มีประวัติการดูแลในรอบเวรนี้`;
   } else {
     allLogs.forEach(log => {
-      reportText += `- ${format(log.doneAt, 'HH:mm')} น. : ${log.name}\n`;
+      reportText += `- ${format(log.doneAt, 'HH:mm')} น. : ${log.name}`;
+      if (log.rr !== null || log.urineOutput !== null || log.reflex !== null) {
+        reportText += ` (RR ${log.rr ?? '-'}, Urine ${log.urineOutput ?? '-'}ml/hr, DTR ${log.reflex ?? '-'})`;
+      }
+      reportText += `\n`;
     });
   }
 
