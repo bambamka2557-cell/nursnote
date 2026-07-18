@@ -9,29 +9,39 @@ import { subscribeToPush } from '@/lib/pushClient';
 
 const POLL_MS = 30_000;
 const FIRED_KEY = 'lr_fired_reminders';
+// Re-alert cadence for a still-overdue, ungiven order. Matches the
+// check-reminders cron tick so foreground and background behave the same —
+// previously this fired once per due-instance and then went silent, while
+// background push kept re-alerting every 5 min (audit finding: a nurse who
+// misses the one beep on a counter-top tablet got no second chance).
+const REFIRE_MS = 5 * 60 * 1000;
 
 type Perm = 'default' | 'granted' | 'denied' | 'unsupported';
 
 export default function ReminderEngine() {
   const [perm, setPerm] = useState<Perm>('default');
-  const firedRef = useRef<Set<string>>(new Set());
+  // key -> last-fired-at ms, so a still-due order can re-alert after REFIRE_MS
+  // instead of being silenced forever after the first beep.
+  const firedRef = useRef<Map<string, number>>(new Map());
   const audioCtxRef = useRef<AudioContext | null>(null);
 
   // --- fired-key persistence (so a reload doesn't re-alert past dues) ---
   const loadFired = () => {
     try {
       const raw = localStorage.getItem(FIRED_KEY);
-      const arr: string[] = raw ? JSON.parse(raw) : [];
+      const obj: Record<string, number> = raw ? JSON.parse(raw) : {};
       const cutoff = Date.now() - 24 * 60 * 60 * 1000; // drop keys older than 24h
-      firedRef.current = new Set(arr.filter((k) => dueMsFromKey(k) >= cutoff));
+      firedRef.current = new Map(
+        Object.entries(obj).filter(([k]) => dueMsFromKey(k) >= cutoff)
+      );
       persistFired();
     } catch {
-      firedRef.current = new Set();
+      firedRef.current = new Map();
     }
   };
   const persistFired = () => {
     try {
-      localStorage.setItem(FIRED_KEY, JSON.stringify([...firedRef.current]));
+      localStorage.setItem(FIRED_KEY, JSON.stringify(Object.fromEntries(firedRef.current)));
     } catch {
       /* storage full / unavailable — dedup degrades to in-memory only */
     }
@@ -105,10 +115,12 @@ export default function ReminderEngine() {
       return; // network blip — try again next poll
     }
     const due = computeDueOrders(patients);
+    const now = Date.now();
     let changed = false;
     for (const o of due) {
-      if (firedRef.current.has(o.key)) continue;
-      firedRef.current.add(o.key);
+      const lastFired = firedRef.current.get(o.key);
+      if (lastFired !== undefined && now - lastFired < REFIRE_MS) continue;
+      firedRef.current.set(o.key, now);
       changed = true;
       void fire(o);
     }
