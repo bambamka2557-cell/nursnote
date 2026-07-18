@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="th" className="h-full antialiased">
-      <body className={`${inter.className} min-h-full flex flex-col pb-16 md:pb-0 bg-slate-50 text-slate-900`}>
+      <body className={`${inter.className} min-h-full flex flex-col pb-16 md:pb-0 bg-slate-50 text-slate-900 overflow-x-hidden`}>
         <PinLock>
           {/* Top Header Navigation & Tools */}
           <Header />

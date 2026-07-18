@@ -67,8 +67,8 @@ export default function ReminderEngine() {
       }
       beep(3);
 
-      const title = `⏰ ถึงเวลา: ${order.name}`;
-      const body = `เตียง ${order.bedNumber} (${order.nickname}) — กำหนด ${format(order.dueTime, 'HH:mm')} น.`;
+      const title = `🛏️ เตียง ${order.bedNumber} (${order.nickname})`;
+      const body = `🔔 ถึงเวลา: ${order.name} (กำหนด ${format(order.dueTime, 'HH:mm')} น.)`;
       const opts: NotificationOptions & { vibrate?: number[] } = {
         body,
         tag: order.key, // collapse duplicates for the same due-instance

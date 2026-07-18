@@ -128,7 +128,7 @@ export default function Header() {
 
       {/* Global GA Calculator Modal */}
       {gaOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-[100] flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-200 text-slate-800">
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
@@ -183,7 +183,7 @@ export default function Header() {
 
       {/* Global LR Guidelines Modal */}
       {guideOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-[100] flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-2xl rounded-2xl p-5 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200 text-slate-800">
             <div className="flex justify-between items-start border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">

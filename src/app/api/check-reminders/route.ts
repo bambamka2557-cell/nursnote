@@ -47,8 +47,8 @@ export async function GET(req: NextRequest) {
 
   for (const order of toNotify) {
     const payload = {
-      title: `⏰ ถึงเวลา: ${order.name}`,
-      body: `เตียง ${order.bedNumber} (${order.nickname}) — กำหนด ${format(order.dueTime, 'HH:mm')} น.`,
+      title: `🛏️ เตียง ${order.bedNumber} (${order.nickname})`,
+      body: `🔔 ถึงเวลา: ${order.name} (กำหนด ${format(order.dueTime, 'HH:mm')} น.)`,
       tag: order.key,
     };
 

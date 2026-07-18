@@ -187,7 +187,7 @@ export default function TimelinePage() {
 
       {/* MgSO4 Checklist Modal */}
       {mgso4ModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-end sm:items-center justify-center p-4">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-[100] flex items-end sm:items-center justify-center p-4">
           <div className="bg-white w-full max-w-md rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl space-y-4 animate-in slide-in-from-bottom duration-250">
             <div className="flex items-start gap-3 text-rose-600">
               <div className="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center shrink-0">

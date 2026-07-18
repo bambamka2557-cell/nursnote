@@ -168,7 +168,7 @@ export default function AddPatient() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* 1. Patient Info */}
-        <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] space-y-4">
+        <div className="bg-white border border-slate-100 rounded-2xl p-4 sm:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] space-y-4">
           <h2 className="text-lg font-bold text-slate-800 border-b border-slate-50 pb-2.5">ข้อมูลผู้ป่วยแรกรับ</h2>
           
           <div className="grid grid-cols-2 gap-4">
@@ -179,7 +179,7 @@ export default function AddPatient() {
                 required 
                 value={bedNumber} 
                 onChange={e => setBedNumber(e.target.value)} 
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:outline-hidden text-sm font-medium transition-all text-slate-850" 
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:outline-hidden text-base sm:text-sm font-medium transition-all text-slate-850" 
                 placeholder="เช่น 1, 2" 
               />
             </div>
@@ -190,7 +190,7 @@ export default function AddPatient() {
                 required 
                 value={nickname} 
                 onChange={e => setNickname(e.target.value)} 
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:outline-hidden text-sm font-medium transition-all text-slate-850" 
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:outline-hidden text-base sm:text-sm font-medium transition-all text-slate-850" 
                 placeholder="เช่น เอ, บี" 
               />
             </div>
@@ -202,7 +202,7 @@ export default function AddPatient() {
               type="text" 
               value={dx} 
               onChange={e => setDx(e.target.value)} 
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:outline-hidden text-sm font-medium transition-all text-slate-850" 
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:outline-hidden text-base sm:text-sm font-medium transition-all text-slate-850" 
               placeholder="เช่น G1P0A0 GA 38 wks c PROM" 
             />
           </div>
@@ -212,14 +212,14 @@ export default function AddPatient() {
             <textarea 
               value={initialNote} 
               onChange={e => setInitialNote(e.target.value)} 
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:outline-hidden text-sm font-medium min-h-[90px] transition-all text-slate-850" 
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:outline-hidden text-base sm:text-sm font-medium min-h-[90px] transition-all text-slate-850" 
               placeholder="CC: เจ็บครรภ์คลอด&#10;PI: ...&#10;V/S: ..."
             ></textarea>
           </div>
         </div>
 
         {/* 2. Choose Presets with Category Dropdowns */}
-        <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] space-y-4">
+        <div className="bg-white border border-slate-100 rounded-2xl p-4 sm:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] space-y-4">
           <h2 className="text-lg font-bold text-slate-800 border-b border-slate-50 pb-2.5">เลือกรายการยาและการประเมิน (Preset Orders)</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -231,7 +231,7 @@ export default function AddPatient() {
                   toggleMedicationPreset(e.target.value);
                   e.target.value = ''; // Reset select
                 }}
-                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-pink-500 focus:outline-hidden text-sm font-medium transition-all text-slate-800 cursor-pointer"
+                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-pink-500 focus:outline-hidden text-base sm:text-sm font-medium transition-all text-slate-800 cursor-pointer"
               >
                 <option value="">-- เลือกยากลุ่มนี้ --</option>
                 {PRESET_MEDICATIONS.filter(m => m.category === 'tocolytic').map(m => {
@@ -253,7 +253,7 @@ export default function AddPatient() {
                   toggleMedicationPreset(e.target.value);
                   e.target.value = ''; // Reset select
                 }}
-                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-indigo-500 focus:outline-hidden text-sm font-medium transition-all text-slate-800 cursor-pointer"
+                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-indigo-500 focus:outline-hidden text-base sm:text-sm font-medium transition-all text-slate-800 cursor-pointer"
               >
                 <option value="">-- เลือกยากลุ่มนี้ --</option>
                 {PRESET_MEDICATIONS.filter(m => m.category === 'induction').map(m => {
@@ -275,7 +275,7 @@ export default function AddPatient() {
                   toggleMedicationPreset(e.target.value);
                   e.target.value = ''; // Reset select
                 }}
-                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-sky-500 focus:outline-hidden text-sm font-medium transition-all text-slate-800 cursor-pointer"
+                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-sky-500 focus:outline-hidden text-base sm:text-sm font-medium transition-all text-slate-800 cursor-pointer"
               >
                 <option value="">-- เลือกยากลุ่มนี้ --</option>
                 {PRESET_MEDICATIONS.filter(m => m.category === 'preop').map(m => {
@@ -297,7 +297,7 @@ export default function AddPatient() {
                   toggleMedicationPreset(e.target.value);
                   e.target.value = ''; // Reset select
                 }}
-                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-slate-500 focus:outline-hidden text-sm font-medium transition-all text-slate-800 cursor-pointer"
+                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-slate-500 focus:outline-hidden text-base sm:text-sm font-medium transition-all text-slate-800 cursor-pointer"
               >
                 <option value="">-- เลือกยากลุ่มนี้ --</option>
                 {PRESET_MEDICATIONS.filter(m => m.category === 'general').map(m => {
@@ -319,7 +319,7 @@ export default function AddPatient() {
                   toggleAssessmentPreset(e.target.value);
                   e.target.value = ''; // Reset select
                 }}
-                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-emerald-500 focus:outline-hidden text-sm font-medium transition-all text-slate-800 cursor-pointer"
+                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-emerald-500 focus:outline-hidden text-base sm:text-sm font-medium transition-all text-slate-800 cursor-pointer"
               >
                 <option value="">-- เลือกการประเมินเฝ้าระวัง --</option>
                 {PRESET_ASSESSMENTS.map(a => {
@@ -336,7 +336,7 @@ export default function AddPatient() {
         </div>
 
         {/* 3. Custom Order Creator */}
-        <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] space-y-3">
+        <div className="bg-white border border-slate-100 rounded-2xl p-4 sm:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] space-y-3">
           <h2 className="text-lg font-bold text-slate-800 border-b border-slate-50 pb-2">เพิ่มการแจ้งเตือนแบบกำหนดเอง (Custom)</h2>
           <div className="flex flex-col sm:flex-row gap-3">
             <input 
@@ -344,7 +344,7 @@ export default function AddPatient() {
               value={customName}
               onChange={e => setCustomName(e.target.value)}
               placeholder="พิมพ์ชื่อคำสั่งดูแล เช่น NPO, สังเกตอาการ"
-              className="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:outline-hidden focus:border-indigo-500 focus:bg-white text-slate-800"
+              className="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base sm:text-sm font-medium focus:outline-hidden focus:border-indigo-500 focus:bg-white text-slate-800"
             />
             <div className="flex gap-2">
               <input 
@@ -352,12 +352,12 @@ export default function AddPatient() {
                 value={customInterval}
                 onChange={e => setCustomInterval(e.target.value)}
                 placeholder="นาที"
-                className="w-20 px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-center font-semibold focus:outline-hidden focus:border-indigo-500 focus:bg-white text-slate-800"
+                className="w-20 px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base sm:text-sm text-center font-semibold focus:outline-hidden focus:border-indigo-500 focus:bg-white text-slate-800"
               />
               <select 
                 value={customType}
                 onChange={e => setCustomType(e.target.value)}
-                className="px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-hidden focus:border-indigo-500 text-slate-800"
+                className="px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base sm:text-xs font-semibold focus:outline-hidden focus:border-indigo-500 text-slate-800"
               >
                 <option value="MEDICATION">ยา</option>
                 <option value="ASSESSMENT">ประเมิน</option>
@@ -375,7 +375,7 @@ export default function AddPatient() {
 
         {/* 4. Selected Orders Summary */}
         {selectedOrders.length > 0 && (
-          <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] space-y-4">
+          <div className="bg-white border border-slate-100 rounded-2xl p-4 sm:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] space-y-4">
             <h2 className="text-lg font-bold text-slate-800 border-b border-slate-50 pb-2">รายการแจ้งเตือนที่เลือกไว้ ({selectedOrders.length} รายการ)</h2>
             <div className="divide-y divide-slate-100">
               {selectedOrders.map(order => (
@@ -415,7 +415,7 @@ export default function AddPatient() {
                         type="time"
                         value={order.lastGivenTime}
                         onChange={e => handleUpdateLastGivenTime(order.name, e.target.value)}
-                        className="px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-800 focus:outline-hidden focus:border-indigo-500"
+                        className="px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg font-bold text-base sm:text-xs text-slate-800 focus:outline-hidden focus:border-indigo-500"
                       />
                     </div>
                     
@@ -426,7 +426,7 @@ export default function AddPatient() {
                         type="number"
                         value={order.intervalMinutes || ''}
                         onChange={e => handleUpdateInterval(order.name, parseInt(e.target.value, 10) || 0)}
-                        className="w-16 px-1.5 py-1 text-center bg-slate-50 border border-slate-200 rounded-md font-bold focus:outline-hidden focus:border-indigo-500 focus:bg-white text-slate-800"
+                        className="w-16 px-1.5 py-1 text-center bg-slate-50 border border-slate-200 rounded-md font-bold focus:outline-hidden focus:border-indigo-500 focus:bg-white text-base sm:text-xs text-slate-800"
                       />
                       <span>นาที</span>
                     </div>
