@@ -115,8 +115,15 @@ export default function AddPatient() {
       const now = new Date();
       const orderDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0, 0);
       
-      // Heuristic: If target date is in the future by > 2 hours, it belongs to yesterday
-      if (orderDate.getTime() > now.getTime() + 2 * 60 * 60 * 1000) {
+      // Heuristic: a same-day future time this far out is far more likely a
+      // nurse pre-scheduling later in the shift (e.g. entering 14:00 at
+      // 10:00) than an overnight handover reference to "last night" — only
+      // assume yesterday once the gap is implausible for same-day scheduling
+      // (12h covers the real handover case: night shift citing a time from
+      // just after midnight). A 2h threshold was flipping ordinary
+      // few-hours-ahead scheduling to "yesterday", creating a false
+      // ~20h-overdue alarm the moment the patient was added (audit finding).
+      if (orderDate.getTime() > now.getTime() + 12 * 60 * 60 * 1000) {
         orderDate.setDate(orderDate.getDate() - 1);
       }
       
