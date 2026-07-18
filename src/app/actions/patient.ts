@@ -3,13 +3,17 @@
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 
-export async function getPatients() {
-  // Auto-purge patients older than 24 hours
+// Runs on a schedule (check-reminders cron, every 5 min) instead of on every
+// read — deleteMany() was previously inline in getPatients(), doubling every
+// page load's DB round-trip for a cleanup that doesn't need to be that fresh.
+export async function purgeExpiredPatients() {
   const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
   await prisma.patient.deleteMany({
     where: { createdAt: { lt: yesterday } }
   });
+}
 
+export async function getPatients() {
   return await prisma.patient.findMany({
     include: {
       orders: {

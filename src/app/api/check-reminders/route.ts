@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { sendPush } from '@/lib/webpush';
 import { computeDueOrders } from '@/lib/reminders';
+import { purgeExpiredPatients } from '@/app/actions/patient';
 import { format } from 'date-fns';
 
 // Host-agnostic reminder tick. Whatever scheduler ends up in front of this
@@ -22,6 +23,10 @@ export async function GET(req: NextRequest) {
   if (auth !== `Bearer ${secret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+
+  // Moved here from getPatients() so every page load doesn't pay for a
+  // DELETE query — this tick (every 5 min) is a good enough cadence for it.
+  await purgeExpiredPatients();
 
   const patients = await prisma.patient.findMany({
     include: {
