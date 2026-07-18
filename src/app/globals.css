@@ -53,6 +53,19 @@ body {
   touch-action: manipulation;
 }
 
+/* iOS Safari renders type="date"/type="time" with its own native chrome,
+   which can ignore the Tailwind width classes on the input and render wider
+   than its container (reported: the GA calculator's due-date field sticking
+   out past its box on an iPhone). This resets that native styling so the
+   input is sized like a normal text input instead. */
+input[type="date"],
+input[type="time"] {
+  -webkit-appearance: none;
+  appearance: none;
+  min-width: 0;
+  width: 100%;
+}
+
 /* Glassmorphism Navigation with Pink/Strawberry Tint */
 .glass-nav {
   background: rgba(255, 243, 245, 0.85);
