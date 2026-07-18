@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getPatients } from '../actions/patient';
 import { logEvent } from '../actions/order';
 import { Check, AlertTriangle, Sparkles, Info } from 'lucide-react';
@@ -43,6 +43,17 @@ export default function TimelineClient({ initialPatients }: { initialPatients: a
   // Seeded from the server-rendered initial fetch — no loading spinner on
   // first paint, unlike the old client-only useEffect fetch.
   const [tasks, setTasks] = useState<any[]>(() => computeTasks(initialPatients));
+  // Bug found in testing: the check button had no busy state, so a nurse
+  // tapping it a few times (nothing visibly happens until the round-trip
+  // completes) fired one logEvent() per tap — 13 duplicate rows landed in
+  // the DB for one order within 6 seconds. submittingOrderId drives the
+  // disabled/spinner UI, but React state updates are batched/async, so a
+  // burst of clicks within the same tick can all read the state before any
+  // of them re-renders — verified this by clicking 5x programmatically and
+  // getting 5 duplicate rows despite the state guard. submittingRef is a
+  // second, synchronous gate that closes on the very first call.
+  const [submittingOrderId, setSubmittingOrderId] = useState<string | null>(null);
+  const submittingRef = useRef<string | null>(null);
 
   // Modal states for MgSO4
   const [mgso4ModalOpen, setMgso4ModalOpen] = useState(false);
@@ -69,9 +80,17 @@ export default function TimelineClient({ initialPatients }: { initialPatients: a
       setMgso4ModalOpen(true);
       return;
     }
+    if (submittingRef.current === task.orderId) return; // already in flight
 
-    await logEvent(task.orderId, new Date());
-    loadTasks();
+    submittingRef.current = task.orderId;
+    setSubmittingOrderId(task.orderId);
+    try {
+      await logEvent(task.orderId, new Date());
+      await loadTasks();
+    } finally {
+      submittingRef.current = null;
+      setSubmittingOrderId(null);
+    }
   };
 
   const submitMgso4 = async () => {
@@ -79,11 +98,20 @@ export default function TimelineClient({ initialPatients }: { initialPatients: a
       alert('กรุณากรอกข้อมูลให้ครบถ้วน');
       return;
     }
-    await logEvent(activeTask.orderId, new Date(), {
-      rr: parseInt(rr, 10),
-      urineOutput: parseInt(urine, 10),
-      reflex,
-    });
+    if (submittingRef.current === activeTask.orderId) return; // already in flight
+
+    submittingRef.current = activeTask.orderId;
+    setSubmittingOrderId(activeTask.orderId);
+    try {
+      await logEvent(activeTask.orderId, new Date(), {
+        rr: parseInt(rr, 10),
+        urineOutput: parseInt(urine, 10),
+        reflex,
+      });
+    } finally {
+      submittingRef.current = null;
+      setSubmittingOrderId(null);
+    }
 
     setMgso4ModalOpen(false);
     setRr('');
@@ -173,9 +201,14 @@ export default function TimelineClient({ initialPatients }: { initialPatients: a
 
                 <button
                   onClick={() => handleDone(task)}
-                  className={`w-14 h-14 rounded-full flex items-center justify-center shadow-md active:scale-95 transition-all shrink-0 ${btnClass}`}
+                  disabled={submittingOrderId === task.orderId}
+                  className={`w-14 h-14 rounded-full flex items-center justify-center shadow-md active:scale-95 transition-all shrink-0 disabled:opacity-60 disabled:active:scale-100 ${btnClass}`}
                 >
-                  <Check size={24} strokeWidth={3} />
+                  {submittingOrderId === task.orderId ? (
+                    <span className="w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                  ) : (
+                    <Check size={24} strokeWidth={3} />
+                  )}
                 </button>
               </div>
             );
@@ -237,16 +270,18 @@ export default function TimelineClient({ initialPatients }: { initialPatients: a
 
             <div className="flex gap-3 pt-4 border-t border-slate-100">
               <button
-                className="flex-1 py-3 border border-slate-200 text-slate-600 font-semibold rounded-xl text-sm hover:bg-slate-50 active:scale-98 transition-all"
+                className="flex-1 py-3 border border-slate-200 text-slate-600 font-semibold rounded-xl text-sm hover:bg-slate-50 active:scale-98 transition-all disabled:opacity-50"
                 onClick={() => setMgso4ModalOpen(false)}
+                disabled={submittingOrderId === activeTask?.orderId}
               >
                 ยกเลิก
               </button>
               <button
-                className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm active:scale-98 transition-all"
+                className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm active:scale-98 transition-all disabled:opacity-60"
                 onClick={submitMgso4}
+                disabled={submittingOrderId === activeTask?.orderId}
               >
-                บันทึกสำเร็จ
+                {submittingOrderId === activeTask?.orderId ? 'กำลังบันทึก...' : 'บันทึกสำเร็จ'}
               </button>
             </div>
           </div>
