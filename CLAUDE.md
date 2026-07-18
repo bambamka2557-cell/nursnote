@@ -43,16 +43,15 @@ Deploy จริงแล้วที่ `https://nursnote.vercel.app` (Vercel p
 | Foreground (แอปเปิดค้าง จอไม่ดับ) — สั่น+เสียง+notification | ✅ **verify แล้วบน production จริง** (เห็น toast แจ้งเตือนจริงจาก nursnote.vercel.app) | `ReminderEngine.tsx`, `lib/reminders.ts` |
 | Background push (จอล็อก/แอปปิด) — โครงสร้าง | ✅ สร้างแล้ว, verify เฉพาะ backend logic | `lib/webpush.ts`, `app/api/check-reminders/route.ts`, `PushSubscription` model |
 | Background push — end-to-end จริงบนมือถือ | ❌ **ยังไม่เคย verify** (sandbox แอปทดสอบไม่ได้เพราะ browser auto-deny permission) | ต้องทดสอบจริงบนมือถือ |
-| Scheduler ที่ยิง `/api/check-reminders` เป็นระยะ | ⏳ เขียน workflow ไว้แล้ว แต่ **inert** จนกว่าจะตั้ง GitHub Actions secrets (repo/deploy พร้อมแล้ว) | `.github/workflows/check-reminders.yml` |
+| Scheduler ที่ยิง `/api/check-reminders` เป็นระยะ | ✅ ตั้ง secrets แล้ว + manual run เขียว (curl ยิงถูก endpoint จริง) รันอัตโนมัติทุก 5 นาทีแล้ว | `.github/workflows/check-reminders.yml` |
 
-**ต้องทำต่อก่อนระบบแจ้งเตือนพื้นหลังจะทำงานจริง:**
+**เหลือขั้นตอนเดียวก่อนระบบแจ้งเตือนพื้นหลังจะ verify ครบ:**
 1. ~~Push repo ขึ้น GitHub~~ ✅ เสร็จแล้ว
 2. ~~Deploy ขึ้น Vercel~~ ✅ เสร็จแล้ว (`nursnote.vercel.app`)
-3. ตั้ง GitHub Actions secrets: `CHECK_REMINDERS_URL` = `https://nursnote.vercel.app/api/check-reminders`
-   และ `CRON_SECRET` (ต้องตรงกับค่าใน Vercel env vars)
+3. ~~ตั้ง GitHub Actions secrets~~ ✅ เสร็จแล้ว (`CHECK_REMINDERS_URL`, `CRON_SECRET`), manual trigger ทดสอบผ่าน
 4. **ทดสอบบนมือถือจริง** กด "เปิดแจ้งเตือน" → ปิดจอ → รอถึงเวลา order ครบกำหนด → เช็คว่า push เด้งจริง
    — iOS ต้อง **Add to Home Screen ก่อน** (iOS 16.4+) ถึงจะรับ background push ได้ เปิดผ่าน Safari tab
-   ธรรมดาจะไม่ได้เลย
+   ธรรมดาจะไม่ได้เลย — **ยังไม่เคย verify ข้อนี้ ยังไม่ควรเคลมว่าระบบพร้อมใช้งาน 100% จนกว่าจะทดสอบจริง**
 
 **Gotcha ที่เจอจริงตอน deploy (2026-07-18) — Supabase direct connection ใช้จาก Vercel serverless ไม่ได้:**
 `DATABASE_URL` ที่ชี้ direct connection (`db.<ref>.supabase.co:5432`) ใช้ได้ปกติจาก local แต่ทำให้ build
