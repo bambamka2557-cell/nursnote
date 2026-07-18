@@ -8,6 +8,8 @@ import { redirect } from 'next/navigation';
 import CopyButton from '@/app/components/CopyButton';
 import DiscontinueButton from '@/app/components/DiscontinueButton';
 
+export const dynamic = 'force-dynamic';
+
 export default async function HandoverReport({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const patient = await prisma.patient.findUnique({

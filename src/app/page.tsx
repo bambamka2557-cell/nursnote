@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { Clock, CheckCircle2, AlertCircle, Plus } from 'lucide-react';
 import { differenceInMinutes, addMinutes, format } from 'date-fns';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Dashboard() {
   const patients = await getPatients();
 
