@@ -66,6 +66,14 @@ export default function TimelineClient({ initialPatients }: { initialPatients: a
     toastTimeoutRef.current = setTimeout(() => setToastMsg(null), 2200);
   };
 
+  // Confirm-before-logging modal for plain (non-MgSO4) tasks — requested
+  // after testing: a check button with no confirm step is too easy to tap
+  // by accident and log a false "done" against a real patient. MgSO4 skips
+  // this and goes straight to its own modal, since filling in RR/urine/DTR
+  // already requires deliberate action — a second confirm on top would just
+  // be an extra tap with no safety benefit.
+  const [confirmTask, setConfirmTask] = useState<any>(null);
+
   // Modal states for MgSO4
   const [mgso4ModalOpen, setMgso4ModalOpen] = useState(false);
   const [activeTask, setActiveTask] = useState<any>(null);
@@ -85,19 +93,25 @@ export default function TimelineClient({ initialPatients }: { initialPatients: a
     return () => clearInterval(interval);
   }, []);
 
-  const handleDone = async (task: any) => {
+  const handleDone = (task: any) => {
     if (task.isMgso4) {
       setActiveTask(task);
       setMgso4ModalOpen(true);
       return;
     }
-    if (submittingRef.current === task.orderId) return; // already in flight
+    setConfirmTask(task);
+  };
+
+  const confirmDone = async () => {
+    const task = confirmTask;
+    if (!task || submittingRef.current === task.orderId) return; // already in flight
 
     submittingRef.current = task.orderId;
     setSubmittingOrderId(task.orderId);
     try {
       await logEvent(task.orderId, new Date());
       await loadTasks();
+      setConfirmTask(null);
       showToast(`บันทึกแล้ว — ${task.name}`);
     } finally {
       submittingRef.current = null;
@@ -236,6 +250,48 @@ export default function TimelineClient({ initialPatients }: { initialPatients: a
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Confirm-before-log modal (non-MgSO4 tasks) */}
+      {confirmTask && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-[100] flex items-end sm:items-center justify-center p-4">
+          <div className="bg-white w-full max-w-sm rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl space-y-5 animate-in slide-in-from-bottom duration-250">
+            <div className="flex items-start gap-3 text-emerald-600">
+              <div className="w-11 h-11 rounded-full bg-emerald-50 flex items-center justify-center shrink-0">
+                <Check size={22} strokeWidth={3} />
+              </div>
+              <div className="pt-1">
+                <h3 className="font-extrabold text-lg text-slate-900">ยืนยันบันทึก?</h3>
+                <p className="text-sm font-semibold text-slate-600 mt-0.5">
+                  เตียง {confirmTask.bedNumber} ({confirmTask.nickname}) — &ldquo;{confirmTask.name}&rdquo;
+                </p>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-500">
+              จะบันทึกว่าให้ยา/ทำรายการนี้แล้ว ณ เวลานี้ และเริ่มนับรอบถัดไปใหม่
+            </p>
+
+            <div className="flex gap-3 pt-1">
+              <button
+                type="button"
+                onClick={() => setConfirmTask(null)}
+                disabled={submittingOrderId === confirmTask.orderId}
+                className="flex-1 py-3 border border-slate-200 text-slate-600 font-semibold rounded-xl text-sm hover:bg-slate-50 active:scale-98 transition-all disabled:opacity-50"
+              >
+                ยกเลิก
+              </button>
+              <button
+                type="button"
+                onClick={confirmDone}
+                disabled={submittingOrderId === confirmTask.orderId}
+                className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-sm active:scale-98 transition-all disabled:opacity-60"
+              >
+                {submittingOrderId === confirmTask.orderId ? 'กำลังบันทึก...' : 'ยืนยัน บันทึกแล้ว'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
