@@ -18,6 +18,13 @@ Next.js 16 (App Router) + React 19 + Prisma 6 + Postgres ผ่าน Supabase (
 **ไม่มี migration history** (`prisma/migrations/` ไม่มี) — ใช้ `npx prisma db push` sync schema ตรงๆ
 ตาม pattern เดิมของโปรเจกต์ อย่าเริ่ม `prisma migrate dev` เองโดยไม่คุยก่อน (เปลี่ยน workflow ทั้งหมด)
 
+**`package.json`'s `build` ต้องเป็น `prisma generate && next build` เสมอ ห้ามลดกลับเหลือแค่ `next build`**
+(2026-07-18: แก้ schema เพิ่ม field ใหม่, `npx prisma db push` local สำเร็จ, build local ผ่าน — แต่ deploy
+บน Vercel **fail เงียบๆ หลายรอบติด** เพราะ npm install cache ข้าม `@prisma/client`'s postinstall hook ไป
+ทำให้ generated client ไม่ตรง schema ล่าสุด, error "'rr' does not exist in type..." — Vercel เสิร์ฟ build
+เก่าต่อ (ยัง 200 อยู่ปกติ) ดูจาก curl เฉยๆ**ไม่รู้เลยว่า deploy พัง** ต้องเข้าไปดู Deployments tab จริงๆ) —
+ทุกครั้งที่แก้ `schema.prisma` ต้องเช็ค Vercel Deployments ว่าขึ้นเขียว ไม่ใช่แค่ curl 200
+
 **Windows + dev server ที่รันค้างอยู่**: `prisma generate` มักพัง `EPERM` เพราะ query engine DLL ถูก
 dev server lock อยู่ — **ไม่ต้อง panic** ปกติ TS client code (types) regenerate สำเร็จอยู่ดี มีแค่ binary
 swap ที่พัง และ engine เป็น schema-generic (อ่าน DMMF จาก client) ใช้งานได้จริงแม้ binary จะเก่า — verify
@@ -88,8 +95,23 @@ issue) — **ทางแก้: `DATABASE_URL` ต้องใช้ connection
 connection, รันจาก local เท่านั้น ไม่ได้รันบน Vercel) — ถ้าเจอ error นี้อีกใน Supabase+Vercel project อื่น
 ให้เช็คจุดนี้ก่อนเลย
 
+**Gotcha ที่เจอจริง (2026-07-18) — เวลาที่ format ฝั่ง server เพี้ยน -7 ชม.:** Vercel serverless ไม่ได้รันที่
+Asia/Bangkok (default UTC) และ **`TZ` เป็นชื่อ env var ที่ Vercel reserve ไว้เอง ตั้งเองจาก dashboard ไม่ได้
+เลย** (ขึ้น error "The name of your Environment Variable is reserved") ลอง `process.env.TZ = '...'` ใน
+`instrumentation.ts` แล้วก็ไม่ทำงานจริงบน production เช่นกัน (verify แล้วว่าไม่ช่วย) — **ทางแก้ที่ใช้จริง**:
+ทุกจุดที่ format วันที่ในไฟล์ server-side (ไม่มี `'use client'`) ต้องใช้ `date-fns-tz`'s
+`formatInTimeZone(date, 'Asia/Bangkok', fmt)` แทน `date-fns`'s `format()` ธรรมดา — ระบุ timezone ตรงๆทุกครั้ง
+ไม่พึ่ง server's ambient timezone เลย ไฟล์ที่ต้องระวัง (grep `format(` ในไฟล์ที่ไม่มี `'use client'`):
+`page.tsx` (dashboard), `patient/[id]/report/page.tsx`, `api/check-reminders/route.ts` — client component
+(`ReminderEngine.tsx`, `TimelineClient.tsx`, `add/page.tsx`) ใช้ `format()` ปกติได้ เพราะ browser ผู้ใช้จริง
+อยู่ Asia/Bangkok อยู่แล้ว ไม่มีปัญหา
+
 ## Verify before done
 เปิด dev server ทดสอบจริงทุกครั้งที่แก้ scheduling/reminder/PIN/push logic — ฟีเจอร์กลุ่มนี้พลาดแล้ว
 กระทบผู้ใช้จริงโดยตรง อย่าเคลมว่าเสร็จจากแค่ build ผ่าน ถ้า sandbox ทดสอบ end-to-end ไม่ได้ (เช่น
 notification permission ที่ browser automation deny เสมอ) ให้บอกตรงๆ ว่า "verify ไม่ได้ในนี้ ต้องทดสอบจริง"
 ไม่ใช่เคลมว่าผ่านทั้งที่ยังไม่ได้เห็นจริง
+
+**เช็ค Vercel Deployments tab จริง ไม่ใช่แค่ curl 200:** curl/browser ที่ตอบ 200 ไม่ได้แปลว่า deploy ล่าสุด
+สำเร็จ — Vercel เสิร์ฟ build **ที่แล้ว** ต่อถ้า build ล่าสุด fail (ไม่ down) หลัง push ที่แตะ `schema.prisma`
+หรือ dependency ใหม่ ให้เข้าไปดู Deployments tab ว่าขึ้นเขียว/Ready จริง ก่อนจะเชื่อว่า fix ขึ้น production แล้ว
