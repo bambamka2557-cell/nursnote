@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -45,13 +45,13 @@ export default function TravelClient({ initialMonth }: TravelClientProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-50/50 via-pink-50/25 to-white pb-28 text-slate-800">
-      {/* Top Header Bar */}
-      <div className="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-pink-100 shadow-2xs px-3 sm:px-6 py-3">
-        <div className="max-w-4xl mx-auto flex items-center justify-between gap-2">
-          {/* Back to Schedule Button */}
+      {/* Top Header Floating Bar with Soft Rounded Corners */}
+      <div className="sticky top-2 z-40 px-3 sm:px-6 pt-1.5">
+        <div className="max-w-4xl mx-auto bg-white/95 backdrop-blur-md rounded-2xl sm:rounded-3xl border border-pink-100 shadow-sm shadow-pink-100/30 px-3.5 sm:px-5 py-2.5 flex items-center justify-between gap-2">
+          {/* Back to Schedule Button with Rounded-2xl */}
           <Link
             href="/schedule"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-pink-50 hover:bg-pink-100 text-pink-600 font-black text-xs sm:text-sm transition-all border border-pink-200/60 shadow-2xs active:scale-95 cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-pink-50 hover:bg-pink-100 text-pink-600 font-black text-xs sm:text-sm transition-all border border-pink-200/70 shadow-2xs active:scale-95 cursor-pointer"
           >
             <ChevronLeft size={16} />
             <span>กลับตารางเวร</span>
@@ -190,13 +190,28 @@ export default function TravelClient({ initialMonth }: TravelClientProps) {
 function TravelSpotCard({ spot }: { spot: TravelSpot }) {
   const [imgError, setImgError] = useState(false);
   const [imgLoading, setImgLoading] = useState(true);
+  const [isOnline, setIsOnline] = useState(true);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsOnline(navigator.onLine);
+      const handleOnline = () => setIsOnline(true);
+      const handleOffline = () => setIsOnline(false);
+      window.addEventListener('online', handleOnline);
+      window.addEventListener('offline', handleOffline);
+      return () => {
+        window.removeEventListener('online', handleOnline);
+        window.removeEventListener('offline', handleOffline);
+      };
+    }
+  }, []);
 
   return (
     <div className="bg-white rounded-3xl overflow-hidden border border-pink-100/90 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
       {/* Photo Header with Overlay Badges */}
       <div className="relative w-full h-48 sm:h-52 bg-slate-100 overflow-hidden">
         {imgError ? (
-          /* Offline Graceful Fallback Card */
+          /* Graceful Fallback Card */
           <div className="w-full h-full bg-gradient-to-br from-pink-100 via-rose-50 to-sky-100 flex flex-col items-center justify-center p-4 text-center border-b border-pink-100">
             <span className="text-4xl mb-1 filter drop-shadow-2xs">
               {spot.imageEmoji || '🏞️'}
@@ -204,7 +219,9 @@ function TravelSpotCard({ spot }: { spot: TravelSpot }) {
             <span className="text-sm font-black text-slate-800">{spot.name}</span>
             <span className="text-[10px] text-pink-600 font-bold mt-1 bg-white/90 px-2.5 py-0.5 rounded-full border border-pink-200 shadow-2xs flex items-center gap-1">
               <AlertCircle size={10} />
-              <span>รูปภาพไม่พร้อมใช้งาน (โหมดออฟไลน์)</span>
+              <span>
+                {!isOnline ? '📶 โหมดออฟไลน์ (ไม่มีสัญญาณเน็ต)' : '🌸 ภาพบรรยากาศจำลอง'}
+              </span>
             </span>
           </div>
         ) : (
