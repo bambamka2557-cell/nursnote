@@ -1,15 +1,25 @@
 import { Suspense } from 'react';
 import TravelClient from './TravelClient';
 
-export const dynamic = 'force-dynamic';
-
 interface PageProps {
   searchParams: Promise<{ month?: string }>;
 }
 
 export default async function TravelPage({ searchParams }: PageProps) {
   const resolvedParams = await searchParams;
-  const monthParam = resolvedParams?.month ? parseInt(resolvedParams.month, 10) : new Date().getMonth() + 1;
+
+  // Bangkok local month default (Audit Note #4)
+  const currentBangkokMonth = new Date(
+    new Date().toLocaleString('en-US', { timeZone: 'Asia/Bangkok' })
+  ).getMonth() + 1;
+
+  let monthParam = currentBangkokMonth;
+  if (resolvedParams?.month) {
+    const parsed = parseInt(resolvedParams.month, 10);
+    if (!isNaN(parsed) && parsed >= 1 && parsed <= 12) {
+      monthParam = parsed;
+    }
+  }
 
   return (
     <Suspense
