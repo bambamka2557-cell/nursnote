@@ -4,8 +4,8 @@
   "description": "Labor Room Assistant",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#570df8",
+  "background_color": "#fff3f5",
+  "theme_color": "#fdd4e1",
   "icons": [
     {
       "src": "/icon-192.png",

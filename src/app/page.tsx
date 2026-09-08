@@ -18,17 +18,24 @@ export default async function Dashboard() {
 
   if (patients.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-slate-400">
-        <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center text-2xl mb-4">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4 py-8">
+        <div className="w-16 h-16 rounded-2xl bg-white border border-pink-200/80 shadow-xs flex items-center justify-center text-3xl mb-4 text-pink-500">
           🛏️
         </div>
-        <p className="font-medium text-slate-500">ยังไม่มีผู้ป่วยในระบบ</p>
-        <p className="text-xs text-slate-400 mt-1">รับผู้ป่วยใหม่เพื่อเริ่มการติดตาม</p>
+
+        <h2 className="text-xl sm:text-2xl font-black bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+          ยินดีต้อนรับสู่ LR-Helper
+        </h2>
+        <p className="font-semibold text-slate-700 mt-2">ยังไม่มีผู้ป่วยในระบบ</p>
+        <p className="text-xs text-slate-500 mt-1 max-w-xs">
+          กดปุ่มด้านล่างเพื่อรับผู้ป่วยใหม่และเริ่มต้นการติดตามรอบยาและการประเมิน
+        </p>
+
         <Link 
           href="/add" 
-          className="mt-6 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl shadow-md shadow-indigo-100 flex items-center gap-2 transition-all duration-200"
+          className="mt-6 px-6 py-3.5 bg-gradient-to-r from-pink-500 to-indigo-600 hover:from-pink-600 hover:to-indigo-700 text-white font-bold rounded-2xl shadow-lg shadow-pink-200 flex items-center gap-2 transition-all duration-200 active:scale-95"
         >
-          <Plus size={18} />
+          <Plus size={20} />
           รับผู้ป่วยใหม่
         </Link>
       </div>
@@ -39,24 +46,31 @@ export default async function Dashboard() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">แผงควบคุมเตียง</h1>
-          <p className="text-xs text-slate-500 mt-0.5">ติดตามสถานะความเร่งด่วนของแต่ละเตียง</p>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+            แผงควบคุมเตียง
+          </h1>
+          <p className="text-xs text-slate-500 mt-0.5">
+            ติดตามสถานะความเร่งด่วนและรอบการดูแลของแต่ละเตียง
+          </p>
         </div>
+
         <Link 
           href="/add" 
-          className="p-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg transition-all"
+          className="p-2.5 bg-white hover:bg-pink-50 text-pink-600 rounded-xl shadow-xs border border-pink-200/60 transition-all active:scale-95 flex items-center gap-1.5 text-xs font-bold"
+          title="รับผู้ป่วยใหม่"
         >
-          <Plus size={20} />
+          <Plus size={18} />
+          <span className="hidden sm:inline">รับใหม่</span>
         </Link>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {patients.map(patient => {
-          let nextTask: any = null;
+          let nextTask: { name: string; time: string; minutesLeft: number } | null = null;
           let minMinutesLeft = Infinity;
 
-          patient.orders.forEach(order => {
-            if (!order.intervalMinutes) return;
+          for (const order of patient.orders) {
+            if (!order.intervalMinutes) continue;
             
             const lastEvent = order.eventLogs[0];
             const startTime = lastEvent ? lastEvent.doneAt : order.startTime;
@@ -72,7 +86,7 @@ export default async function Dashboard() {
                 minutesLeft
               };
             }
-          });
+          }
 
           // Style definitions
           let cardBorder = 'border-slate-100';
