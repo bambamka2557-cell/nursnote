@@ -34,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="th" className="h-full antialiased">
-      <body className={`${prompt.className} ${prompt.variable} min-h-full flex flex-col pb-16 md:pb-0 bg-[#fff3f5] text-slate-900 overflow-x-hidden`}>
+      <body className={`${prompt.className} ${prompt.variable} min-h-full flex flex-col pb-28 md:pb-0 bg-[#fff3f5] text-slate-900 overflow-x-hidden`}>
         {/* App launch transition / splash screen (shows cover image on opening) */}
         <SplashScreen />
 

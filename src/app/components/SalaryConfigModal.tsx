@@ -332,8 +332,14 @@ export default function SalaryConfigModal({
                   type="number"
                   min={1}
                   max={28}
+                  step={1}
                   value={formData.cycleStartDay}
-                  onChange={(e) => handleNumberChange('cycleStartDay', e.target.value)}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      cycleStartDay: Math.max(0, Math.floor(parseFloat(e.target.value) || 0)),
+                    }))
+                  }
                   className="w-16 px-2 py-1.5 bg-white border border-sky-200 rounded-xl text-center font-black text-sky-800 focus:border-sky-500"
                 />
               </div>

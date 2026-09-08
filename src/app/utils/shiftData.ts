@@ -276,6 +276,9 @@ export function calculateDayShiftAllowance(shifts: SubShift[], rates: ShiftRateM
  * E.g. month=8, cycleStartDay=26 -> '2026-07-26' to '2026-08-25'
  */
 export function getCycleRangeForMonth(year: number, month: number, cycleStartDay = 26): { startDate: string; endDate: string } {
+  // Guard against non-integer input — a fractional day would build a malformed
+  // date string (e.g. "2026-07-26.5") that silently drops the 26th from the range.
+  cycleStartDay = Math.floor(cycleStartDay) || 26;
   if (cycleStartDay <= 1) {
     const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
     const mStr = String(month).padStart(2, '0');

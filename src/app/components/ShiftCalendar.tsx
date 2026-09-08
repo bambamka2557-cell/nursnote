@@ -70,6 +70,8 @@ export default function ShiftCalendar({
   const [editNote, setEditNote] = useState<string>('');
   const [editSticker, setEditSticker] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  // Two-tap guard for the destructive "clear shift" button (first tap arms it).
+  const [confirmClear, setConfirmClear] = useState(false);
 
   // Format today's date in local browser
   const todayDateObj = new Date();
@@ -167,6 +169,7 @@ export default function ShiftCalendar({
   // Open modal for day
   const handleCellClick = (dateStr: string) => {
     setSelectedDate(dateStr);
+    setConfirmClear(false);
     const existing = shiftsMap[dateStr];
     if (existing) {
       setEditShifts(existing.shifts ? [...existing.shifts] : []);
@@ -182,6 +185,7 @@ export default function ShiftCalendar({
   // Close modal
   const handleCloseModal = () => {
     setSelectedDate(null);
+    setConfirmClear(false);
   };
 
   // Quick pattern select
@@ -640,12 +644,16 @@ export default function ShiftCalendar({
             <div className="flex items-center justify-between pt-2 border-t border-slate-100 gap-2">
               <button
                 type="button"
-                onClick={handleDeleteModal}
+                onClick={() => (confirmClear ? handleDeleteModal() : setConfirmClear(true))}
                 disabled={isSaving}
-                className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-rose-600 hover:bg-rose-50 border border-rose-100 text-xs sm:text-sm font-bold transition-colors cursor-pointer"
+                className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-colors cursor-pointer border ${
+                  confirmClear
+                    ? 'bg-rose-500 text-white border-rose-500 hover:bg-rose-600'
+                    : 'text-rose-600 hover:bg-rose-50 border-rose-100'
+                }`}
               >
                 <Trash2 size={16} />
-                <span>ล้างเวร</span>
+                <span>{isSaving ? 'กำลังล้าง...' : confirmClear ? 'กดยืนยันล้างเวร' : 'ล้างเวร'}</span>
               </button>
 
               <div className="flex items-center gap-2">

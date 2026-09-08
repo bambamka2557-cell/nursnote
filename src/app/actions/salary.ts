@@ -57,7 +57,7 @@ export async function getSalaryConfig(): Promise<NurseSalaryConfigData> {
       inChargeAllowance: config.inChargeAllowance,
       otherAllowance: config.otherAllowance,
       shiftRates: sanitizeShiftRates(config.shiftRates),
-      cycleStartDay: config.cycleStartDay,
+      cycleStartDay: Math.floor(config.cycleStartDay) || 26,
       taxDeduction: config.taxDeduction,
       socialSecurity: config.socialSecurity,
       providentFund: config.providentFund,
@@ -76,7 +76,7 @@ export async function getSalaryConfig(): Promise<NurseSalaryConfigData> {
 export async function saveSalaryConfig(data: Partial<NurseSalaryConfigData>): Promise<{ success: boolean; error?: string }> {
   try {
     const shiftRates = data.shiftRates ? sanitizeShiftRates(data.shiftRates) : DEFAULT_SHIFT_RATES;
-    const rawCycleDay = Number(data.cycleStartDay);
+    const rawCycleDay = Math.floor(Number(data.cycleStartDay));
     const cycleStartDay = (rawCycleDay >= 1 && rawCycleDay <= 28) ? rawCycleDay : 26;
 
     const payload = {
