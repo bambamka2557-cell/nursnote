@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Prompt } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
@@ -12,6 +12,15 @@ const prompt = Prompt({
   display: "swap",
   variable: "--font-prompt",
 });
+
+export const viewport: Viewport = {
+  themeColor: "#fce7eb",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   title: "LR-Helper",
@@ -33,13 +42,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="th" className="h-full antialiased">
-      <body className={`${prompt.className} ${prompt.variable} min-h-full flex flex-col pb-28 md:pb-0 bg-[#fff3f5] text-slate-900 overflow-x-hidden`}>
+    <html lang="th" className="h-full antialiased overscroll-none">
+      <body className={`${prompt.className} ${prompt.variable} min-h-full flex flex-col pb-28 md:pb-0 bg-[#fff3f5] text-slate-900 overflow-x-hidden overscroll-none`}>
         {/* App launch transition / splash screen (shows cover image on opening) */}
         <SplashScreen />
 
-        {/* Top Header Navigation & Tools */}
+        {/* Top Header Navigation & Tools (Fixed to top of viewport) */}
         <Header />
+
+        {/* Top spacer matching fixed Header height + safe area inset */}
+        <div className="h-[calc(3.5rem+env(safe-area-inset-top,0px))] shrink-0" />
 
         {/* Reminder engine: notification permission banner + foreground
             due-time alerts (sound/vibration). Was imported but never

@@ -62,7 +62,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-sky-100/90 backdrop-blur-md border-b border-sky-200/40 px-4 md:px-6 py-3 flex items-center justify-between shadow-sm">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-sky-100/95 backdrop-blur-md border-b border-sky-200/40 px-4 md:px-6 py-3 pt-[calc(0.75rem+env(safe-area-inset-top,0px))] flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-4 md:gap-6">
           <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
             <div className="relative w-8 h-8 rounded-lg overflow-hidden shadow-xs border border-pink-200/60 bg-white shrink-0">

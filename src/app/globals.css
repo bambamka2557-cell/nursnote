@@ -42,9 +42,18 @@
   --shadow-lg: 0 12px 20px -3px rgba(249, 160, 179, 0.1), 0 4px 8px -2px rgba(249, 160, 179, 0.05);
 }
 
+html {
+  overscroll-behavior: none;
+  overscroll-behavior-y: none;
+  -webkit-overscroll-behavior: none;
+}
+
 body {
   background-color: var(--background);
   color: var(--foreground);
+  overscroll-behavior: none;
+  overscroll-behavior-y: none;
+  -webkit-overscroll-behavior: none;
   /* iOS standalone PWA (manifest "display": "standalone") reintroduces the
      old double-tap-to-zoom gesture recognizer, which delays every tap ~300ms
      while it waits to see if a second tap is coming — feels like buttons
