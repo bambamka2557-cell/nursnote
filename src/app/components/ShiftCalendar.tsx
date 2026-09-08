@@ -23,6 +23,7 @@ import {
   X,
   FileText,
 } from 'lucide-react';
+import { getThaiHoliday } from '@/app/utils/thaiHolidays';
 
 interface ShiftCalendarProps {
   initialShifts: DayShiftData[];
@@ -30,6 +31,8 @@ interface ShiftCalendarProps {
   initialMonth: number; // 1-12
   onShiftUpdated: () => void;
   onMonthChange?: (year: number, month: number) => void;
+  calendarMode?: 'shift' | 'holiday';
+  onModeChange?: (mode: 'shift' | 'holiday') => void;
 }
 
 export default function ShiftCalendar({
@@ -38,7 +41,37 @@ export default function ShiftCalendar({
   initialMonth,
   onShiftUpdated,
   onMonthChange,
+  calendarMode: controlledMode,
+  onModeChange,
 }: ShiftCalendarProps) {
+  const [internalMode, setInternalMode] = useState<'shift' | 'holiday'>('shift');
+  const calendarMode = controlledMode ?? internalMode;
+
+  const handleModeChange = (mode: 'shift' | 'holiday') => {
+    if (onModeChange) {
+      onModeChange(mode);
+    } else {
+      setInternalMode(mode);
+    }
+    try {
+      localStorage.setItem('lr_calendar_mode', mode);
+    } catch {}
+  };
+
+  // Sync saved mode from localStorage on mount (hydration safe)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('lr_calendar_mode');
+      if (saved === 'shift' || saved === 'holiday') {
+        if (onModeChange) {
+          onModeChange(saved);
+        } else {
+          setInternalMode(saved);
+        }
+      }
+    } catch {}
+  }, []);
+
   const [currentYear, setCurrentYear] = useState(initialYear);
   const [currentMonth, setCurrentMonth] = useState(initialMonth); // 1-12
   const [shiftsMap, setShiftsMap] = useState<Record<string, DayShiftData>>(() => {
@@ -290,11 +323,11 @@ export default function ShiftCalendar({
 
   return (
     <div className="bg-white/95 rounded-2xl sm:rounded-3xl p-2 sm:p-5 md:p-6 shadow-[0_4px_25px_rgba(244,114,182,0.12)] border border-pink-100 transition-all text-slate-800">
-      {/* Calendar Top Header: Month title, Kitty Theme, Navigation */}
-      <div className="flex flex-wrap items-center justify-between gap-2.5 pb-3 sm:pb-4 border-b border-pink-100">
+      {/* Calendar Top Header: Month title, Kitty Theme, Mode Toggle & Navigation */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 sm:pb-4 border-b border-pink-100">
         <div className="flex items-center gap-2.5 sm:gap-3">
           <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-pink-400 to-rose-400 flex items-center justify-center text-white shadow-sm shadow-pink-200 shrink-0">
-            <span className="text-xl sm:text-2xl">🐱</span>
+            <span className="text-xl sm:text-2xl">{calendarMode === 'shift' ? '🐱' : '🌸'}</span>
           </div>
           <div>
             <div className="flex items-center gap-1.5 sm:gap-2">
@@ -305,32 +338,65 @@ export default function ShiftCalendar({
                 ห้องคลอด LR
               </span>
             </div>
-            <p className="text-xs sm:text-sm text-pink-500 font-medium mt-0.5">ตารางเวรพยาบาลห้องคลอด</p>
+            <p className="text-xs sm:text-sm text-pink-500 font-medium mt-0.5">
+              {calendarMode === 'shift' ? 'ตารางเวรพยาบาลห้องคลอด' : 'ปฏิทินวันหยุดราชการ & เทศกาล'}
+            </p>
           </div>
         </div>
 
-        {/* Navigation Buttons */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleGoToday}
-            className="px-3.5 py-2 rounded-xl bg-pink-50 hover:bg-pink-100 text-pink-600 font-black text-xs sm:text-sm transition-colors border border-pink-200/60 cursor-pointer shadow-2xs"
-          >
-            วันนี้
-          </button>
-          <button
-            onClick={handlePrevMonth}
-            className="p-2 rounded-xl bg-slate-50 hover:bg-pink-50 text-slate-600 hover:text-pink-600 transition-colors border border-slate-200 cursor-pointer shadow-2xs"
-            title="เดือนก่อนหน้า"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <button
-            onClick={handleNextMonth}
-            className="p-2 rounded-xl bg-slate-50 hover:bg-pink-50 text-slate-600 hover:text-pink-600 transition-colors border border-slate-200 cursor-pointer shadow-2xs"
-            title="เดือนถัดไป"
-          >
-            <ChevronRight size={20} />
-          </button>
+        {/* Action Controls: Mode Toggle & Navigation */}
+        <div className="flex items-center justify-between sm:justify-end gap-2 flex-wrap">
+          {/* Mode Toggle Capsule */}
+          <div className="flex items-center p-1 bg-pink-50/80 rounded-2xl border border-pink-200/70 shadow-2xs">
+            <button
+              type="button"
+              onClick={() => handleModeChange('shift')}
+              className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
+                calendarMode === 'shift'
+                  ? 'bg-white text-pink-600 shadow-2xs border border-pink-200/60'
+                  : 'text-slate-600 hover:text-pink-600'
+              }`}
+            >
+              <span>🩺</span>
+              <span>ตารางเวร</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleModeChange('holiday')}
+              className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
+                calendarMode === 'holiday'
+                  ? 'bg-white text-rose-600 shadow-2xs border border-rose-200/60'
+                  : 'text-slate-600 hover:text-rose-600'
+              }`}
+            >
+              <span>📅</span>
+              <span>วันหยุด</span>
+            </button>
+          </div>
+
+          {/* Navigation Buttons */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <button
+              onClick={handleGoToday}
+              className="px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-pink-50 hover:bg-pink-100 text-pink-600 font-black text-xs sm:text-sm transition-colors border border-pink-200/60 cursor-pointer shadow-2xs"
+            >
+              วันนี้
+            </button>
+            <button
+              onClick={handlePrevMonth}
+              className="p-1.5 sm:p-2 rounded-xl bg-slate-50 hover:bg-pink-50 text-slate-600 hover:text-pink-600 transition-colors border border-slate-200 cursor-pointer shadow-2xs"
+              title="เดือนก่อนหน้า"
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <button
+              onClick={handleNextMonth}
+              className="p-1.5 sm:p-2 rounded-xl bg-slate-50 hover:bg-pink-50 text-slate-600 hover:text-pink-600 transition-colors border border-slate-200 cursor-pointer shadow-2xs"
+              title="เดือนถัดไป"
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -354,72 +420,177 @@ export default function ShiftCalendar({
           const patternId = matchShiftPattern(shifts);
           const pattern = SHIFT_PATTERNS.find((p) => p.id === patternId);
           const stickerEmoji = STICKER_OPTIONS.find((s) => s.key === shiftData?.sticker)?.emoji;
+          const thaiHoliday = getThaiHoliday(cell.dateStr);
+          const isPublicHoliday = Boolean(thaiHoliday?.isPublicHoliday);
+          const isHolidayMode = calendarMode === 'holiday';
 
           return (
             <button
               key={cell.dateStr}
               type="button"
               onClick={() => handleCellClick(cell.dateStr)}
-              className={`min-h-[70px] sm:min-h-[88px] md:min-h-[105px] p-1 sm:p-2 rounded-xl sm:rounded-2xl border transition-all text-left flex flex-col justify-between relative group cursor-pointer ${
+              className={`min-h-[72px] sm:min-h-[88px] md:min-h-[105px] p-1 sm:p-2 rounded-xl sm:rounded-2xl border transition-all text-left flex flex-col justify-between relative group cursor-pointer ${
                 cell.isToday
-                  ? 'bg-pink-50/90 border-pink-400 ring-2 ring-pink-300/40 shadow-xs'
-                  : cell.isCurrentMonth
-                  ? 'bg-white hover:bg-pink-50/40 border-pink-100/80 hover:border-pink-300 hover:shadow-xs'
-                  : 'bg-slate-50/50 border-slate-100 opacity-40 hover:opacity-75'
+                  ? isHolidayMode && isPublicHoliday
+                    ? 'bg-rose-100/90 border-rose-400 ring-2 ring-rose-300/50 shadow-xs'
+                    : 'bg-pink-50/90 border-pink-400 ring-2 ring-pink-300/40 shadow-xs'
+                  : !cell.isCurrentMonth
+                  ? 'bg-slate-50/50 border-slate-100 opacity-30 hover:opacity-60'
+                  : isHolidayMode
+                  ? isPublicHoliday
+                    ? 'bg-rose-50/70 border-rose-300/80 ring-1 ring-rose-200/50 hover:bg-rose-50 hover:border-rose-400 hover:shadow-xs'
+                    : thaiHoliday
+                    ? 'bg-amber-50/50 border-amber-200/80 hover:bg-amber-50 hover:border-amber-300 hover:shadow-xs'
+                    : 'bg-white hover:bg-pink-50/30 border-pink-100/80 hover:border-pink-300 hover:shadow-xs'
+                  : isPublicHoliday
+                  ? 'bg-white hover:bg-pink-50/40 border-rose-200/80 hover:border-rose-300 hover:shadow-xs'
+                  : 'bg-white hover:bg-pink-50/40 border-pink-100/80 hover:border-pink-300 hover:shadow-xs'
               }`}
             >
-              {/* Day number & Sticker */}
+              {/* Day number & Sticker / Holiday Icon */}
               <div className="flex items-center justify-between w-full">
-                <span
-                  className={`font-black ${
-                    cell.isToday
-                      ? 'w-5 h-5 sm:w-7 sm:h-7 rounded-full bg-pink-500 text-white flex items-center justify-center text-xs sm:text-sm shadow-xs'
-                      : cell.isCurrentMonth
-                      ? 'text-slate-800 text-xs sm:text-base md:text-lg'
-                      : 'text-slate-400 text-xs sm:text-base'
-                  }`}
-                >
-                  {cell.dayNum}
-                </span>
-                {stickerEmoji && (
-                  <span className="text-xs sm:text-base md:text-lg filter drop-shadow-xs animate-in zoom-in-50">
-                    {stickerEmoji}
-                  </span>
-                )}
-              </div>
-
-              {/* Shift Badge (With individual sub-shift Red/Black OT colors!) */}
-              <div className="w-full my-auto">
-                {shifts.length > 0 ? (
-                  <div
-                    className={`w-full py-0.5 sm:py-1 px-0.5 sm:px-1 rounded-lg sm:rounded-xl border text-center font-black text-xs sm:text-base md:text-lg shadow-2xs flex items-center justify-center gap-0.5 ${
-                      pattern && patternId !== 'OFF'
-                        ? `${pattern.badgeBg} ${pattern.badgeBorder}`
-                        : 'bg-pink-50/90 border-pink-200'
+                <div className="flex items-center gap-0.5 sm:gap-1">
+                  <span
+                    className={`font-black ${
+                      cell.isToday
+                        ? 'w-5 h-5 sm:w-7 sm:h-7 rounded-full bg-pink-500 text-white flex items-center justify-center text-xs sm:text-sm shadow-xs'
+                        : isPublicHoliday && cell.isCurrentMonth
+                        ? 'text-rose-600 text-xs sm:text-base md:text-lg'
+                        : cell.isCurrentMonth
+                        ? 'text-slate-800 text-xs sm:text-base md:text-lg'
+                        : 'text-slate-400 text-xs sm:text-base'
                     }`}
                   >
-                    {shifts.map((s, idx) => (
-                      <span key={idx} className="flex items-center">
-                        {idx > 0 && <span className="text-slate-400 text-xs sm:text-sm mx-0.5">/</span>}
-                        <span
-                          className={
+                    {cell.dayNum}
+                  </span>
+                  {/* Small festive balloon in shift mode for public holidays */}
+                  {!isHolidayMode && isPublicHoliday && cell.isCurrentMonth && (
+                    <span
+                      className="text-[9px] sm:text-[11px] leading-none text-rose-500 select-none filter drop-shadow-2xs"
+                      title={thaiHoliday?.name}
+                    >
+                      🎈
+                    </span>
+                  )}
+                </div>
+
+                {/* Right icon: In Holiday Mode show holiday icon; in Shift mode show sticker */}
+                {isHolidayMode && thaiHoliday && cell.isCurrentMonth ? (
+                  <span
+                    className="text-xs sm:text-sm md:text-base filter drop-shadow-2xs leading-none"
+                    title={thaiHoliday.name}
+                  >
+                    {thaiHoliday.icon || '🎌'}
+                  </span>
+                ) : stickerEmoji ? (
+                  <span className="text-xs sm:text-base md:text-lg filter drop-shadow-xs animate-in zoom-in-50 leading-none">
+                    {stickerEmoji}
+                  </span>
+                ) : null}
+              </div>
+
+              {/* Main Content Area */}
+              {!isHolidayMode ? (
+                /* === SHIFT MODE: Classic Shift Badges with sub-shift red/black OT colors === */
+                <div className="w-full my-auto">
+                  {shifts.length > 0 ? (
+                    <div
+                      className={`w-full py-0.5 sm:py-1 px-0.5 sm:px-1 rounded-lg sm:rounded-xl border text-center font-black text-xs sm:text-base md:text-lg shadow-2xs flex items-center justify-center gap-0.5 ${
+                        pattern && patternId !== 'OFF'
+                          ? `${pattern.badgeBg} ${pattern.badgeBorder}`
+                          : 'bg-pink-50/90 border-pink-200'
+                      }`}
+                    >
+                      {shifts.map((s, idx) => (
+                        <span key={idx} className="flex items-center">
+                          {idx > 0 && <span className="text-slate-400 text-xs sm:text-sm mx-0.5">/</span>}
+                          <span
+                            className={
                               s.ot
                                 ? 'text-rose-600 font-black drop-shadow-xs'
                                 : 'text-slate-800 font-black'
-                          }
-                          title={`${ATOMIC_SHIFTS[s.code]?.fullLabel ?? s.code} (${s.ot ? 'OT สีแดง' : 'ปกติ สีดำ'})`}
-                        >
-                          {ATOMIC_SHIFTS[s.code]?.shortLabel ?? s.code}
+                            }
+                            title={`${ATOMIC_SHIFTS[s.code]?.fullLabel ?? s.code} (${s.ot ? 'OT สีแดง' : 'ปกติ สีดำ'})`}
+                          >
+                            {ATOMIC_SHIFTS[s.code]?.shortLabel ?? s.code}
+                          </span>
                         </span>
-                      </span>
-                    ))}
-                  </div>
-                ) : shiftData ? (
-                  <div className="text-xs sm:text-sm text-slate-400 text-center font-extrabold py-1">
-                    OFF
-                  </div>
-                ) : null}
-              </div>
+                      ))}
+                    </div>
+                  ) : shiftData ? (
+                    <div className="text-xs sm:text-sm text-slate-400 text-center font-extrabold py-1">
+                      OFF
+                    </div>
+                  ) : null}
+                </div>
+              ) : (
+                /* === HOLIDAY MODE: Holiday Name + Nurse Shift Cross-Check === */
+                <div className="w-full my-auto flex flex-col items-center justify-center gap-0.5">
+                  {thaiHoliday && cell.isCurrentMonth ? (
+                    <div className="w-full text-center">
+                      {/* Holiday Name (compact & truncated for mobile) */}
+                      <div
+                        className={`w-full px-0.5 sm:px-1 py-0.5 rounded text-[8px] sm:text-[10px] md:text-[11px] font-black truncate ${
+                          isPublicHoliday
+                            ? 'bg-rose-100/90 text-rose-700 border border-rose-200/80'
+                            : 'bg-amber-100/80 text-amber-800 border border-amber-200/80'
+                        }`}
+                        title={thaiHoliday.name}
+                      >
+                        {thaiHoliday.name}
+                      </div>
+
+                      {/* Nurse Cross-Check on Holiday (Strict Audit #1: Real OT red/black, NO auto-OT) */}
+                      {shifts.length > 0 ? (
+                        <div className="mt-0.5 py-0.5 px-0.5 sm:px-1 rounded bg-white/95 border border-pink-200 text-center text-[8px] sm:text-[10px] md:text-[11px] font-black flex items-center justify-center gap-0.5 shadow-2xs">
+                          <span className="text-[7px] sm:text-[9px] text-slate-400 font-semibold">เวร:</span>
+                          {shifts.map((s, idx) => (
+                            <span key={idx} className="flex items-center">
+                              {idx > 0 && <span className="text-slate-300 mx-0.5">/</span>}
+                              <span
+                                className={s.ot ? 'text-rose-600 font-black' : 'text-slate-800 font-black'}
+                                title={s.ot ? 'OT (ตัวแดง)' : 'ปกติ (ตัวดำ)'}
+                              >
+                                {ATOMIC_SHIFTS[s.code]?.shortLabel ?? s.code}
+                              </span>
+                            </span>
+                          ))}
+                        </div>
+                      ) : isPublicHoliday ? (
+                        <div className="mt-0.5 py-0.5 px-0.5 sm:px-1 rounded bg-emerald-100/90 border border-emerald-200 text-emerald-800 font-black text-[8px] sm:text-[10px] md:text-[11px] text-center flex items-center justify-center gap-0.5 shadow-2xs">
+                          <span className="text-[8px] sm:text-[10px]">🌴</span>
+                          <span className="truncate">ได้หยุด</span>
+                        </div>
+                      ) : (
+                        <div className="mt-0.5 text-[8px] sm:text-[9px] text-slate-400 text-center font-bold">
+                          {shiftData ? 'OFF' : 'วันสำคัญ'}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    /* Non-holiday day in holiday view: Show shifts or OFF cleanly */
+                    <div className="w-full text-center">
+                      {shifts.length > 0 ? (
+                        <div className="w-full py-0.5 px-0.5 sm:px-1 rounded bg-slate-50 border border-slate-200/80 text-center text-[9px] sm:text-xs font-black flex items-center justify-center gap-0.5">
+                          <span className="text-[7px] sm:text-[9px] text-slate-400 font-semibold">เวร:</span>
+                          {shifts.map((s, idx) => (
+                            <span key={idx} className="flex items-center">
+                              {idx > 0 && <span className="text-slate-300 mx-0.5">/</span>}
+                              <span className={s.ot ? 'text-rose-600' : 'text-slate-700'}>
+                                {ATOMIC_SHIFTS[s.code]?.shortLabel ?? s.code}
+                              </span>
+                            </span>
+                          ))}
+                        </div>
+                      ) : shiftData ? (
+                        <div className="text-[9px] sm:text-xs text-slate-400 text-center font-bold">
+                          OFF
+                        </div>
+                      ) : null}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Note Indicator */}
               <div className="w-full min-h-[14px] flex items-center justify-start">
@@ -438,38 +609,64 @@ export default function ShiftCalendar({
         })}
       </div>
 
-      {/* Shift Legend Bar */}
-      <div className="flex flex-wrap items-center justify-center gap-2.5 md:gap-4 mt-4 pt-3.5 border-t border-pink-100 text-xs sm:text-sm text-slate-700">
-        <span className="font-extrabold text-pink-600 flex items-center gap-1">
-          <Sparkles size={14} />
-          <span>สัญลักษณ์เวร:</span>
-        </span>
-        <div className="flex items-center gap-1.5 font-bold">
-          <span className="w-3 h-3 rounded-full bg-pink-400 shadow-2xs" />
-          <span>ช (เช้า)</span>
+      {/* Mode-Specific Legend Bar */}
+      {calendarMode === 'shift' ? (
+        /* Shift Legend Bar */
+        <div className="flex flex-wrap items-center justify-center gap-2.5 md:gap-4 mt-4 pt-3.5 border-t border-pink-100 text-xs sm:text-sm text-slate-700">
+          <span className="font-extrabold text-pink-600 flex items-center gap-1">
+            <Sparkles size={14} />
+            <span>สัญลักษณ์เวร:</span>
+          </span>
+          <div className="flex items-center gap-1.5 font-bold">
+            <span className="w-3 h-3 rounded-full bg-pink-400 shadow-2xs" />
+            <span>ช (เช้า)</span>
+          </div>
+          <div className="flex items-center gap-1.5 font-bold">
+            <span className="w-3 h-3 rounded-full bg-purple-400 shadow-2xs" />
+            <span>บ (บ่าย)</span>
+          </div>
+          <div className="flex items-center gap-1.5 font-bold">
+            <span className="w-3 h-3 rounded-full bg-indigo-400 shadow-2xs" />
+            <span>ด (ดึก)</span>
+          </div>
+          <div className="flex items-center gap-1.5 font-bold">
+            <span className="w-3 h-3 rounded-full bg-amber-500 shadow-2xs" />
+            <span>ช/บ</span>
+          </div>
+          <div className="flex items-center gap-1.5 font-bold">
+            <span className="w-3 h-3 rounded-full bg-teal-500 shadow-2xs" />
+            <span>บ/ด</span>
+          </div>
+          <div className="flex items-center gap-1.5 pl-2 sm:pl-3 border-l border-pink-200">
+            <span className="text-slate-900 font-black">ตัวดำ: ปกติ</span>
+            <span className="text-slate-300">|</span>
+            <span className="text-rose-600 font-black">ตัวแดง: OT</span>
+          </div>
         </div>
-        <div className="flex items-center gap-1.5 font-bold">
-          <span className="w-3 h-3 rounded-full bg-purple-400 shadow-2xs" />
-          <span>บ (บ่าย)</span>
+      ) : (
+        /* Holiday Legend Bar */
+        <div className="flex flex-wrap items-center justify-center gap-2.5 md:gap-4 mt-4 pt-3.5 border-t border-pink-100 text-xs sm:text-sm text-slate-700">
+          <span className="font-extrabold text-rose-600 flex items-center gap-1">
+            <span>🎌 สัญลักษณ์วันหยุด:</span>
+          </span>
+          <div className="flex items-center gap-1.5 font-bold">
+            <span className="w-3 h-3 rounded-full bg-rose-400 shadow-2xs" />
+            <span>วันหยุดราชการ</span>
+          </div>
+          <div className="flex items-center gap-1.5 font-bold">
+            <span className="w-3 h-3 rounded-full bg-emerald-500 shadow-2xs" />
+            <span>🌴 ได้หยุดจริง (OFF)</span>
+          </div>
+          <div className="flex items-center gap-1.5 font-bold">
+            <span className="w-3 h-3 rounded-full bg-amber-500 shadow-2xs" />
+            <span>🩺 ติดเวร</span>
+          </div>
+          <div className="flex items-center gap-1.5 font-bold">
+            <span className="w-3 h-3 rounded-full bg-slate-300 shadow-2xs" />
+            <span>🎈 วันสำคัญทั่วไป</span>
+          </div>
         </div>
-        <div className="flex items-center gap-1.5 font-bold">
-          <span className="w-3 h-3 rounded-full bg-indigo-400 shadow-2xs" />
-          <span>ด (ดึก)</span>
-        </div>
-        <div className="flex items-center gap-1.5 font-bold">
-          <span className="w-3 h-3 rounded-full bg-amber-500 shadow-2xs" />
-          <span>ช/บ</span>
-        </div>
-        <div className="flex items-center gap-1.5 font-bold">
-          <span className="w-3 h-3 rounded-full bg-teal-500 shadow-2xs" />
-          <span>บ/ด</span>
-        </div>
-        <div className="flex items-center gap-1.5 pl-2 sm:pl-3 border-l border-pink-200">
-          <span className="text-slate-900 font-black">ตัวดำ: ปกติ</span>
-          <span className="text-slate-300">|</span>
-          <span className="text-rose-600 font-black">ตัวแดง: OT</span>
-        </div>
-      </div>
+      )}
 
       {/* Edit Shift Modal */}
       {selectedDate && (
@@ -497,6 +694,42 @@ export default function ShiftCalendar({
                 <X size={18} />
               </button>
             </div>
+
+            {/* Holiday Notice in Modal if date is a Thai Holiday */}
+            {(() => {
+              const hol = selectedDate ? getThaiHoliday(selectedDate) : null;
+              if (!hol) return null;
+              return (
+                <div
+                  className={`p-2.5 sm:p-3 rounded-2xl border flex items-center gap-2.5 ${
+                    hol.isPublicHoliday
+                      ? 'bg-rose-50/80 border-rose-200 text-rose-800'
+                      : 'bg-amber-50/80 border-amber-200 text-amber-800'
+                  }`}
+                >
+                  <span className="text-xl">{hol.icon || '🎌'}</span>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-black text-xs sm:text-sm text-slate-900">{hol.name}</span>
+                      <span
+                        className={`text-[10px] font-extrabold px-1.5 py-0.2 rounded-md ${
+                          hol.isPublicHoliday
+                            ? 'bg-rose-100 text-rose-700'
+                            : 'bg-amber-100 text-amber-700'
+                        }`}
+                      >
+                        {hol.isPublicHoliday ? 'วันหยุดราชการ' : 'วันสำคัญ'}
+                      </span>
+                    </div>
+                    {hol.description && (
+                      <p className="text-[10px] text-slate-500 font-medium truncate mt-0.5">
+                        {hol.description}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Pattern Quick Selector */}
             <div className="space-y-2">

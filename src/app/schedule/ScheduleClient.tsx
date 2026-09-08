@@ -5,6 +5,7 @@ import ShiftCalendar from '@/app/components/ShiftCalendar';
 import WorkLifeBalanceCard from '@/app/components/WorkLifeBalanceCard';
 import SalarySummaryCard from '@/app/components/SalarySummaryCard';
 import SalaryConfigModal from '@/app/components/SalaryConfigModal';
+import HolidaySummaryCard from '@/app/components/HolidaySummaryCard';
 import {
   DayShiftData,
   SalarySummaryResult,
@@ -32,6 +33,7 @@ export default function ScheduleClient({
   initialYear,
   initialMonth,
 }: ScheduleClientProps) {
+  const [calendarMode, setCalendarMode] = useState<'shift' | 'holiday'>('shift');
   const [shifts, setShifts] = useState<DayShiftData[]>(initialShifts);
   const [summary, setSummary] = useState<SalarySummaryResult>(initialSummary);
   const [config, setConfig] = useState<NurseSalaryConfigData>(initialConfig);
@@ -86,11 +88,17 @@ export default function ScheduleClient({
             </div>
             <div>
               <h1 className="text-lg md:text-xl font-black text-slate-900 flex items-center gap-1.5">
-                <span>ตารางเวร & คำนวณเงินเดือน</span>
+                <span>
+                  {calendarMode === 'shift'
+                    ? 'ตารางเวร & คำนวณเงินเดือน'
+                    : 'ปฏิทินวันหยุด & เทศกาลราชการ'}
+                </span>
                 <Sparkles size={16} className="text-pink-500" />
               </h1>
               <p className="text-xs text-slate-400">
-                ระบบบันทึกเวรพยาบาลห้องคลอด
+                {calendarMode === 'shift'
+                  ? 'ระบบบันทึกเวรพยาบาลห้องคลอด & สรุปชั่วโมงทำงาน'
+                  : 'ตรวจสอบวันหยุดราชการไทย & เช็คสถานะการขึ้นเวร (Cross-Check)'}
               </p>
             </div>
           </div>
@@ -99,29 +107,45 @@ export default function ScheduleClient({
 
       {/* Main Content Layout */}
       <div className="px-1.5 sm:px-4 md:px-8 max-w-5xl mx-auto space-y-3 sm:space-y-4 md:space-y-6 mt-2">
-        {/* Shift Calendar */}
+        {/* Shift / Holiday Calendar */}
         <ShiftCalendar
           initialShifts={shifts}
           initialYear={year}
           initialMonth={month}
           onShiftUpdated={() => refreshData(year, month)}
           onMonthChange={handleMonthChange}
+          calendarMode={calendarMode}
+          onModeChange={setCalendarMode}
         />
 
-        {/* Work-Life Balance & Working Hours Statistics */}
-        <WorkLifeBalanceCard
-          shifts={shifts}
-          year={year}
-          month={month}
-          cycleStartDay={config.cycleStartDay}
-        />
+        {/* Content depending on calendar mode */}
+        {calendarMode === 'shift' ? (
+          <>
+            {/* Work-Life Balance & Working Hours Statistics */}
+            <WorkLifeBalanceCard
+              shifts={shifts}
+              year={year}
+              month={month}
+              cycleStartDay={config.cycleStartDay}
+            />
 
-        {/* Salary Summary Card */}
-        <SalarySummaryCard
-          summary={summary}
-          onOpenConfig={() => setIsConfigOpen(true)}
-          isLoading={isPending}
-        />
+            {/* Salary Summary Card */}
+            <SalarySummaryCard
+              summary={summary}
+              onOpenConfig={() => setIsConfigOpen(true)}
+              isLoading={isPending}
+            />
+          </>
+        ) : (
+          /* Monthly Holiday Summary & Cross-Check Card */
+          <div className="animate-in fade-in slide-in-from-top-2 duration-200">
+            <HolidaySummaryCard
+              shifts={shifts}
+              year={year}
+              month={month}
+            />
+          </div>
+        )}
       </div>
 
       {/* Salary Config Modal */}
