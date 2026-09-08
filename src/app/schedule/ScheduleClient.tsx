@@ -89,7 +89,7 @@ export default function ScheduleClient({
                 <Sparkles size={16} className="text-pink-500" />
               </h1>
               <p className="text-xs text-slate-400">
-                ระบบบันทึกเวรพยาบาลห้องคลอด สไตล์ Hello Kitty พาสเทล
+                ระบบบันทึกเวรพยาบาลห้องคลอด
               </p>
             </div>
           </div>

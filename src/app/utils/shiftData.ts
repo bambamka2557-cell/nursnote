@@ -20,8 +20,9 @@ export type ShiftPatternId = 'M' | 'A' | 'N' | 'M_A' | 'A_N' | 'OFF';
 export interface ShiftPatternDef {
   id: ShiftPatternId;
   code: string; // e.g. "M", "M/A", "OFF"
-  shortLabel: string; // e.g. "ช", "ช/บ", "OFF"
+  shortLabel: string; // e.g. "เช้า", "บ่าย", "ดึก", "เช้า/บ่าย", "ดึก/บ่าย", "หยุด"
   fullLabel: string; // e.g. "เช้า (ช)", "เช้า/บ่าย (ช/บ)"
+  icon?: string; // e.g. "☀️", "🌤️", "🌙", "🎉"
   subShifts: AtomicShiftCode[];
   badgeBg: string;
   badgeBorder: string;
@@ -31,31 +32,39 @@ export interface ShiftPatternDef {
 
 export const ATOMIC_SHIFTS: Record<AtomicShiftCode, {
   code: AtomicShiftCode;
-  shortLabel: string; // "ช", "บ", "ด"
+  shortLabel: string; // "เช้า", "บ่าย", "ดึก"
+  letterLabel: string; // "ช", "บ", "ด"
   fullLabel: string; // "เวรเช้า", "เวรบ่าย", "เวรดึก"
+  icon: string;
   timeRange: string;
   defaultBg: string;
 }> = {
   MORNING: {
     code: 'MORNING',
-    shortLabel: 'ช',
+    shortLabel: 'เช้า',
+    letterLabel: 'ช',
     fullLabel: 'เวรเช้า',
+    icon: '☀️',
     timeRange: '08:00 - 16:00',
-    defaultBg: 'bg-pink-100 text-pink-700 border-pink-200',
+    defaultBg: 'bg-sky-200 text-sky-950 border-sky-300',
   },
   AFTERNOON: {
     code: 'AFTERNOON',
-    shortLabel: 'บ',
+    shortLabel: 'บ่าย',
+    letterLabel: 'บ',
     fullLabel: 'เวรบ่าย',
+    icon: '🌤️',
     timeRange: '16:00 - 24:00',
-    defaultBg: 'bg-purple-100 text-purple-700 border-purple-200',
+    defaultBg: 'bg-amber-200 text-amber-950 border-amber-300',
   },
   NIGHT: {
     code: 'NIGHT',
-    shortLabel: 'ด',
+    shortLabel: 'ดึก',
+    letterLabel: 'ด',
     fullLabel: 'เวรดึก',
+    icon: '🌙',
     timeRange: '00:00 - 08:00',
-    defaultBg: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+    defaultBg: 'bg-purple-200 text-purple-950 border-purple-300',
   },
 };
 
@@ -63,68 +72,74 @@ export const SHIFT_PATTERNS: ShiftPatternDef[] = [
   {
     id: 'M',
     code: 'M',
-    shortLabel: 'ช',
+    shortLabel: 'เช้า',
     fullLabel: 'เช้า (ช)',
+    icon: '☀️',
     subShifts: ['MORNING'],
-    badgeBg: 'bg-pink-100/95',
-    badgeBorder: 'border-pink-300',
-    badgeTextColor: 'text-pink-800',
-    dotColor: 'bg-pink-400',
+    badgeBg: 'bg-[#bae6fd]', // ☀️ Sky Blue (ฟ้าสดใส)
+    badgeBorder: 'border-[#7dd3fc]',
+    badgeTextColor: 'text-sky-950',
+    dotColor: 'bg-sky-400',
   },
   {
     id: 'A',
     code: 'A',
-    shortLabel: 'บ',
+    shortLabel: 'บ่าย',
     fullLabel: 'บ่าย (บ)',
+    icon: '🌤️',
     subShifts: ['AFTERNOON'],
-    badgeBg: 'bg-purple-100/95',
-    badgeBorder: 'border-purple-300',
-    badgeTextColor: 'text-purple-800',
-    dotColor: 'bg-purple-400',
+    badgeBg: 'bg-[#fef08a]', // 🌤️ Warm Yellow (เหลืองอบอุ่น)
+    badgeBorder: 'border-[#fde047]',
+    badgeTextColor: 'text-amber-950',
+    dotColor: 'bg-amber-400',
   },
   {
     id: 'N',
     code: 'N',
-    shortLabel: 'ด',
+    shortLabel: 'ดึก',
     fullLabel: 'ดึก (ด)',
+    icon: '🌙',
     subShifts: ['NIGHT'],
-    badgeBg: 'bg-indigo-100/95',
-    badgeBorder: 'border-indigo-300',
-    badgeTextColor: 'text-indigo-800',
-    dotColor: 'bg-indigo-400',
+    badgeBg: 'bg-[#e9d5ff]', // 🌙 Soft Purple (ม่วงลาเวนเดอร์)
+    badgeBorder: 'border-[#d8b4fe]',
+    badgeTextColor: 'text-purple-950',
+    dotColor: 'bg-purple-400',
   },
   {
     id: 'M_A',
     code: 'M/A',
-    shortLabel: 'ช/บ',
+    shortLabel: 'เช้า/บ่าย',
     fullLabel: 'เช้า/บ่าย (ช/บ)',
+    icon: '',
     subShifts: ['MORNING', 'AFTERNOON'],
-    badgeBg: 'bg-amber-100/95',
-    badgeBorder: 'border-amber-300',
-    badgeTextColor: 'text-amber-800',
-    dotColor: 'bg-amber-500',
+    badgeBg: 'bg-[#fecdd3]', // Coral Rose (ชมพูอมส้ม/คอรัล)
+    badgeBorder: 'border-[#fda4af]',
+    badgeTextColor: 'text-rose-950',
+    dotColor: 'bg-rose-400',
   },
   {
     id: 'A_N',
     code: 'A/N',
-    shortLabel: 'บ/ด',
-    fullLabel: 'บ่าย/ดึก (บ/ด)',
+    shortLabel: 'ดึก/บ่าย',
+    fullLabel: 'ดึก/บ่าย (ด/บ)',
+    icon: '',
     subShifts: ['AFTERNOON', 'NIGHT'],
-    badgeBg: 'bg-teal-100/95',
-    badgeBorder: 'border-teal-300',
-    badgeTextColor: 'text-teal-800',
-    dotColor: 'bg-teal-500',
+    badgeBg: 'bg-[#94a37a]', // Sage/Olive Green (เขียวมะกอก/ขี้ม้า)
+    badgeBorder: 'border-[#7d8c65]',
+    badgeTextColor: 'text-white',
+    dotColor: 'bg-[#7d8c65]',
   },
   {
     id: 'OFF',
     code: 'OFF',
-    shortLabel: 'OFF',
+    shortLabel: 'หยุด',
     fullLabel: 'วันหยุด (OFF)',
+    icon: '🎉',
     subShifts: [],
-    badgeBg: 'bg-slate-100/80',
-    badgeBorder: 'border-slate-200',
-    badgeTextColor: 'text-slate-400',
-    dotColor: 'bg-slate-300',
+    badgeBg: 'bg-[#a7f3d0]', // 🎉 Mint Green (เขียวมิ้นต์)
+    badgeBorder: 'border-[#6ee7b7]',
+    badgeTextColor: 'text-emerald-950',
+    dotColor: 'bg-emerald-400',
   },
 ];
 

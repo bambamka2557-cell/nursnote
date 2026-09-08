@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   SubShift,
   DayShiftData,
@@ -265,6 +265,50 @@ export default function ShiftCalendar({
 
   const selectedPatternId = matchShiftPattern(editShifts);
 
+  // Count shifts by pattern for the currently viewed month (like user reference app)
+  const patternCounts = useMemo(() => {
+    const counts: Record<string, number> = {
+      M: 0,
+      A: 0,
+      N: 0,
+      M_A: 0,
+      A_N: 0,
+      OFF: 0,
+    };
+    for (const cell of cells) {
+      if (!cell.isCurrentMonth) continue;
+      const data = shiftsMap[cell.dateStr];
+      if (!data) continue;
+      const patId = matchShiftPattern(data.shifts || []);
+      if (patId && counts[patId] !== undefined) {
+        counts[patId]++;
+      } else if (data.shifts && data.shifts.length === 0) {
+        counts.OFF++;
+      }
+    }
+    return counts;
+  }, [cells, shiftsMap]);
+
+  // Collect days with notes in the currently viewed month
+  const monthNotes = useMemo(() => {
+    const list: Array<{ dayNum: number; dateStr: string; note: string; patternId: ShiftPatternId | null; shifts: SubShift[] }> = [];
+    for (const cell of cells) {
+      if (!cell.isCurrentMonth) continue;
+      const data = shiftsMap[cell.dateStr];
+      if (data?.note && data.note.trim()) {
+        const patId = matchShiftPattern(data.shifts || []);
+        list.push({
+          dayNum: cell.dayNum,
+          dateStr: cell.dateStr,
+          note: data.note.trim(),
+          patternId: patId,
+          shifts: data.shifts || [],
+        });
+      }
+    }
+    return list;
+  }, [cells, shiftsMap]);
+
   // Format date text for modal header
   const getModalDateHeader = () => {
     if (!selectedDate) return '';
@@ -290,7 +334,7 @@ export default function ShiftCalendar({
       <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-pink-100">
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-pink-400 to-rose-400 flex items-center justify-center text-white shadow-sm shadow-pink-200 shrink-0">
-            <span className="text-xl sm:text-2xl">🐱</span>
+            <span className="text-xl sm:text-2xl">📅</span>
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -298,7 +342,7 @@ export default function ShiftCalendar({
                 {THAI_MONTH_NAMES[currentMonth - 1]} {currentYear + 543}
               </h2>
               <span className="text-xs bg-pink-100 text-pink-700 font-extrabold px-2.5 py-0.5 rounded-full border border-pink-200/50">
-                🎀 Hello Kitty
+                ห้องคลอด LR
               </span>
             </div>
             <p className="text-xs sm:text-sm text-pink-500 font-medium mt-0.5">ตารางเวรพยาบาลห้องคลอด</p>
@@ -356,7 +400,7 @@ export default function ShiftCalendar({
               key={cell.dateStr}
               type="button"
               onClick={() => handleCellClick(cell.dateStr)}
-              className={`min-h-[82px] sm:min-h-[94px] md:min-h-[105px] p-1.5 sm:p-2 rounded-2xl border transition-all text-left flex flex-col justify-between relative group cursor-pointer ${
+              className={`min-h-[82px] sm:min-h-[94px] md:min-h-[105px] p-1 sm:p-1.5 rounded-2xl border transition-all text-left flex flex-col justify-between relative group cursor-pointer ${
                 cell.isToday
                   ? 'bg-pink-50/90 border-pink-400 ring-2 ring-pink-300/40 shadow-xs'
                   : cell.isCurrentMonth
@@ -365,7 +409,7 @@ export default function ShiftCalendar({
               }`}
             >
               {/* Day number & Sticker */}
-              <div className="flex items-center justify-between w-full">
+              <div className="flex items-center justify-between w-full px-1">
                 <span
                   className={`font-black ${
                     cell.isToday
@@ -384,49 +428,64 @@ export default function ShiftCalendar({
                 )}
               </div>
 
-              {/* Shift Badge (With individual sub-shift Red/Black OT colors!) */}
-              <div className="w-full my-auto">
+              {/* Shift Badge (With icons and colors matching user's reference app) */}
+              <div className="w-full my-auto px-0.5">
                 {shifts.length > 0 ? (
                   <div
-                    className={`w-full py-1 px-1 rounded-xl border text-center font-black text-sm sm:text-base md:text-lg shadow-2xs flex items-center justify-center gap-0.5 ${
+                    className={`w-full py-1 px-1 rounded-xl border text-center font-black text-xs sm:text-sm md:text-base shadow-2xs flex items-center justify-center gap-1 ${
                       pattern && patternId !== 'OFF'
                         ? `${pattern.badgeBg} ${pattern.badgeBorder}`
                         : 'bg-pink-50/90 border-pink-200'
                     }`}
                   >
-                    {shifts.map((s, idx) => (
-                      <span key={idx} className="flex items-center">
-                        {idx > 0 && <span className="text-slate-400 text-xs sm:text-sm mx-0.5">/</span>}
-                        <span
-                          className={
+                    {pattern?.icon && (
+                      <span className="text-sm sm:text-base leading-none shrink-0">{pattern.icon}</span>
+                    )}
+                    <span className="flex items-center">
+                      {shifts.map((s, idx) => (
+                        <span key={idx} className="flex items-center">
+                          {idx > 0 && (
+                            <span
+                              className={`${
+                                pattern?.id === 'A_N' ? 'text-white/80' : 'text-slate-400'
+                              } text-xs sm:text-sm mx-0.5`}
+                            >
+                              /
+                            </span>
+                          )}
+                          <span
+                            className={
                               s.ot
                                 ? 'text-rose-600 font-black drop-shadow-xs'
-                                : 'text-slate-800 font-black'
-                          }
-                          title={`${ATOMIC_SHIFTS[s.code]?.fullLabel ?? s.code} (${s.ot ? 'OT สีแดง' : 'ปกติ สีดำ'})`}
-                        >
-                          {ATOMIC_SHIFTS[s.code]?.shortLabel ?? s.code}
+                                : pattern?.id === 'A_N'
+                                ? 'text-white font-black'
+                                : 'text-slate-900 font-black'
+                            }
+                            title={`${ATOMIC_SHIFTS[s.code]?.fullLabel ?? s.code} (${s.ot ? 'OT สีแดง' : 'ปกติ สีดำ'})`}
+                          >
+                            {ATOMIC_SHIFTS[s.code]?.shortLabel ?? s.code}
+                          </span>
                         </span>
-                      </span>
-                    ))}
+                      ))}
+                    </span>
                   </div>
-                ) : shiftData ? (
-                  <div className="text-xs sm:text-sm text-slate-400 text-center font-extrabold py-1">
-                    OFF
+                ) : shiftData && patternId === 'OFF' ? (
+                  <div className="w-full py-1 px-1 rounded-xl border border-[#6ee7b7] bg-[#a7f3d0] text-center font-black text-xs sm:text-sm text-emerald-950 shadow-2xs flex items-center justify-center gap-1">
+                    <span className="text-sm">🎉</span>
+                    <span>หยุด</span>
                   </div>
                 ) : null}
               </div>
 
-              {/* Note Indicator */}
-              <div className="w-full min-h-[14px] flex items-center justify-start">
+              {/* Note Indicator (Red text under shift badge like in user's app) */}
+              <div className="w-full min-h-[16px] flex items-center justify-center mt-0.5">
                 {shiftData?.note ? (
-                  <div
-                    className="flex items-center gap-1 text-[10px] sm:text-xs text-pink-600 font-semibold truncate max-w-full"
+                  <span
+                    className="text-[10px] sm:text-xs text-rose-600 font-bold truncate max-w-full block px-1 text-center"
                     title={shiftData.note}
                   >
-                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-pink-500 shrink-0" />
-                    <span className="truncate">{shiftData.note}</span>
-                  </div>
+                    {shiftData.note}
+                  </span>
                 ) : null}
               </div>
             </button>
@@ -434,37 +493,66 @@ export default function ShiftCalendar({
         })}
       </div>
 
-      {/* Shift Legend Bar */}
-      <div className="flex flex-wrap items-center justify-center gap-2.5 md:gap-4 mt-4 pt-3.5 border-t border-pink-100 text-xs sm:text-sm text-slate-700">
-        <span className="font-extrabold text-pink-600 flex items-center gap-1">
-          <Sparkles size={14} />
-          <span>สัญลักษณ์เวร:</span>
-        </span>
-        <div className="flex items-center gap-1.5 font-bold">
-          <span className="w-3 h-3 rounded-full bg-pink-400 shadow-2xs" />
-          <span>ช (เช้า)</span>
+      {/* Shift Legend & Counters Bar (Styled after user's reference app) */}
+      <div className="mt-4 pt-3.5 border-t border-pink-100 space-y-3">
+        {/* Chips grid with counts */}
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+          {SHIFT_PATTERNS.map((p) => {
+            const count = patternCounts[p.id] || 0;
+            return (
+              <div
+                key={p.id}
+                className={`py-1.5 px-2 rounded-xl border text-center shadow-2xs flex items-center justify-center gap-1.5 transition-all ${p.badgeBg} ${p.badgeBorder}`}
+              >
+                {p.icon && <span className="text-sm sm:text-base">{p.icon}</span>}
+                <span className={`text-xs sm:text-sm font-black ${p.id === 'A_N' ? 'text-white' : 'text-slate-900'}`}>
+                  {p.shortLabel}
+                </span>
+                <span className={`text-xs sm:text-sm font-bold opacity-80 ${p.id === 'A_N' ? 'text-white' : 'text-slate-800'}`}>
+                  ({count})
+                </span>
+              </div>
+            );
+          })}
         </div>
-        <div className="flex items-center gap-1.5 font-bold">
-          <span className="w-3 h-3 rounded-full bg-purple-400 shadow-2xs" />
-          <span>บ (บ่าย)</span>
-        </div>
-        <div className="flex items-center gap-1.5 font-bold">
-          <span className="w-3 h-3 rounded-full bg-indigo-400 shadow-2xs" />
-          <span>ด (ดึก)</span>
-        </div>
-        <div className="flex items-center gap-1.5 font-bold">
-          <span className="w-3 h-3 rounded-full bg-amber-500 shadow-2xs" />
-          <span>ช/บ</span>
-        </div>
-        <div className="flex items-center gap-1.5 font-bold">
-          <span className="w-3 h-3 rounded-full bg-teal-500 shadow-2xs" />
-          <span>บ/ด</span>
-        </div>
-        <div className="flex items-center gap-1.5 pl-2 sm:pl-3 border-l border-pink-200">
-          <span className="text-slate-900 font-black">ตัวดำ: ปกติ</span>
+
+        {/* OT vs Normal explanation */}
+        <div className="flex items-center justify-center gap-2 text-xs sm:text-sm text-slate-600 font-medium">
+          <span className="text-slate-900 font-black">ตัวดำ: เวรปกติ</span>
           <span className="text-slate-300">|</span>
-          <span className="text-rose-600 font-black">ตัวแดง: OT</span>
+          <span className="text-rose-600 font-black">ตัวแดง: เวร OT</span>
         </div>
+
+        {/* Days with Notes List (like ✏️ 3 - ☀️ เช้า | อบรม) */}
+        {monthNotes.length > 0 && (
+          <div className="space-y-1.5 pt-2 border-t border-pink-50">
+            <span className="text-xs font-bold text-slate-500 block">
+              บันทึกประจำเดือน ({monthNotes.length} รายการ):
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {monthNotes.map((item) => {
+                const pat = SHIFT_PATTERNS.find((p) => p.id === item.patternId);
+                return (
+                  <div
+                    key={item.dateStr}
+                    onClick={() => handleCellClick(item.dateStr)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-pink-50/80 hover:bg-pink-100 border border-pink-200/60 text-xs font-medium text-slate-800 transition-colors cursor-pointer shadow-2xs"
+                  >
+                    <span className="font-black text-pink-700">✏️ วันที่ {item.dayNum}</span>
+                    {pat && (
+                      <span className="font-bold text-slate-600 flex items-center gap-0.5">
+                        {pat.icon && <span>{pat.icon}</span>}
+                        <span>{pat.shortLabel}</span>
+                      </span>
+                    )}
+                    <span className="text-slate-400">|</span>
+                    <span className="text-rose-600 font-bold">{item.note}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Edit Shift Modal */}
@@ -516,11 +604,15 @@ export default function ShiftCalendar({
                       }`}
                     >
                       <div className="flex items-center justify-center gap-1.5">
-                        <span className={`w-2.5 h-2.5 rounded-full ${p.dotColor}`} />
-                        <span className="text-sm font-black">{p.code}</span>
+                        {p.icon ? (
+                          <span className="text-base leading-none">{p.icon}</span>
+                        ) : (
+                          <span className={`w-2.5 h-2.5 rounded-full ${p.dotColor}`} />
+                        )}
+                        <span className="text-sm font-black">{p.shortLabel}</span>
                       </div>
-                      <span className="text-xs text-slate-600 font-bold block truncate mt-0.5">
-                        {p.shortLabel}
+                      <span className="text-[11px] text-slate-500 font-semibold block truncate mt-0.5">
+                        {p.code}
                       </span>
                     </button>
                   );
