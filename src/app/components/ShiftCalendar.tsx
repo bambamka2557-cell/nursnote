@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import {
   SubShift,
   DayShiftData,
@@ -324,7 +325,8 @@ export default function ShiftCalendar({
   return (
     <div className="bg-white/95 rounded-2xl sm:rounded-3xl p-2 sm:p-5 md:p-6 shadow-[0_4px_25px_rgba(244,114,182,0.12)] border border-pink-100 transition-all text-slate-800">
       {/* Calendar Top Header: Month title, Kitty Theme, Mode Toggle & Navigation */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 sm:pb-4 border-b border-pink-100">
+      <div className="pb-3 sm:pb-4 border-b border-pink-100 space-y-2.5 sm:space-y-3">
+        {/* Row 1: Month Title & Kitty Theme */}
         <div className="flex items-center gap-2.5 sm:gap-3">
           <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-pink-400 to-rose-400 flex items-center justify-center text-white shadow-sm shadow-pink-200 shrink-0">
             <span className="text-xl sm:text-2xl">{calendarMode === 'shift' ? '🐱' : '🌸'}</span>
@@ -344,58 +346,58 @@ export default function ShiftCalendar({
           </div>
         </div>
 
-        {/* Action Controls: Mode Toggle & Navigation */}
-        <div className="flex items-center justify-between sm:justify-end gap-2 flex-wrap">
-          {/* Mode Toggle Capsule */}
-          <div className="flex items-center p-1 bg-pink-50/80 rounded-2xl border border-pink-200/70 shadow-2xs">
-            <button
-              type="button"
-              onClick={() => handleModeChange('shift')}
-              className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
-                calendarMode === 'shift'
-                  ? 'bg-white text-pink-600 shadow-2xs border border-pink-200/60'
-                  : 'text-slate-600 hover:text-pink-600'
-              }`}
-            >
-              <span>🩺</span>
-              <span>ตารางเวร</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleModeChange('holiday')}
-              className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
-                calendarMode === 'holiday'
-                  ? 'bg-white text-rose-600 shadow-2xs border border-rose-200/60'
-                  : 'text-slate-600 hover:text-rose-600'
-              }`}
-            >
-              <span>📅</span>
-              <span>วันหยุด</span>
-            </button>
-          </div>
-
-          {/* Navigation Buttons */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
+        {/* Row 2: Navigation (Left) + The Two Circled Buttons (Right) */}
+        <div className="flex items-center justify-between gap-1.5 sm:gap-2 pt-1 border-t border-pink-50/80">
+          {/* Left: Navigation Buttons [วันนี้] [<] [>] */}
+          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
             <button
               onClick={handleGoToday}
-              className="px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-pink-50 hover:bg-pink-100 text-pink-600 font-black text-xs sm:text-sm transition-colors border border-pink-200/60 cursor-pointer shadow-2xs"
+              className="px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-pink-50 hover:bg-pink-100 text-pink-600 font-black text-xs sm:text-sm transition-colors border border-pink-200/60 cursor-pointer shadow-2xs active:scale-95"
             >
               วันนี้
             </button>
             <button
               onClick={handlePrevMonth}
-              className="p-1.5 sm:p-2 rounded-xl bg-slate-50 hover:bg-pink-50 text-slate-600 hover:text-pink-600 transition-colors border border-slate-200 cursor-pointer shadow-2xs"
+              className="p-1.5 sm:p-2 rounded-xl bg-slate-50 hover:bg-pink-50 text-slate-600 hover:text-pink-600 transition-colors border border-slate-200 cursor-pointer shadow-2xs active:scale-95"
               title="เดือนก่อนหน้า"
             >
               <ChevronLeft size={18} />
             </button>
             <button
               onClick={handleNextMonth}
-              className="p-1.5 sm:p-2 rounded-xl bg-slate-50 hover:bg-pink-50 text-slate-600 hover:text-pink-600 transition-colors border border-slate-200 cursor-pointer shadow-2xs"
+              className="p-1.5 sm:p-2 rounded-xl bg-slate-50 hover:bg-pink-50 text-slate-600 hover:text-pink-600 transition-colors border border-slate-200 cursor-pointer shadow-2xs active:scale-95"
               title="เดือนถัดไป"
             >
               <ChevronRight size={18} />
             </button>
+          </div>
+
+          {/* Right: The Two Circled Buttons (Single Toggle Button & Travel Guide Button) */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {/* วงกลมที่ 1: ปุ่มเดียวกดสลับโหมดปฏิทิน พร้อมคำว่าสลับ */}
+            <button
+              type="button"
+              onClick={() => handleModeChange(calendarMode === 'shift' ? 'holiday' : 'shift')}
+              className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer border shadow-2xs active:scale-95 ${
+                calendarMode === 'shift'
+                  ? 'bg-rose-50 hover:bg-rose-100 text-rose-600 border-rose-200/80 shadow-rose-100/50'
+                  : 'bg-pink-50 hover:bg-pink-100 text-pink-600 border-pink-200/80 shadow-pink-100/50'
+              }`}
+              title={calendarMode === 'shift' ? 'แตะเพื่อสลับเป็นปฏิทินวันหยุด' : 'แตะเพื่อสลับเป็นตารางเวร'}
+            >
+              <span className="text-xs sm:text-sm">{calendarMode === 'shift' ? '📅' : '🩺'}</span>
+              <span>สลับ{calendarMode === 'shift' ? 'วันหยุด' : 'ตารางเวร'}</span>
+            </button>
+
+            {/* วงกลมที่ 2: ปุ่มแนะนำที่เที่ยวประจำเดือน */}
+            <Link
+              href={`/travel?month=${currentMonth}`}
+              className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer border shadow-2xs active:scale-95 bg-sky-50 hover:bg-sky-100 text-sky-600 border-sky-200/80 shadow-sky-100/50"
+              title={`แนะนำที่เที่ยวไทยประจำเดือน ${THAI_MONTH_NAMES[currentMonth - 1]}`}
+            >
+              <span className="text-xs sm:text-sm">✈️</span>
+              <span>ที่เที่ยว</span>
+            </Link>
           </div>
         </div>
       </div>
