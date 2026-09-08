@@ -98,13 +98,6 @@ export default function ScheduleClient({
 
       {/* Main Content Layout */}
       <div className="px-3 sm:px-4 md:px-8 max-w-5xl mx-auto space-y-4 md:space-y-6 mt-2">
-        {/* Salary Summary Card */}
-        <SalarySummaryCard
-          summary={summary}
-          onOpenConfig={() => setIsConfigOpen(true)}
-          isLoading={isPending}
-        />
-
         {/* Shift Calendar */}
         <ShiftCalendar
           initialShifts={shifts}
@@ -112,6 +105,13 @@ export default function ScheduleClient({
           initialMonth={month}
           onShiftUpdated={() => refreshData(year, month)}
           onMonthChange={handleMonthChange}
+        />
+
+        {/* Salary Summary Card */}
+        <SalarySummaryCard
+          summary={summary}
+          onOpenConfig={() => setIsConfigOpen(true)}
+          isLoading={isPending}
         />
       </div>
 
