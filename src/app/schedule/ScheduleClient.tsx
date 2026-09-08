@@ -77,7 +77,7 @@ export default function ScheduleClient({
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50/50 via-white to-pink-50/30 pb-24 md:pb-12 text-slate-800">
       {/* Page Header Banner */}
-      <div className="px-4 md:px-8 pt-4 pb-2 max-w-5xl mx-auto">
+      <div className="px-3 sm:px-4 md:px-8 pt-4 pb-2 max-w-5xl mx-auto">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-500 to-rose-500 flex items-center justify-center text-white shadow-sm shadow-pink-200">
@@ -97,7 +97,7 @@ export default function ScheduleClient({
       </div>
 
       {/* Main Content Layout */}
-      <div className="px-3 sm:px-4 md:px-8 max-w-5xl mx-auto space-y-4 md:space-y-6 mt-2">
+      <div className="px-1.5 sm:px-4 md:px-8 max-w-5xl mx-auto space-y-3 sm:space-y-4 md:space-y-6 mt-2">
         {/* Shift Calendar */}
         <ShiftCalendar
           initialShifts={shifts}

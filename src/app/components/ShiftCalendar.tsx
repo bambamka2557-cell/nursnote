@@ -285,16 +285,16 @@ export default function ShiftCalendar({
   ];
 
   return (
-    <div className="bg-white/95 rounded-3xl p-4 md:p-6 shadow-[0_4px_25px_rgba(244,114,182,0.12)] border border-pink-100 transition-all text-slate-800">
+    <div className="bg-white/95 rounded-2xl sm:rounded-3xl p-2 sm:p-5 md:p-6 shadow-[0_4px_25px_rgba(244,114,182,0.12)] border border-pink-100 transition-all text-slate-800">
       {/* Calendar Top Header: Month title, Kitty Theme, Navigation */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-pink-100">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-pink-400 to-rose-400 flex items-center justify-center text-white shadow-sm shadow-pink-200 shrink-0">
+      <div className="flex flex-wrap items-center justify-between gap-2.5 pb-3 sm:pb-4 border-b border-pink-100">
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-pink-400 to-rose-400 flex items-center justify-center text-white shadow-sm shadow-pink-200 shrink-0">
             <span className="text-xl sm:text-2xl">🐱</span>
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-lg sm:text-xl md:text-2xl font-black text-slate-800">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <h2 className="text-base sm:text-xl md:text-2xl font-black text-slate-800">
                 {THAI_MONTH_NAMES[currentMonth - 1]} {currentYear + 543}
               </h2>
               <span className="text-xs bg-pink-100 text-pink-700 font-extrabold px-2.5 py-0.5 rounded-full border border-pink-200/50">
@@ -331,11 +331,11 @@ export default function ShiftCalendar({
       </div>
 
       {/* Weekday Names Header */}
-      <div className="grid grid-cols-7 gap-1 md:gap-2 mt-3 text-center">
+      <div className="grid grid-cols-7 gap-0.5 sm:gap-1.5 md:gap-2 mt-2 sm:mt-3 text-center">
         {dayOfWeekLabels.map((d, idx) => (
           <div
             key={idx}
-            className={`py-2 text-xs sm:text-sm md:text-base font-black rounded-xl bg-pink-50/50 ${d.color}`}
+            className={`py-1.5 sm:py-2 text-xs sm:text-sm md:text-base font-black rounded-lg sm:rounded-xl bg-pink-50/50 ${d.color}`}
           >
             {d.label}
           </div>
@@ -343,7 +343,7 @@ export default function ShiftCalendar({
       </div>
 
       {/* Days Grid */}
-      <div className="grid grid-cols-7 gap-1 md:gap-2 mt-2">
+      <div className="grid grid-cols-7 gap-0.5 sm:gap-1.5 md:gap-2 mt-1.5 sm:mt-2">
         {cells.map((cell) => {
           const shiftData = shiftsMap[cell.dateStr];
           const shifts = shiftData?.shifts || [];
@@ -356,7 +356,7 @@ export default function ShiftCalendar({
               key={cell.dateStr}
               type="button"
               onClick={() => handleCellClick(cell.dateStr)}
-              className={`min-h-[82px] sm:min-h-[94px] md:min-h-[105px] p-1.5 sm:p-2 rounded-2xl border transition-all text-left flex flex-col justify-between relative group cursor-pointer ${
+              className={`min-h-[70px] sm:min-h-[88px] md:min-h-[105px] p-1 sm:p-2 rounded-xl sm:rounded-2xl border transition-all text-left flex flex-col justify-between relative group cursor-pointer ${
                 cell.isToday
                   ? 'bg-pink-50/90 border-pink-400 ring-2 ring-pink-300/40 shadow-xs'
                   : cell.isCurrentMonth
@@ -369,16 +369,16 @@ export default function ShiftCalendar({
                 <span
                   className={`font-black ${
                     cell.isToday
-                      ? 'w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-pink-500 text-white flex items-center justify-center text-xs sm:text-sm shadow-xs'
+                      ? 'w-5 h-5 sm:w-7 sm:h-7 rounded-full bg-pink-500 text-white flex items-center justify-center text-xs sm:text-sm shadow-xs'
                       : cell.isCurrentMonth
-                      ? 'text-slate-800 text-sm sm:text-base md:text-lg'
-                      : 'text-slate-400 text-sm sm:text-base'
+                      ? 'text-slate-800 text-xs sm:text-base md:text-lg'
+                      : 'text-slate-400 text-xs sm:text-base'
                   }`}
                 >
                   {cell.dayNum}
                 </span>
                 {stickerEmoji && (
-                  <span className="text-sm sm:text-base md:text-lg filter drop-shadow-xs animate-in zoom-in-50">
+                  <span className="text-xs sm:text-base md:text-lg filter drop-shadow-xs animate-in zoom-in-50">
                     {stickerEmoji}
                   </span>
                 )}
@@ -388,7 +388,7 @@ export default function ShiftCalendar({
               <div className="w-full my-auto">
                 {shifts.length > 0 ? (
                   <div
-                    className={`w-full py-1 px-1 rounded-xl border text-center font-black text-sm sm:text-base md:text-lg shadow-2xs flex items-center justify-center gap-0.5 ${
+                    className={`w-full py-0.5 sm:py-1 px-0.5 sm:px-1 rounded-lg sm:rounded-xl border text-center font-black text-xs sm:text-base md:text-lg shadow-2xs flex items-center justify-center gap-0.5 ${
                       pattern && patternId !== 'OFF'
                         ? `${pattern.badgeBg} ${pattern.badgeBorder}`
                         : 'bg-pink-50/90 border-pink-200'

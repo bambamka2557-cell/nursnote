@@ -56,7 +56,7 @@ export default function SalarySummaryCard({
   const { breakdown, shiftCounts, windowText } = summary;
 
   return (
-    <div className="bg-white/95 rounded-3xl p-4 md:p-5 shadow-[0_4px_20px_rgba(244,114,182,0.12)] border border-pink-100 transition-all text-slate-800">
+    <div className="bg-white/95 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5 shadow-[0_4px_20px_rgba(244,114,182,0.12)] border border-pink-100 transition-all text-slate-800">
       {/* Top Bar: Title & Actions */}
       <div className="flex items-center justify-between gap-2 pb-3 border-b border-pink-50">
         <div className="flex items-center gap-2">
