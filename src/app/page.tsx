@@ -23,7 +23,7 @@ export default async function Dashboard() {
           🛏️
         </div>
 
-        <h2 className="text-xl sm:text-2xl font-black bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+        <h2 className="text-xl sm:text-2xl font-black bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">
           ยินดีต้อนรับสู่ LR-Helper
         </h2>
         <p className="font-semibold text-slate-700 mt-2">ยังไม่มีผู้ป่วยในระบบ</p>
@@ -33,7 +33,7 @@ export default async function Dashboard() {
 
         <Link 
           href="/add" 
-          className="mt-6 px-6 py-3.5 bg-gradient-to-r from-pink-500 to-indigo-600 hover:from-pink-600 hover:to-indigo-700 text-white font-bold rounded-2xl shadow-lg shadow-pink-200 flex items-center gap-2 transition-all duration-200 active:scale-95"
+          className="mt-6 px-6 py-3.5 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200 flex items-center gap-2 transition-all duration-200 active:scale-95"
         >
           <Plus size={20} />
           รับผู้ป่วยใหม่

@@ -1,12 +1,17 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Prompt } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import ReminderEngine from "./components/ReminderEngine";
 import Header from "./components/Header";
 import SplashScreen from "./components/SplashScreen";
 
-const inter = Inter({ subsets: ["latin"] });
+const prompt = Prompt({
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  subsets: ["thai", "latin"],
+  display: "swap",
+  variable: "--font-prompt",
+});
 
 export const metadata: Metadata = {
   title: "LR-Helper",
@@ -29,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="th" className="h-full antialiased">
-      <body className={`${inter.className} min-h-full flex flex-col pb-16 md:pb-0 bg-[#fff3f5] text-slate-900 overflow-x-hidden`}>
+      <body className={`${prompt.className} ${prompt.variable} min-h-full flex flex-col pb-16 md:pb-0 bg-[#fff3f5] text-slate-900 overflow-x-hidden`}>
         {/* App launch transition / splash screen (shows cover image on opening) */}
         <SplashScreen />
 

@@ -75,7 +75,7 @@ export default function Header() {
                 priority
               />
             </div>
-            <span className="text-lg md:text-xl font-black bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent group-hover:scale-102 transition-transform">LR-Helper</span>
+            <span className="text-lg md:text-xl font-black bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent group-hover:scale-102 transition-transform">LR-Helper</span>
             <span className="text-[9px] uppercase font-extrabold tracking-wider px-1.5 py-0.5 bg-pink-100 text-pink-700 rounded-full border border-pink-200/20">LR</span>
           </Link>
           
