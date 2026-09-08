@@ -288,44 +288,44 @@ export default function ShiftCalendar({
     <div className="bg-white/95 rounded-3xl p-4 md:p-6 shadow-[0_4px_25px_rgba(244,114,182,0.12)] border border-pink-100 transition-all text-slate-800">
       {/* Calendar Top Header: Month title, Kitty Theme, Navigation */}
       <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-pink-100">
-        <div className="flex items-center gap-2.5">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-400 to-rose-400 flex items-center justify-center text-white shadow-sm shadow-pink-200">
-            <span className="text-lg">🐱</span>
+        <div className="flex items-center gap-3">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-pink-400 to-rose-400 flex items-center justify-center text-white shadow-sm shadow-pink-200 shrink-0">
+            <span className="text-xl sm:text-2xl">🐱</span>
           </div>
           <div>
-            <div className="flex items-center gap-1.5">
-              <h2 className="text-base md:text-lg font-black text-slate-800">
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-black text-slate-800">
                 {THAI_MONTH_NAMES[currentMonth - 1]} {currentYear + 543}
               </h2>
-              <span className="text-[10px] bg-pink-100 text-pink-700 font-extrabold px-2 py-0.5 rounded-full border border-pink-200/50">
+              <span className="text-xs bg-pink-100 text-pink-700 font-extrabold px-2.5 py-0.5 rounded-full border border-pink-200/50">
                 🎀 Hello Kitty
               </span>
             </div>
-            <p className="text-[11px] text-pink-400 font-medium">ตารางเวรพยาบาลห้องคลอด</p>
+            <p className="text-xs sm:text-sm text-pink-500 font-medium mt-0.5">ตารางเวรพยาบาลห้องคลอด</p>
           </div>
         </div>
 
         {/* Navigation Buttons */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           <button
             onClick={handleGoToday}
-            className="px-3 py-1.5 rounded-xl bg-pink-50 hover:bg-pink-100 text-pink-600 font-extrabold text-xs transition-colors border border-pink-200/60 cursor-pointer"
+            className="px-3.5 py-2 rounded-xl bg-pink-50 hover:bg-pink-100 text-pink-600 font-black text-xs sm:text-sm transition-colors border border-pink-200/60 cursor-pointer shadow-2xs"
           >
             วันนี้
           </button>
           <button
             onClick={handlePrevMonth}
-            className="p-1.5 rounded-xl bg-slate-50 hover:bg-pink-50 text-slate-600 hover:text-pink-600 transition-colors border border-slate-200 cursor-pointer"
+            className="p-2 rounded-xl bg-slate-50 hover:bg-pink-50 text-slate-600 hover:text-pink-600 transition-colors border border-slate-200 cursor-pointer shadow-2xs"
             title="เดือนก่อนหน้า"
           >
-            <ChevronLeft size={18} />
+            <ChevronLeft size={20} />
           </button>
           <button
             onClick={handleNextMonth}
-            className="p-1.5 rounded-xl bg-slate-50 hover:bg-pink-50 text-slate-600 hover:text-pink-600 transition-colors border border-slate-200 cursor-pointer"
+            className="p-2 rounded-xl bg-slate-50 hover:bg-pink-50 text-slate-600 hover:text-pink-600 transition-colors border border-slate-200 cursor-pointer shadow-2xs"
             title="เดือนถัดไป"
           >
-            <ChevronRight size={18} />
+            <ChevronRight size={20} />
           </button>
         </div>
       </div>
@@ -335,7 +335,7 @@ export default function ShiftCalendar({
         {dayOfWeekLabels.map((d, idx) => (
           <div
             key={idx}
-            className={`py-1.5 text-xs font-black rounded-lg bg-pink-50/40 ${d.color}`}
+            className={`py-2 text-xs sm:text-sm md:text-base font-black rounded-xl bg-pink-50/50 ${d.color}`}
           >
             {d.label}
           </div>
@@ -356,7 +356,7 @@ export default function ShiftCalendar({
               key={cell.dateStr}
               type="button"
               onClick={() => handleCellClick(cell.dateStr)}
-              className={`min-h-[70px] md:min-h-[88px] p-1.5 rounded-2xl border transition-all text-left flex flex-col justify-between relative group cursor-pointer ${
+              className={`min-h-[82px] sm:min-h-[94px] md:min-h-[105px] p-1.5 sm:p-2 rounded-2xl border transition-all text-left flex flex-col justify-between relative group cursor-pointer ${
                 cell.isToday
                   ? 'bg-pink-50/90 border-pink-400 ring-2 ring-pink-300/40 shadow-xs'
                   : cell.isCurrentMonth
@@ -367,18 +367,18 @@ export default function ShiftCalendar({
               {/* Day number & Sticker */}
               <div className="flex items-center justify-between w-full">
                 <span
-                  className={`text-xs font-black ${
+                  className={`font-black ${
                     cell.isToday
-                      ? 'w-5 h-5 rounded-full bg-pink-500 text-white flex items-center justify-center text-[10px]'
+                      ? 'w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-pink-500 text-white flex items-center justify-center text-xs sm:text-sm shadow-xs'
                       : cell.isCurrentMonth
-                      ? 'text-slate-700'
-                      : 'text-slate-400'
+                      ? 'text-slate-800 text-sm sm:text-base md:text-lg'
+                      : 'text-slate-400 text-sm sm:text-base'
                   }`}
                 >
                   {cell.dayNum}
                 </span>
                 {stickerEmoji && (
-                  <span className="text-xs filter drop-shadow-xs animate-in zoom-in-50">
+                  <span className="text-sm sm:text-base md:text-lg filter drop-shadow-xs animate-in zoom-in-50">
                     {stickerEmoji}
                   </span>
                 )}
@@ -388,7 +388,7 @@ export default function ShiftCalendar({
               <div className="w-full my-auto">
                 {shifts.length > 0 ? (
                   <div
-                    className={`w-full py-0.5 px-1 rounded-lg border text-center font-bold text-xs shadow-2xs flex items-center justify-center gap-0.5 ${
+                    className={`w-full py-1 px-1 rounded-xl border text-center font-black text-sm sm:text-base md:text-lg shadow-2xs flex items-center justify-center gap-0.5 ${
                       pattern && patternId !== 'OFF'
                         ? `${pattern.badgeBg} ${pattern.badgeBorder}`
                         : 'bg-pink-50/90 border-pink-200'
@@ -396,12 +396,12 @@ export default function ShiftCalendar({
                   >
                     {shifts.map((s, idx) => (
                       <span key={idx} className="flex items-center">
-                        {idx > 0 && <span className="text-slate-400 text-[10px] mx-0.5">/</span>}
+                        {idx > 0 && <span className="text-slate-400 text-xs sm:text-sm mx-0.5">/</span>}
                         <span
                           className={
-                            s.ot
-                              ? 'text-rose-600 font-black drop-shadow-xs'
-                              : 'text-slate-800 font-bold'
+                              s.ot
+                                ? 'text-rose-600 font-black drop-shadow-xs'
+                                : 'text-slate-800 font-black'
                           }
                           title={`${ATOMIC_SHIFTS[s.code]?.fullLabel ?? s.code} (${s.ot ? 'OT สีแดง' : 'ปกติ สีดำ'})`}
                         >
@@ -411,21 +411,21 @@ export default function ShiftCalendar({
                     ))}
                   </div>
                 ) : shiftData ? (
-                  <div className="text-[10px] text-slate-400 text-center font-bold py-0.5">
+                  <div className="text-xs sm:text-sm text-slate-400 text-center font-extrabold py-1">
                     OFF
                   </div>
                 ) : null}
               </div>
 
               {/* Note Indicator */}
-              <div className="w-full h-3 flex items-center justify-start">
+              <div className="w-full min-h-[14px] flex items-center justify-start">
                 {shiftData?.note ? (
                   <div
-                    className="flex items-center gap-0.5 text-[9px] text-pink-500 font-medium truncate max-w-full"
+                    className="flex items-center gap-1 text-[10px] sm:text-xs text-pink-600 font-semibold truncate max-w-full"
                     title={shiftData.note}
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-pink-500 shrink-0" />
-                    <span className="truncate hidden md:inline">{shiftData.note}</span>
+                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-pink-500 shrink-0" />
+                    <span className="truncate">{shiftData.note}</span>
                   </div>
                 ) : null}
               </div>
@@ -435,33 +435,33 @@ export default function ShiftCalendar({
       </div>
 
       {/* Shift Legend Bar */}
-      <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3 mt-4 pt-3 border-t border-pink-100 text-[11px] text-slate-600">
-        <span className="font-bold text-pink-600 flex items-center gap-1">
-          <Sparkles size={12} />
+      <div className="flex flex-wrap items-center justify-center gap-2.5 md:gap-4 mt-4 pt-3.5 border-t border-pink-100 text-xs sm:text-sm text-slate-700">
+        <span className="font-extrabold text-pink-600 flex items-center gap-1">
+          <Sparkles size={14} />
           <span>สัญลักษณ์เวร:</span>
         </span>
-        <div className="flex items-center gap-1">
-          <span className="w-2.5 h-2.5 rounded-full bg-pink-400" />
+        <div className="flex items-center gap-1.5 font-bold">
+          <span className="w-3 h-3 rounded-full bg-pink-400 shadow-2xs" />
           <span>ช (เช้า)</span>
         </div>
-        <div className="flex items-center gap-1">
-          <span className="w-2.5 h-2.5 rounded-full bg-purple-400" />
+        <div className="flex items-center gap-1.5 font-bold">
+          <span className="w-3 h-3 rounded-full bg-purple-400 shadow-2xs" />
           <span>บ (บ่าย)</span>
         </div>
-        <div className="flex items-center gap-1">
-          <span className="w-2.5 h-2.5 rounded-full bg-indigo-400" />
+        <div className="flex items-center gap-1.5 font-bold">
+          <span className="w-3 h-3 rounded-full bg-indigo-400 shadow-2xs" />
           <span>ด (ดึก)</span>
         </div>
-        <div className="flex items-center gap-1">
-          <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+        <div className="flex items-center gap-1.5 font-bold">
+          <span className="w-3 h-3 rounded-full bg-amber-500 shadow-2xs" />
           <span>ช/บ</span>
         </div>
-        <div className="flex items-center gap-1">
-          <span className="w-2.5 h-2.5 rounded-full bg-teal-500" />
+        <div className="flex items-center gap-1.5 font-bold">
+          <span className="w-3 h-3 rounded-full bg-teal-500 shadow-2xs" />
           <span>บ/ด</span>
         </div>
-        <div className="flex items-center gap-1 pl-2 border-l border-pink-200">
-          <span className="text-slate-900 font-bold">ตัวดำ: ปกติ</span>
+        <div className="flex items-center gap-1.5 pl-2 sm:pl-3 border-l border-pink-200">
+          <span className="text-slate-900 font-black">ตัวดำ: ปกติ</span>
           <span className="text-slate-300">|</span>
           <span className="text-rose-600 font-black">ตัวแดง: OT</span>
         </div>
@@ -472,33 +472,33 @@ export default function ShiftCalendar({
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-[100] flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
           <div className="bg-white w-full max-w-sm sm:max-w-md rounded-3xl p-5 shadow-2xl border border-pink-100 space-y-4 max-h-[92vh] overflow-y-auto text-slate-800">
             {/* Modal Header */}
-            <div className="flex justify-between items-center border-b border-pink-100 pb-3">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center font-bold">
-                  <CalendarIcon size={16} />
+            <div className="flex justify-between items-center border-b border-pink-100 pb-3.5">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center font-bold shrink-0">
+                  <CalendarIcon size={18} />
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-sm md:text-base text-slate-800">
+                  <h3 className="font-black text-base md:text-lg text-slate-800">
                     {getModalDateHeader()}
                   </h3>
-                  <p className="text-[10px] text-pink-500 font-medium">
+                  <p className="text-xs text-pink-500 font-medium">
                     บันทึกเวร & สติกเกอร์ประจำวัน{selectedDate ? ` • ${getCycleForDate(selectedDate).windowText}` : ''}
                   </p>
                 </div>
               </div>
               <button
                 onClick={handleCloseModal}
-                className="w-7 h-7 rounded-full hover:bg-slate-100 text-slate-400 flex items-center justify-center cursor-pointer"
+                className="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-400 flex items-center justify-center cursor-pointer"
               >
-                <X size={16} />
+                <X size={18} />
               </button>
             </div>
 
             {/* Pattern Quick Selector */}
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-600 flex items-center justify-between">
+              <label className="text-xs sm:text-sm font-extrabold text-slate-700 flex items-center justify-between">
                 <span>เลือกเวรประจำวัน</span>
-                <span className="text-[10px] text-pink-500 font-normal">แตะเลือกเพื่อเปลี่ยน</span>
+                <span className="text-xs text-pink-500 font-normal">แตะเลือกเพื่อเปลี่ยน</span>
               </label>
 
               <div className="grid grid-cols-3 gap-2">
@@ -509,17 +509,17 @@ export default function ShiftCalendar({
                       key={p.id}
                       type="button"
                       onClick={() => handleSelectPattern(p.id)}
-                      className={`py-2 px-2.5 rounded-xl border text-center transition-all cursor-pointer ${
+                      className={`py-2.5 px-2 rounded-xl border text-center transition-all cursor-pointer ${
                         isSelected
                           ? `${p.badgeBg} ${p.badgeBorder} ring-2 ring-pink-400 font-black shadow-xs scale-102`
                           : 'bg-slate-50 border-slate-200/80 hover:bg-white text-slate-700 font-bold'
                       }`}
                     >
-                      <div className="flex items-center justify-center gap-1">
-                        <span className={`w-2 h-2 rounded-full ${p.dotColor}`} />
-                        <span className="text-xs">{p.code}</span>
+                      <div className="flex items-center justify-center gap-1.5">
+                        <span className={`w-2.5 h-2.5 rounded-full ${p.dotColor}`} />
+                        <span className="text-sm font-black">{p.code}</span>
                       </div>
-                      <span className="text-[10px] text-slate-500 block truncate mt-0.5">
+                      <span className="text-xs text-slate-600 font-bold block truncate mt-0.5">
                         {p.shortLabel}
                       </span>
                     </button>
@@ -532,14 +532,14 @@ export default function ShiftCalendar({
             {editShifts.length > 0 && (
               <div className="p-3.5 bg-gradient-to-br from-pink-50/60 to-rose-50/40 rounded-2xl border border-pink-200/80 space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-black text-pink-700 flex items-center gap-1">
+                  <span className="text-xs sm:text-sm font-black text-pink-700 flex items-center gap-1">
                     <span>🔴 กำหนดสีตัวอักษรรายเวรย่อย (OT / ปกติ)</span>
                   </span>
-                  <span className="text-[10px] text-slate-500 bg-white px-2 py-0.5 rounded-full border border-pink-100">
+                  <span className="text-[11px] text-slate-500 bg-white px-2.5 py-0.5 rounded-full border border-pink-100 font-medium">
                     แตะเพื่อสลับ
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-500 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   รพ. กำหนดสีเป็นรายตัวอักษรเวรย่อย (แดง = คิด OT, ดำ = ปกติ). วัน ช/บ สามารถตั้ง ช แดง และ บ ดำ ได้อย่างอิสระ
                 </p>
 
@@ -549,13 +549,13 @@ export default function ShiftCalendar({
                     return (
                       <div
                         key={sub.code}
-                        className="flex items-center justify-between p-2 rounded-xl bg-white border border-pink-100 shadow-2xs"
+                        className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-pink-100 shadow-2xs"
                       >
                         <div className="flex items-center gap-2">
-                          <span className="font-extrabold text-xs text-slate-800">
+                          <span className="font-black text-sm text-slate-800">
                             {info.fullLabel} ({info.shortLabel})
                           </span>
-                          <span className="text-[10px] text-slate-400">
+                          <span className="text-xs text-slate-400 font-medium">
                             {info.timeRange}
                           </span>
                         </div>
@@ -564,7 +564,7 @@ export default function ShiftCalendar({
                         <button
                           type="button"
                           onClick={() => handleToggleOt(sub.code)}
-                          className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
                             sub.ot
                               ? 'bg-rose-500 text-white shadow-xs shadow-rose-200'
                               : 'bg-slate-100 text-slate-800 hover:bg-slate-200'
@@ -586,13 +586,13 @@ export default function ShiftCalendar({
 
             {/* Sticker Selector */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-600 flex items-center justify-between">
+              <label className="text-xs sm:text-sm font-extrabold text-slate-700 flex items-center justify-between">
                 <span>สติกเกอร์น่ารัก</span>
                 {editSticker && (
                   <button
                     type="button"
                     onClick={() => setEditSticker(null)}
-                    className="text-[10px] text-slate-400 hover:text-slate-600 underline"
+                    className="text-xs text-slate-400 hover:text-slate-600 underline"
                   >
                     ลบสติกเกอร์
                   </button>
@@ -606,7 +606,7 @@ export default function ShiftCalendar({
                       key={st.key}
                       type="button"
                       onClick={() => setEditSticker(isChosen ? null : st.key)}
-                      className={`flex-1 py-2 rounded-xl border text-base flex flex-col items-center gap-0.5 transition-all cursor-pointer ${
+                      className={`flex-1 py-2.5 rounded-xl border text-lg sm:text-xl flex flex-col items-center gap-0.5 transition-all cursor-pointer ${
                         isChosen
                           ? 'bg-pink-100 border-pink-300 ring-2 ring-pink-400 shadow-xs scale-105'
                           : 'bg-slate-50 border-slate-200 hover:bg-pink-50/50'
@@ -614,7 +614,7 @@ export default function ShiftCalendar({
                       title={st.label}
                     >
                       <span>{st.emoji}</span>
-                      <span className="text-[9px] text-slate-500 font-bold">{st.label}</span>
+                      <span className="text-[10px] sm:text-xs text-slate-600 font-bold">{st.label}</span>
                     </button>
                   );
                 })}
@@ -622,9 +622,9 @@ export default function ShiftCalendar({
             </div>
 
             {/* Daily Note */}
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-600 flex items-center gap-1">
-                <FileText size={13} className="text-pink-500" />
+            <div className="space-y-1.5">
+              <label className="text-xs sm:text-sm font-extrabold text-slate-700 flex items-center gap-1">
+                <FileText size={15} className="text-pink-500" />
                 <span>โน้ตประจำวัน</span>
               </label>
               <input
@@ -632,7 +632,7 @@ export default function ShiftCalendar({
                 value={editNote}
                 placeholder="เช่น แลกเวรกับพี่ดาว, เวรตรวจการ, ทำหัตถการ"
                 onChange={(e) => setEditNote(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:bg-white focus:border-pink-500"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-medium text-slate-800 focus:bg-white focus:border-pink-500"
               />
             </div>
 
@@ -642,9 +642,9 @@ export default function ShiftCalendar({
                 type="button"
                 onClick={handleDeleteModal}
                 disabled={isSaving}
-                className="flex items-center gap-1 px-3 py-2 rounded-xl text-rose-600 hover:bg-rose-50 border border-rose-100 text-xs font-bold transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-rose-600 hover:bg-rose-50 border border-rose-100 text-xs sm:text-sm font-bold transition-colors cursor-pointer"
               >
-                <Trash2 size={14} />
+                <Trash2 size={16} />
                 <span>ล้างเวร</span>
               </button>
 
@@ -652,7 +652,7 @@ export default function ShiftCalendar({
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="px-3 py-2 rounded-xl border border-slate-200 text-slate-600 text-xs font-bold hover:bg-slate-50 cursor-pointer"
+                  className="px-3.5 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-xs sm:text-sm font-bold hover:bg-slate-50 cursor-pointer"
                 >
                   ยกเลิก
                 </button>
@@ -660,9 +660,9 @@ export default function ShiftCalendar({
                   type="button"
                   onClick={handleSaveModal}
                   disabled={isSaving}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-extrabold text-xs shadow-xs active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
+                  className="flex items-center gap-1.5 px-4.5 py-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-extrabold text-xs sm:text-sm shadow-xs active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
                 >
-                  <Check size={14} />
+                  <Check size={16} />
                   <span>{isSaving ? 'กำลังบันทึก...' : 'บันทึก'}</span>
                 </button>
               </div>
