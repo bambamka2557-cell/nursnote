@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Activity, PlusCircle, ListTodo, Calculator, BookOpen, Clock, Heart, ShieldAlert, CheckCircle, Info, Copy } from 'lucide-react';
+import { Activity, PlusCircle, ListTodo, CalendarDays, Calculator, BookOpen, Clock, Heart, ShieldAlert, CheckCircle, Info, Copy } from 'lucide-react';
 
 export default function Header() {
   const pathname = usePathname();
@@ -104,6 +104,14 @@ export default function Header() {
             }`}>
               <ListTodo size={16} />
               <span>คิวงานรวม</span>
+            </Link>
+            <Link href="/schedule" className={`flex items-center gap-1.5 transition-all ${
+              pathname === '/schedule' 
+                ? 'bg-gradient-to-b from-pink-400 to-pink-500 text-white font-black shadow-[0_4px_10px_rgba(244,114,182,0.25)] border-b-3 border-pink-600 px-3 py-1.5 rounded-xl active:translate-y-0.5 active:border-b-0' 
+                : 'bg-white/60 text-slate-700 hover:bg-white hover:text-pink-600 hover:shadow-sm border border-slate-200/50 px-3 py-1.5 rounded-xl active:translate-y-0.5'
+            }`}>
+              <CalendarDays size={16} />
+              <span>ตารางเวร</span>
             </Link>
           </nav>
         </div>

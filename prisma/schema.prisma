@@ -64,3 +64,38 @@ model PushSubscription {
   auth      String
   createdAt DateTime @default(now())
 }
+
+// ข้อมูลตารางเวรแต่ละวัน
+model ShiftSchedule {
+  id        String   @id @default(uuid())
+  date      String   @unique // "YYYY-MM-DD"
+  // เวรของวันนั้นเก็บเป็น "รายเวรย่อย" เพราะสี (ปกติ/OT) แยกอิสระต่อเวรย่อย
+  // source of truth ของการคิดเงิน: array เวรย่อย {code, ot}; วันหยุด(OFF) = [] ว่าง
+  shifts    Json     // [{ "code":"MORNING","ot":false }, { "code":"AFTERNOON","ot":true }]
+  note      String?
+  sticker   String?  // "bow", "cherry", "flower", "kitty", "heart"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// การตั้งค่าอัตราเงินเดือนและค่าเวร
+model NurseSalaryConfig {
+  id                    String   @id @default("default")
+  baseSalary            Float    @default(0)    // เงินเดือนพื้นฐาน
+  ptsAllowance          Float    @default(0)    // ค่า พ.ต.ส.
+  noPrivatePractice     Float    @default(0)    // ค่าไม่ทำเวชฯ / ฉ.11
+  inChargeAllowance     Float    @default(0)    // ค่าหัวหน้าเวร
+  otherAllowance        Float    @default(0)    // ค่าอื่นๆ
+  // --- ค่าเวร (OT): "ตารางเรต" (matrix) เวรย่อย 3 ตัว × สี (normal ดำ / ot แดง) ---
+  // shape: { "MORNING":{"normal":0,"ot":0}, "AFTERNOON":{"normal":0,"ot":0}, "NIGHT":{"normal":0,"ot":0} }
+  shiftRates            Json
+  cycleStartDay         Int      @default(26)   // รอบจ่ายเริ่มวันที่ 26 ของเดือนก่อน → 25 ของเดือนนั้น
+  // --- รายการหัก ---
+  taxDeduction          Float    @default(0)    // ภาษี ณ ที่จ่าย
+  socialSecurity        Float    @default(0)    // ประกันสังคม
+  providentFund         Float    @default(0)    // กบข.
+  coopDeduction         Float    @default(0)    // สหกรณ์ออมทรัพย์
+  otherDeduction        Float    @default(0)    // หักอื่นๆ
+  updatedAt             DateTime @updatedAt
+}
+

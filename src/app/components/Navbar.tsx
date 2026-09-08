@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Activity, ListTodo, PlusCircle } from 'lucide-react';
+import { Activity, ListTodo, PlusCircle, CalendarDays } from 'lucide-react';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -11,10 +11,11 @@ export default function Navbar() {
     { href: '/', label: 'เตียง (Beds)', icon: Activity, activeClass: 'text-pink-500' },
     { href: '/add', label: 'รับใหม่', icon: PlusCircle, activeClass: 'text-sky-400' },
     { href: '/timeline', label: 'คิวงาน (Timeline)', icon: ListTodo, activeClass: 'text-pink-500' },
+    { href: '/schedule', label: 'ตารางเวร', icon: CalendarDays, activeClass: 'text-pink-500' },
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto h-16 glass-nav z-50 grid grid-cols-3 md:hidden">
+    <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto h-16 glass-nav z-50 grid grid-cols-4 md:hidden">
       {navItems.map((item) => {
         const Icon = item.icon;
         const isActive = pathname === item.href;
