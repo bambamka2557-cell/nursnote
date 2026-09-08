@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Activity, PlusCircle, ListTodo, Calculator, BookOpen, Clock, Heart, ShieldAlert, CheckCircle, Info, Copy } from 'lucide-react';
 
@@ -63,7 +64,17 @@ export default function Header() {
     <>
       <header className="sticky top-0 z-40 bg-sky-100/90 backdrop-blur-md border-b border-sky-200/40 px-4 md:px-6 py-3 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-4 md:gap-6">
-          <Link href="/" className="flex items-center gap-2 shrink-0 group">
+          <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
+            <div className="relative w-8 h-8 rounded-lg overflow-hidden shadow-xs border border-pink-200/60 bg-white shrink-0">
+              <Image
+                src="/LOGO_App.png"
+                alt="LR-Helper Logo"
+                width={32}
+                height={32}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                priority
+              />
+            </div>
             <span className="text-lg md:text-xl font-black bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent group-hover:scale-102 transition-transform">LR-Helper</span>
             <span className="text-[9px] uppercase font-extrabold tracking-wider px-1.5 py-0.5 bg-pink-100 text-pink-700 rounded-full border border-pink-200/20">LR</span>
           </Link>
