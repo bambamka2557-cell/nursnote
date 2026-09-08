@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useTransition } from 'react';
 import ShiftCalendar from '@/app/components/ShiftCalendar';
+import WorkLifeBalanceCard from '@/app/components/WorkLifeBalanceCard';
 import SalarySummaryCard from '@/app/components/SalarySummaryCard';
 import SalaryConfigModal from '@/app/components/SalaryConfigModal';
 import {
@@ -105,6 +106,14 @@ export default function ScheduleClient({
           initialMonth={month}
           onShiftUpdated={() => refreshData(year, month)}
           onMonthChange={handleMonthChange}
+        />
+
+        {/* Work-Life Balance & Working Hours Statistics */}
+        <WorkLifeBalanceCard
+          shifts={shifts}
+          year={year}
+          month={month}
+          cycleStartDay={config.cycleStartDay}
         />
 
         {/* Salary Summary Card */}

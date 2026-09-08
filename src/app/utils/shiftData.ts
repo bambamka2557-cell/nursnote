@@ -389,3 +389,260 @@ export function getCycleForDate(dateStr: string, cycleStartDay = 26): {
   };
 }
 
+export type WorkLifeBalanceStatus = 'HEALTHY' | 'MODERATE' | 'HEAVY';
+
+export interface ShiftDistribution {
+  morning: { count: number; hours: number; percentage: number };
+  afternoon: { count: number; hours: number; percentage: number };
+  night: { count: number; hours: number; percentage: number };
+}
+
+export interface WorkLifeBalanceResult {
+  startDate: string;
+  endDate: string;
+  windowText: string;
+  totalCycleDays: number;
+  totalWorkedDays: number;
+  offDaysCount: number;
+  normalHours: number;
+  otHours: number;
+  totalHours: number;
+  totalSubShifts: number;
+  doubleShiftDays: number;
+  maxConsecutiveDays: number;
+  maxConsecutiveNights: number;
+  standardBenchmarkHours: number;
+  hoursPercentageOfBenchmark: number;
+  distribution: ShiftDistribution;
+  status: WorkLifeBalanceStatus;
+  statusLabel: string;
+  statusDesc: string;
+  statusColor: {
+    bg: string;
+    text: string;
+    border: string;
+    badge: string;
+    indicator: string;
+  };
+  wellnessTip: {
+    title: string;
+    message: string;
+    icon: string;
+  };
+}
+
+/**
+ * Calculate nurse Work-Life Balance and Working Hours statistics
+ */
+export function calculateWorkLifeBalance(
+  shifts: DayShiftData[],
+  year: number,
+  month: number,
+  cycleStartDay = 26,
+  mode: 'cycle' | 'month' = 'cycle'
+): WorkLifeBalanceResult {
+  let startDate = '';
+  let endDate = '';
+  let windowText = '';
+
+  if (mode === 'month' || cycleStartDay <= 1) {
+    const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+    const mStr = String(month).padStart(2, '0');
+    startDate = `${year}-${mStr}-01`;
+    endDate = `${year}-${mStr}-${String(daysInMonth).padStart(2, '0')}`;
+    const mShort = THAI_MONTH_NAMES_SHORT[month - 1];
+    const thaiYear = year + 543;
+    windowText = `1 – ${daysInMonth} ${mShort} ${thaiYear}`;
+  } else {
+    const range = getCycleRangeForMonth(year, month, cycleStartDay);
+    startDate = range.startDate;
+    endDate = range.endDate;
+    windowText = formatCycleWindowText(year, month, cycleStartDay);
+  }
+
+  // Filter shifts within range
+  const filtered = (shifts || []).filter((s) => s.date >= startDate && s.date <= endDate);
+  const shiftMap = new Map<string, DayShiftData>();
+  filtered.forEach((s) => shiftMap.set(s.date, s));
+
+  // Generate all dates in range
+  const allDates: string[] = [];
+  const curr = new Date(`${startDate}T00:00:00Z`);
+  const stop = new Date(`${endDate}T00:00:00Z`);
+
+  while (curr <= stop) {
+    allDates.push(curr.toISOString().split('T')[0]);
+    curr.setUTCDate(curr.getUTCDate() + 1);
+  }
+
+  let normalCount = 0;
+  let otCount = 0;
+  let morningCount = 0;
+  let afternoonCount = 0;
+  let nightCount = 0;
+  let doubleShiftDays = 0;
+  let totalWorkedDays = 0;
+
+  let currentStreak = 0;
+  let maxConsecutiveDays = 0;
+
+  let currentNightStreak = 0;
+  let maxConsecutiveNights = 0;
+
+  for (const dateStr of allDates) {
+    const day = shiftMap.get(dateStr);
+    const dayShifts = day?.shifts || [];
+
+    if (dayShifts.length > 0) {
+      totalWorkedDays++;
+      currentStreak++;
+      if (currentStreak > maxConsecutiveDays) {
+        maxConsecutiveDays = currentStreak;
+      }
+
+      let hasNight = false;
+      if (dayShifts.length >= 2) {
+        doubleShiftDays++;
+      }
+
+      for (const s of dayShifts) {
+        if (s.ot) otCount++;
+        else normalCount++;
+
+        if (s.code === 'MORNING') morningCount++;
+        else if (s.code === 'AFTERNOON') afternoonCount++;
+        else if (s.code === 'NIGHT') {
+          nightCount++;
+          hasNight = true;
+        }
+      }
+
+      if (hasNight) {
+        currentNightStreak++;
+        if (currentNightStreak > maxConsecutiveNights) {
+          maxConsecutiveNights = currentNightStreak;
+        }
+      } else {
+        currentNightStreak = 0;
+      }
+    } else {
+      currentStreak = 0;
+      currentNightStreak = 0;
+    }
+  }
+
+  const totalCycleDays = allDates.length;
+  const offDaysCount = Math.max(0, totalCycleDays - totalWorkedDays);
+  const normalHours = normalCount * 8;
+  const otHours = otCount * 8;
+  const totalHours = normalHours + otHours;
+  const totalSubShifts = normalCount + otCount;
+
+  const standardBenchmarkHours = 160;
+  const hoursPercentageOfBenchmark = Math.round((totalHours / standardBenchmarkHours) * 100);
+
+  const distribution: ShiftDistribution = {
+    morning: {
+      count: morningCount,
+      hours: morningCount * 8,
+      percentage: totalSubShifts > 0 ? Math.round((morningCount / totalSubShifts) * 100) : 0,
+    },
+    afternoon: {
+      count: afternoonCount,
+      hours: afternoonCount * 8,
+      percentage: totalSubShifts > 0 ? Math.round((afternoonCount / totalSubShifts) * 100) : 0,
+    },
+    night: {
+      count: nightCount,
+      hours: nightCount * 8,
+      percentage: totalSubShifts > 0 ? Math.round((nightCount / totalSubShifts) * 100) : 0,
+    },
+  };
+
+  let status: WorkLifeBalanceStatus = 'HEALTHY';
+  let statusLabel = 'สมดุลยอดเยี่ยม 🌸';
+  let statusDesc = 'ชั่วโมงทำงานและวันพักผ่อนอยู่ในเกณฑ์สุขภาพดีเยี่ยม';
+  let statusColor = {
+    bg: 'bg-emerald-50/80',
+    text: 'text-emerald-700',
+    border: 'border-emerald-200',
+    badge: 'bg-emerald-100 text-emerald-800',
+    indicator: 'bg-emerald-500',
+  };
+
+  if (totalHours > 200 || doubleShiftDays >= 5 || offDaysCount < 5 || maxConsecutiveDays >= 7) {
+    status = 'HEAVY';
+    statusLabel = 'งานหนักเสี่ยงล้าสะสม ⚠️';
+    statusDesc = 'มีชั่วโมงทำงานหรือเวรควบค่อนข้างสูง ควรหาเวลาพักผ่อนฟื้นฟูร่างกาย';
+    statusColor = {
+      bg: 'bg-rose-50/80',
+      text: 'text-rose-700',
+      border: 'border-rose-200',
+      badge: 'bg-rose-100 text-rose-800',
+      indicator: 'bg-rose-500',
+    };
+  } else if (totalHours > 168 || doubleShiftDays >= 3 || offDaysCount < 8 || maxConsecutiveDays >= 5) {
+    status = 'MODERATE';
+    statusLabel = 'งานค่อนข้างแน่น ⚡';
+    statusDesc = 'ภาระงานปานกลาง-แน่น มีวันพักผ่อนกำลังดี ควรดื่มน้ำและนอนหลับให้เพียงพอ';
+    statusColor = {
+      bg: 'bg-amber-50/80',
+      text: 'text-amber-800',
+      border: 'border-amber-200',
+      badge: 'bg-amber-100 text-amber-900',
+      indicator: 'bg-amber-500',
+    };
+  }
+
+  // Generate personalized wellness advice
+  let wellnessTip = {
+    title: 'เคล็ดลับความสดชื่นประจำวัน ✨',
+    message: 'ดื่มน้ำให้ได้วันละ 2 ลิตร ทานอาหารที่มีโปรตีนและผักผลไม้สด ช่วยให้ร่างกายตื่นตัวและพร้อมดูแลคนไข้เสมอ',
+    icon: '💖',
+  };
+
+  if (nightCount >= 5 || maxConsecutiveNights >= 2) {
+    wellnessTip = {
+      title: 'ฟื้นฟูจังหวะร่างกายหลังกะดึก 🌙',
+      message: 'เดือนนี้มีเวรดึกสะสม แนะนำปรับห้องนอนให้มืดสนิท เลี่ยงคาเฟอีนก่อนนอน 6 ชม. และงีบหลับสั้น 20-30 นาทีเพื่อคืนความสดชื่น',
+      icon: '🌙',
+    };
+  } else if (doubleShiftDays >= 3) {
+    wellnessTip = {
+      title: 'ดูแลกล้ามเนื้อจากเวรควบ 16 ชม. ⚡',
+      message: 'มีเวรควบหลายวัน อย่าลืมยืดเหยียดขาและหลัง ดื่มน้ำบ่อยๆ และสวมถุงน่องซัพพอร์ตเพื่อลดอาการเมื่อยล้าเส้นเลือดขอด',
+      icon: '🧘‍♀️',
+    };
+  } else if (offDaysCount >= 8) {
+    wellnessTip = {
+      title: 'ใช้วันหยุดเติมพลังชีวิต 🏖️',
+      message: 'เดือนนี้มีวันพักผ่อนสมดุลดีมาก เหมาะสำหรับการไปเที่ยว พักผ่อนกับคนที่รัก หรือทำกิจกรรมที่ชอบเพื่อรีชาร์จพลังใจ',
+      icon: '🌸',
+    };
+  }
+
+  return {
+    startDate,
+    endDate,
+    windowText,
+    totalCycleDays,
+    totalWorkedDays,
+    offDaysCount,
+    normalHours,
+    otHours,
+    totalHours,
+    totalSubShifts,
+    doubleShiftDays,
+    maxConsecutiveDays,
+    maxConsecutiveNights,
+    standardBenchmarkHours,
+    hoursPercentageOfBenchmark,
+    distribution,
+    status,
+    statusLabel,
+    statusDesc,
+    statusColor,
+    wellnessTip,
+  };
+}
+
