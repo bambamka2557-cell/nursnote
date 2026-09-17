@@ -121,10 +121,13 @@ export const SHIFT_PATTERNS: ShiftPatternDef[] = [
     shortLabel: 'ด/บ',
     fullLabel: 'ดึก/บ่าย (ด/บ)',
     subShifts: ['NIGHT', 'AFTERNOON'],
-    badgeBg: 'bg-sky-100/95',
-    badgeBorder: 'border-sky-300',
-    badgeTextColor: 'text-sky-800',
-    dotColor: 'bg-sky-500',
+    // NB: this project's globals.css @theme remaps sky-* -> strawberry pink
+    // (and indigo-* -> periwinkle blue). Using emerald here so ด/บ renders a
+    // distinct mint green, not pink that collides with the เช้า (ช) badge.
+    badgeBg: 'bg-emerald-100/95',
+    badgeBorder: 'border-emerald-300',
+    badgeTextColor: 'text-emerald-800',
+    dotColor: 'bg-emerald-500',
   },
   {
     id: 'OFF',

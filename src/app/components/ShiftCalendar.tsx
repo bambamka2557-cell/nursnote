@@ -640,7 +640,7 @@ export default function ShiftCalendar({
             <span>บ/ด</span>
           </div>
           <div className="flex items-center gap-1.5 font-bold">
-            <span className="w-3 h-3 rounded-full bg-sky-500 shadow-2xs" />
+            <span className="w-3 h-3 rounded-full bg-emerald-500 shadow-2xs" />
             <span>ด/บ</span>
           </div>
           <div className="flex items-center gap-1.5 pl-2 sm:pl-3 border-l border-pink-200">
