@@ -639,6 +639,10 @@ export default function ShiftCalendar({
             <span className="w-3 h-3 rounded-full bg-teal-500 shadow-2xs" />
             <span>บ/ด</span>
           </div>
+          <div className="flex items-center gap-1.5 font-bold">
+            <span className="w-3 h-3 rounded-full bg-sky-500 shadow-2xs" />
+            <span>ด/บ</span>
+          </div>
           <div className="flex items-center gap-1.5 pl-2 sm:pl-3 border-l border-pink-200">
             <span className="text-slate-900 font-black">ตัวดำ: ปกติ</span>
             <span className="text-slate-300">|</span>
@@ -743,12 +747,15 @@ export default function ShiftCalendar({
               <div className="grid grid-cols-3 gap-2">
                 {SHIFT_PATTERNS.map((p) => {
                   const isSelected = selectedPatternId === p.id;
+                  const isOff = p.id === 'OFF';
                   return (
                     <button
                       key={p.id}
                       type="button"
                       onClick={() => handleSelectPattern(p.id)}
                       className={`py-2.5 px-2 rounded-xl border text-center transition-all cursor-pointer ${
+                        isOff ? 'col-span-3 py-2' : ''
+                      } ${
                         isSelected
                           ? `${p.badgeBg} ${p.badgeBorder} ring-2 ring-pink-400 font-black shadow-xs scale-102`
                           : 'bg-slate-50 border-slate-200/80 hover:bg-white text-slate-700 font-bold'
@@ -756,11 +763,15 @@ export default function ShiftCalendar({
                     >
                       <div className="flex items-center justify-center gap-1.5">
                         <span className={`w-2.5 h-2.5 rounded-full ${p.dotColor}`} />
-                        <span className="text-sm font-black">{p.code}</span>
+                        <span className="text-sm font-black">
+                          {isOff ? '🌴 วันหยุด (OFF)' : p.code}
+                        </span>
                       </div>
-                      <span className="text-xs text-slate-600 font-bold block truncate mt-0.5">
-                        {p.shortLabel}
-                      </span>
+                      {!isOff && (
+                        <span className="text-xs text-slate-600 font-bold block truncate mt-0.5">
+                          {p.shortLabel}
+                        </span>
+                      )}
                     </button>
                   );
                 })}

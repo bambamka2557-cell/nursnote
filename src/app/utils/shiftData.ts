@@ -15,7 +15,7 @@ export interface DayShiftData {
   sticker?: string | null;
 }
 
-export type ShiftPatternId = 'M' | 'A' | 'N' | 'M_A' | 'A_N' | 'OFF';
+export type ShiftPatternId = 'M' | 'A' | 'N' | 'M_A' | 'A_N' | 'N_A' | 'OFF';
 
 export interface ShiftPatternDef {
   id: ShiftPatternId;
@@ -47,7 +47,7 @@ export const ATOMIC_SHIFTS: Record<AtomicShiftCode, {
     code: 'AFTERNOON',
     shortLabel: 'บ',
     fullLabel: 'เวรบ่าย',
-    timeRange: '16:00 - 24:00',
+    timeRange: '16:00 - 00:00',
     defaultBg: 'bg-purple-100 text-purple-700 border-purple-200',
   },
   NIGHT: {
@@ -114,6 +114,17 @@ export const SHIFT_PATTERNS: ShiftPatternDef[] = [
     badgeBorder: 'border-teal-300',
     badgeTextColor: 'text-teal-800',
     dotColor: 'bg-teal-500',
+  },
+  {
+    id: 'N_A',
+    code: 'N/A',
+    shortLabel: 'ด/บ',
+    fullLabel: 'ดึก/บ่าย (ด/บ)',
+    subShifts: ['NIGHT', 'AFTERNOON'],
+    badgeBg: 'bg-sky-100/95',
+    badgeBorder: 'border-sky-300',
+    badgeTextColor: 'text-sky-800',
+    dotColor: 'bg-sky-500',
   },
   {
     id: 'OFF',
@@ -232,6 +243,8 @@ export function matchShiftPattern(shifts: SubShift[]): ShiftPatternId {
   }
   if (codes.length === 2) {
     if (codes.includes('MORNING') && codes.includes('AFTERNOON')) return 'M_A';
+    if (codes[0] === 'NIGHT' && codes[1] === 'AFTERNOON') return 'N_A';
+    if (codes[0] === 'AFTERNOON' && codes[1] === 'NIGHT') return 'A_N';
     if (codes.includes('AFTERNOON') && codes.includes('NIGHT')) return 'A_N';
   }
   return 'OFF';
@@ -242,7 +255,10 @@ export function matchShiftPattern(shifts: SubShift[]): ShiftPatternId {
  */
 export function getDayShiftDisplay(shifts: SubShift[]) {
   const patternId = matchShiftPattern(shifts);
-  const pattern = SHIFT_PATTERNS.find(p => p.id === patternId) || SHIFT_PATTERNS[5];
+  const pattern =
+    SHIFT_PATTERNS.find((p) => p.id === patternId) ||
+    SHIFT_PATTERNS.find((p) => p.id === 'OFF') ||
+    SHIFT_PATTERNS[0];
 
   return {
     patternId,

@@ -259,7 +259,7 @@ export default function WorkLifeBalanceCard({
             <span className="text-[10px] text-slate-400 block mt-0.5 truncate">
               {stats.doubleShiftDays === 0
                 ? 'ไม่มีเวรควบ ยอดเยี่ยม'
-                : `ช/บ หรือ บ/ด (${stats.doubleShiftDays * 16} ชม.)`}
+                : `ช/บ, บ/ด, ด/บ (${stats.doubleShiftDays * 16} ชม.)`}
             </span>
           </div>
 
