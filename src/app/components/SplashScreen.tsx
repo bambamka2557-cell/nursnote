@@ -23,11 +23,22 @@ export default function SplashScreen() {
     }
   }, [show]);
 
-  // Auto-transition after 2 seconds on initial launch
+  // Check session storage on mount — only show once per browser session
   useEffect(() => {
+    try {
+      if (sessionStorage.getItem('lr_splash_shown') === '1') {
+        setShow(false);
+        return;
+      }
+      sessionStorage.setItem('lr_splash_shown', '1');
+    } catch {
+      // Ignore storage errors in restricted iframe/incognito
+    }
+
+    // Auto-transition after 1.2s on initial launch (reduced from 2s for better LCP)
     const autoTimer = setTimeout(() => {
       setIsFading(true);
-    }, 2000);
+    }, 1200);
 
     return () => clearTimeout(autoTimer);
   }, []);

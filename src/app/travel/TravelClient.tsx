@@ -165,8 +165,8 @@ export default function TravelClient({ initialMonth }: TravelClientProps) {
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
-            {currentMonthData.spots.map((spot) => (
-              <TravelSpotCard key={spot.id} spot={spot} />
+            {currentMonthData.spots.map((spot, idx) => (
+              <TravelSpotCard key={spot.id} spot={spot} isPriority={idx === 0} />
             ))}
           </div>
         </div>
@@ -187,7 +187,13 @@ export default function TravelClient({ initialMonth }: TravelClientProps) {
 }
 
 // Single Travel Spot Card Component with Smart Offline Image Fallback
-function TravelSpotCard({ spot }: { spot: TravelSpot }) {
+function TravelSpotCard({
+  spot,
+  isPriority = false,
+}: {
+  spot: TravelSpot;
+  isPriority?: boolean;
+}) {
   const [imgError, setImgError] = useState(false);
   const [imgLoading, setImgLoading] = useState(true);
   const [isOnline, setIsOnline] = useState(true);
@@ -235,7 +241,8 @@ function TravelSpotCard({ spot }: { spot: TravelSpot }) {
             <img
               src={spot.imageUrl}
               alt={spot.name}
-              loading="lazy"
+              loading={isPriority ? 'eager' : 'lazy'}
+              fetchPriority={isPriority ? 'high' : 'auto'}
               onLoad={() => setImgLoading(false)}
               onError={() => {
                 setImgLoading(false);
