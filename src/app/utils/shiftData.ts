@@ -41,21 +41,21 @@ export const ATOMIC_SHIFTS: Record<AtomicShiftCode, {
     shortLabel: 'ช',
     fullLabel: 'เวรเช้า',
     timeRange: '08:00 - 16:00',
-    defaultBg: 'bg-[#f6efed] text-[#732637] border-[#e4d8d5]',
+    defaultBg: 'bg-[#fdf2f8] text-[#db2777] border-[#fbcfe8]',
   },
   AFTERNOON: {
     code: 'AFTERNOON',
     shortLabel: 'บ',
     fullLabel: 'เวรบ่าย',
     timeRange: '16:00 - 00:00',
-    defaultBg: 'bg-[#f4f0f6] text-[#5e4768] border-[#e2dbe6]',
+    defaultBg: 'bg-[#f5f3ff] text-[#7c3aed] border-[#ddd6fe]',
   },
   NIGHT: {
     code: 'NIGHT',
     shortLabel: 'ด',
     fullLabel: 'เวรดึก',
     timeRange: '00:00 - 08:00',
-    defaultBg: 'bg-[#eef1f5] text-[#425069] border-[#dbe0e8]',
+    defaultBg: 'bg-[#eef2ff] text-[#4f46e5] border-[#c7d2fe]',
   },
 };
 
@@ -66,10 +66,10 @@ export const SHIFT_PATTERNS: ShiftPatternDef[] = [
     shortLabel: 'ช',
     fullLabel: 'เช้า (ช)',
     subShifts: ['MORNING'],
-    badgeBg: 'bg-[#f6efed]',
-    badgeBorder: 'border-[#e4d8d5]',
+    badgeBg: 'bg-[#fdf2f8]',
+    badgeBorder: 'border-[#fbcfe8]',
     badgeTextColor: 'text-[#1d1d1f]',
-    dotColor: 'bg-[#b85d70]',
+    dotColor: 'bg-[#ec4899]',
   },
   {
     id: 'A',
@@ -77,10 +77,10 @@ export const SHIFT_PATTERNS: ShiftPatternDef[] = [
     shortLabel: 'บ',
     fullLabel: 'บ่าย (บ)',
     subShifts: ['AFTERNOON'],
-    badgeBg: 'bg-[#f6efed]',
-    badgeBorder: 'border-[#e4d8d5]',
+    badgeBg: 'bg-[#f5f3ff]',
+    badgeBorder: 'border-[#ddd6fe]',
     badgeTextColor: 'text-[#1d1d1f]',
-    dotColor: 'bg-[#8a6d96]',
+    dotColor: 'bg-[#8b5cf6]',
   },
   {
     id: 'N',
@@ -88,10 +88,10 @@ export const SHIFT_PATTERNS: ShiftPatternDef[] = [
     shortLabel: 'ด',
     fullLabel: 'ดึก (ด)',
     subShifts: ['NIGHT'],
-    badgeBg: 'bg-[#f6efed]',
-    badgeBorder: 'border-[#e4d8d5]',
+    badgeBg: 'bg-[#eef2ff]',
+    badgeBorder: 'border-[#c7d2fe]',
     badgeTextColor: 'text-[#1d1d1f]',
-    dotColor: 'bg-[#5b6b88]',
+    dotColor: 'bg-[#4f46e5]',
   },
   {
     id: 'M_A',
@@ -99,10 +99,10 @@ export const SHIFT_PATTERNS: ShiftPatternDef[] = [
     shortLabel: 'ช/บ',
     fullLabel: 'เช้า/บ่าย (ช/บ)',
     subShifts: ['MORNING', 'AFTERNOON'],
-    badgeBg: 'bg-[#f6efed]',
-    badgeBorder: 'border-[#e4d8d5]',
+    badgeBg: 'bg-[#fffbeb]',
+    badgeBorder: 'border-[#fde68a]',
     badgeTextColor: 'text-[#1d1d1f]',
-    dotColor: 'bg-[#c4843d]',
+    dotColor: 'bg-[#f59e0b]',
   },
   {
     id: 'A_N',
@@ -110,10 +110,10 @@ export const SHIFT_PATTERNS: ShiftPatternDef[] = [
     shortLabel: 'บ/ด',
     fullLabel: 'บ่าย/ดึก (บ/ด)',
     subShifts: ['AFTERNOON', 'NIGHT'],
-    badgeBg: 'bg-[#f6efed]',
-    badgeBorder: 'border-[#e4d8d5]',
+    badgeBg: 'bg-[#f0fdfa]',
+    badgeBorder: 'border-[#99f6e4]',
     badgeTextColor: 'text-[#1d1d1f]',
-    dotColor: 'bg-[#4d827a]',
+    dotColor: 'bg-[#14b8a6]',
   },
   {
     id: 'N_A',
@@ -121,13 +121,10 @@ export const SHIFT_PATTERNS: ShiftPatternDef[] = [
     shortLabel: 'ด/บ',
     fullLabel: 'ดึก/บ่าย (ด/บ)',
     subShifts: ['NIGHT', 'AFTERNOON'],
-    // NB: this project's globals.css @theme remaps sky-* -> strawberry pink
-    // (and indigo-* -> periwinkle blue). Using emerald here so ด/บ renders a
-    // distinct mint green, not pink that collides with the เช้า (ช) badge.
-    badgeBg: 'bg-[#f6efed]',
-    badgeBorder: 'border-[#e4d8d5]',
+    badgeBg: 'bg-[#ecfdf5]',
+    badgeBorder: 'border-[#a7f3d0]',
     badgeTextColor: 'text-[#1d1d1f]',
-    dotColor: 'bg-[#558263]',
+    dotColor: 'bg-[#10b981]',
   },
   {
     id: 'OFF',
@@ -135,10 +132,10 @@ export const SHIFT_PATTERNS: ShiftPatternDef[] = [
     shortLabel: 'OFF',
     fullLabel: 'วันหยุด (OFF)',
     subShifts: [],
-    badgeBg: 'bg-[#f4f0ef]/80',
-    badgeBorder: 'border-[#e6dedc]',
-    badgeTextColor: 'text-[#8e8886]',
-    dotColor: 'bg-[#b5aba8]',
+    badgeBg: 'bg-[#f4f1ea]/85',
+    badgeBorder: 'border-[#ece7dd]',
+    badgeTextColor: 'text-[#8e8e93]',
+    dotColor: 'bg-[#c7c2b8]',
   },
 ];
 
@@ -295,8 +292,6 @@ export function calculateDayShiftAllowance(shifts: SubShift[], rates: ShiftRateM
  * E.g. month=8, cycleStartDay=26 -> '2026-07-26' to '2026-08-25'
  */
 export function getCycleRangeForMonth(year: number, month: number, cycleStartDay = 26): { startDate: string; endDate: string } {
-  // Guard against non-integer input — a fractional day would build a malformed
-  // date string (e.g. "2026-07-26.5") that silently drops the 26th from the range.
   cycleStartDay = Math.floor(cycleStartDay) || 26;
   if (cycleStartDay <= 1) {
     const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
@@ -616,7 +611,6 @@ export function calculateWorkLifeBalance(
     };
   }
 
-  // Generate personalized wellness advice
   let wellnessTip = {
     title: 'เคล็ดลับความสดชื่นประจำวัน',
     message: 'ดื่มน้ำให้ได้วันละ 2 ลิตร ทานอาหารที่มีโปรตีนและผักผลไม้สด ช่วยให้ร่างกายตื่นตัวและพร้อมดูแลคนไข้เสมอ',
@@ -667,4 +661,3 @@ export function calculateWorkLifeBalance(
     wellnessTip,
   };
 }
-

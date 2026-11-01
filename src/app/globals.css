@@ -1,156 +1,107 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-prompt), sans-serif;
+  /*
+   * SunNotes "Warm Calm Tonal" Surface + Vibrant Rose & Multi-Color Chips:
+   * - Surfaces & borders use SunNotes' clean warm cream (#faf8f4, #f4f1ea, #ece7dd)
+   *   so the screen is bright, warm, and never muddy or neon-glaring.
+   * - Accents (pink-500/600, rose-500/600, indigo-500/600) are vibrant and cheerful
+   *   like SunNotes' category chips (#ec4899, #f43f5e, #4f46e5, #10b981, #d99a00).
+   */
+  --color-pink-50: #faf8f4;
+  --color-pink-100: #f4f1ea;
+  --color-pink-200: #ece7dd;
+  --color-pink-300: #f9a8d4;
+  --color-pink-400: #f472b6;
+  --color-pink-500: #ec4899;
+  --color-pink-600: #db2777;
+  --color-pink-700: #be185d;
+  --color-pink-800: #9d174d;
+  --color-pink-900: #831843;
 
-  /* Warm Calm Rose-Cream Palette (SunNotes Tonal equivalent in Warm Pink/Rosewood — zero neon pastel glare) */
-  --color-pink-50: #faf6f5;   /* Warm paper blush-cream (matches SunNotes #faf8f4) */
-  --color-pink-100: #f3ecea;  /* Warm stone-blush container (matches SunNotes #f4f1ea) */
-  --color-pink-200: #e8dfdc;  /* Soft warm stone-taupe border (matches SunNotes #ece7dd) */
-  --color-pink-300: #d6c5c1;  /* Strong warm border (matches SunNotes #ddd6c8) */
-  --color-pink-400: #b85d70;  /* Muted dusty rose */
-  --color-pink-500: #a63e54;  /* Primary Deep Rosewood (matches SunNotes #1b5cad contrast) */
-  --color-pink-600: #8e3246;  /* Deep Rosewood hover (matches SunNotes #0a3a78) */
-  --color-pink-700: #732637;  /* Deep Rosewood ink */
-  --color-pink-800: #591d2b;
-  --color-pink-900: #421520;
+  --color-rose-50: #fff1f2;
+  --color-rose-100: #ffe4e6;
+  --color-rose-200: #fecdd3;
+  --color-rose-300: #fda4af;
+  --color-rose-400: #fb7185;
+  --color-rose-500: #f43f5e;
+  --color-rose-600: #e11d48;
+  --color-rose-700: #be123c;
+  --color-rose-800: #9f1239;
+  --color-rose-900: #881337;
 
-  /* Warm Brick / Terracotta Rose for Holidays, Sunday & OT */
-  --color-rose-50: #f9f1ef;
-  --color-rose-100: #f2e2de;
-  --color-rose-200: #e4cbc5;
-  --color-rose-300: #d1a399;
-  --color-rose-400: #bf6558;
-  --color-rose-500: #b84239;  /* Warm brick red (matches SunNotes urgent ink) */
-  --color-rose-600: #a3332b;  /* Deep brick red for OT */
-  --color-rose-700: #822720;
-  --color-rose-800: #661f19;
-  --color-rose-900: #4d1713;
+  --color-indigo-50: #eef2ff;
+  --color-indigo-100: #e0e7ff;
+  --color-indigo-200: #c7d2fe;
+  --color-indigo-400: #818cf8;
+  --color-indigo-500: #4f46e5;
+  --color-indigo-600: #4338ca;
+  --color-indigo-700: #3730a3;
 
-  /* Muted Slate-Blue & Warm Neutral Accents */
-  --color-indigo-50: #f4f5f7;
-  --color-indigo-100: #e6e9ef;
-  --color-indigo-200: #cfd5e2;
-  --color-indigo-300: #adb7cc;
-  --color-indigo-400: #7e8da8;
-  --color-indigo-500: #5b6b88;
-  --color-indigo-600: #485670;
-  --color-indigo-700: #394459;
+  --color-sky-50: #f0f9ff;
+  --color-sky-100: #e0f2fe;
+  --color-sky-200: #bae6fd;
+  --color-sky-500: #0ea5e9;
+  --color-sky-600: #0284c7;
 
-  --color-sky-50: #faf6f5;
-  --color-sky-100: #f3ecea;
-  --color-sky-200: #e8dfdc;
-  --color-sky-300: #d6c5c1;
-  --color-sky-400: #b85d70;
-  --color-sky-500: #a63e54;
-  --color-sky-600: #8e3246;
+  --font-sans: var(--font-prompt), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 :root {
-  /* Warm Calm Rose-Cream base */
-  --background: #faf6f5;
+  --background: #faf8f4;
   --foreground: #1d1d1f;
-
-  --primary: #a63e54;
-  --primary-hover: #8e3246;
-  --primary-foreground: #ffffff;
-
-  --secondary: #b85d70;
-  --secondary-hover: #a63e54;
-
-  --accent: #c98a2c;
-
-  --card: #ffffff;
-  --card-border: #e8dfdc;
-  --shadow-sm: 0 1px 3px 0 rgba(29, 29, 31, 0.04);
-  --shadow-md: 0 4px 12px -2px rgba(29, 29, 31, 0.06);
-  --shadow-lg: 0 12px 24px -4px rgba(29, 29, 31, 0.08);
+  --card-border: #ece7dd;
+  --accent-pink: #ec4899;
 }
 
-html {
-  overscroll-behavior: none;
-  overscroll-behavior-y: none;
-  -webkit-overscroll-behavior: none;
-  touch-action: pan-x pan-y;
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-  scrollbar-gutter: stable;
+/* Lock body scroll when any modal / drawer is open (supports conditional breakpoint attribute) */
+body:has([data-scroll-lock]:not([data-scroll-lock="1024"])) {
+  overflow: hidden;
+}
+@media (max-width: 1023px) {
+  body:has([data-scroll-lock="1024"]) {
+    overflow: hidden;
+  }
+}
+
+/* Suppress iOS Safari long-press callout preview on navigation buttons & links */
+aside a,
+aside button,
+header a,
+header button {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-  overscroll-behavior: none;
-  overscroll-behavior-y: none;
-  -webkit-overscroll-behavior: none;
-  overflow-x: clip;
-  touch-action: manipulation;
+  font-family: var(--font-prompt), sans-serif;
+  min-height: 100vh;
 }
 
-/* Prevent iOS Safari long-press URL preview popup and text selection on buttons/links */
-a,
-button,
-[role="button"] {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
-[data-scroll-lock],
-[data-scroll-lock] * {
-  overscroll-behavior: contain;
-}
-
-/* Horizontal scroll strips without a visible scrollbar */
-.no-scrollbar {
-  scrollbar-width: none;
-}
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-input[type="date"],
-input[type="time"] {
-  -webkit-appearance: none;
-  appearance: none;
-  min-width: 0;
-  width: 100%;
-}
-
-/* Header border in warm stone-taupe */
-header {
-  border-bottom: 1px solid #e8dfdc !important;
-}
-
-/* Subtle Warm Scrollbar (matches SunNotes custom-scroll) */
+/* Custom cute scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #f4f1ea;
 }
 ::-webkit-scrollbar-thumb {
-  background: #d8ccc8;
+  background: #ddd6c8;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #b8a6a0;
+  background: #ec4899;
 }
 
-/* Pulse Animation for Overdue */
-@keyframes soft-pulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.85;
-    transform: scale(0.985);
-  }
+/* Custom utility for hiding scrollbars on horizontal tabs */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
-
-.pulse-overdue {
-  animation: soft-pulse 2s infinite ease-in-out;
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

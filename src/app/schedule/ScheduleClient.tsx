@@ -135,7 +135,7 @@ export default function ScheduleClient({
       {onClosePanel && (
         <div className="flex items-center justify-between gap-2 rounded-2xl border border-[#e8dfdc] bg-white px-3.5 py-2.5 shadow-2xs">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#f6eaec] text-[#a63e54]">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#ec4899] text-white">
               <BarChart3 size={15} />
             </span>
             <div className="min-w-0">
@@ -152,7 +152,7 @@ export default function ScheduleClient({
                 onClosePanel();
                 setActiveView('overview');
               }}
-              className="rounded-lg border border-[#e8dfdc] bg-[#faf6f5] px-2.5 py-1 text-[11px] font-semibold text-[#a63e54] hover:bg-[#f3ecea] transition-colors cursor-pointer"
+              className="rounded-lg border border-[#fbcfe8] bg-[#fdf2f8] px-2.5 py-1 text-[11px] font-semibold text-[#ec4899] hover:bg-[#fce7f3] transition-colors cursor-pointer"
             >
               ขยายเต็มจอ
             </button>
@@ -309,7 +309,7 @@ export default function ScheduleClient({
           onClick={() => setRightDrawerOpen(false)}
         />
         <aside
-          className={`absolute inset-y-0 right-0 w-[360px] max-w-[92vw] overflow-y-auto bg-[#faf6f5] border-l border-[#e8dfdc] p-3 pt-[calc(0.75rem+env(safe-area-inset-top,0px))] pb-[max(1rem,env(safe-area-inset-bottom,0px))] rounded-l-2xl shadow-xl transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          className={`absolute inset-y-0 right-0 w-[360px] max-w-[92vw] overflow-y-auto bg-[#faf8f4] border-l border-[#ece7dd] p-3 pt-[calc(0.75rem+env(safe-area-inset-top,0px))] pb-[max(1rem,env(safe-area-inset-bottom,0px))] rounded-l-2xl shadow-xl transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
             rightDrawerOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
