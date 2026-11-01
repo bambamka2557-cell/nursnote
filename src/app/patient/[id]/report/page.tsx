@@ -75,14 +75,14 @@ export default async function HandoverReport({ params }: { params: Promise<{ id:
   const handleDischarge = async () => {
     'use server';
     await dischargePatient(patient.id);
-    redirect('/');
+    redirect('/beds');
   };
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 pb-20">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Link href="/" className="p-2 hover:bg-slate-100 rounded-lg text-slate-500 transition-all">
+        <Link href="/beds" className="p-2 hover:bg-slate-100 rounded-lg text-slate-500 transition-all">
           <ChevronLeft size={20} />
         </Link>
         <div>

@@ -68,6 +68,7 @@ export async function saveShift(data: {
       },
     });
 
+    revalidatePath('/');
     revalidatePath('/schedule');
     return { success: true };
   } catch (error) {
@@ -87,6 +88,7 @@ export async function deleteShift(date: string): Promise<{ success: boolean; err
       },
     });
 
+    revalidatePath('/');
     revalidatePath('/schedule');
     return { success: true };
   } catch (error) {

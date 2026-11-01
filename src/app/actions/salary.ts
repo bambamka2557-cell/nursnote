@@ -103,6 +103,7 @@ export async function saveSalaryConfig(data: Partial<NurseSalaryConfigData>): Pr
       },
     });
 
+    revalidatePath('/');
     revalidatePath('/schedule');
     return { success: true };
   } catch (error) {

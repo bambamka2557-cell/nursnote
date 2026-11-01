@@ -46,6 +46,10 @@ html {
   overscroll-behavior: none;
   overscroll-behavior-y: none;
   -webkit-overscroll-behavior: none;
+  touch-action: pan-x pan-y;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -54,12 +58,31 @@ body {
   overscroll-behavior: none;
   overscroll-behavior-y: none;
   -webkit-overscroll-behavior: none;
-  /* iOS standalone PWA (manifest "display": "standalone") reintroduces the
-     old double-tap-to-zoom gesture recognizer, which delays every tap ~300ms
-     while it waits to see if a second tap is coming — feels like buttons
-     need pressing twice. This disables that gesture so taps register
-     immediately. */
+  overflow-x: clip;
   touch-action: manipulation;
+}
+
+/* Prevent iOS Safari long-press URL preview popup and text selection on buttons/links */
+a,
+button,
+[role="button"] {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+[data-scroll-lock],
+[data-scroll-lock] * {
+  overscroll-behavior: contain;
+}
+
+/* Horizontal scroll strips without a visible scrollbar */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 /* iOS Safari renders type="date"/type="time" with its own native chrome,

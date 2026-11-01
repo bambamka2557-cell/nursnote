@@ -143,7 +143,7 @@ export default function AddPatient() {
         initialNote,
         orders: parsedOrders,
       });
-      router.push('/');
+      router.push('/beds');
     } catch (error) {
       console.error(error);
       alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
@@ -155,7 +155,7 @@ export default function AddPatient() {
     <div className="max-w-2xl mx-auto space-y-6 pb-20">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Link href="/" className="p-2 hover:bg-slate-100 rounded-lg text-slate-500 transition-all">
+        <Link href="/beds" className="p-2 hover:bg-slate-100 rounded-lg text-slate-500 transition-all">
           <ChevronLeft size={22} />
         </Link>
         <div>

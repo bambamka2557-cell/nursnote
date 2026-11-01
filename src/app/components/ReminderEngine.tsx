@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { Bell, BellRing, BellOff } from 'lucide-react';
 import { format } from 'date-fns';
 import { getPatients } from '../actions/patient';
@@ -19,6 +20,7 @@ const REFIRE_MS = 5 * 60 * 1000;
 type Perm = 'default' | 'granted' | 'denied' | 'unsupported';
 
 export default function ReminderEngine() {
+  const pathname = usePathname();
   const [perm, setPerm] = useState<Perm>('default');
   // key -> last-fired-at ms, so a still-due order can re-alert after REFIRE_MS
   // instead of being silenced forever after the first beep.
@@ -181,7 +183,13 @@ export default function ReminderEngine() {
     }
   };
 
-  if (perm === 'unsupported') return null;
+  const isBedRoute =
+    pathname.startsWith('/beds') ||
+    pathname.startsWith('/timeline') ||
+    pathname.startsWith('/add') ||
+    pathname.startsWith('/patient');
+
+  if (!isBedRoute || perm === 'unsupported') return null;
 
   if (perm !== 'granted') {
     return (

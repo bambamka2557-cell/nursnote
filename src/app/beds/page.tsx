@@ -1,0 +1,178 @@
+import { getPatients } from '../actions/patient';
+import Link from 'next/link';
+import { Clock, CheckCircle2, AlertCircle, Plus, BedDouble } from 'lucide-react';
+import { differenceInMinutes, addMinutes } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
+
+const format = (date: Date | number, fmt: string) => formatInTimeZone(date, 'Asia/Bangkok', fmt);
+
+export const dynamic = 'force-dynamic';
+
+export default async function BedsDashboard() {
+  const patients = await getPatients();
+
+  if (patients.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4 py-8">
+        <div className="w-16 h-16 rounded-2xl bg-white border border-pink-200/80 shadow-xs flex items-center justify-center text-3xl mb-4 text-pink-500">
+          <BedDouble size={32} />
+        </div>
+
+        <h2 className="text-xl sm:text-2xl font-black bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">
+          เตียงผู้ป่วยห้องคลอด (LR)
+        </h2>
+        <p className="font-semibold text-slate-700 mt-2">ยังไม่มีผู้ป่วยในระบบ</p>
+        <p className="text-xs text-slate-500 mt-1 max-w-xs">
+          กดปุ่มด้านล่างเพื่อรับผู้ป่วยใหม่และเริ่มต้นการติดตามรอบยาและการประเมิน
+        </p>
+
+        <Link
+          href="/add"
+          className="mt-6 px-6 py-3.5 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200 flex items-center gap-2 transition-all duration-200 active:scale-95"
+        >
+          <Plus size={20} />
+          รับผู้ป่วยใหม่
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+            แผงควบคุมเตียง
+          </h1>
+          <p className="text-xs text-slate-500 mt-0.5">
+            ติดตามสถานะความเร่งด่วนและรอบการดูแลของแต่ละเตียง
+          </p>
+        </div>
+
+        <Link
+          href="/add"
+          className="p-2.5 bg-white hover:bg-pink-50 text-pink-600 rounded-xl shadow-xs border border-pink-200/60 transition-all active:scale-95 flex items-center gap-1.5 text-xs font-bold"
+          title="รับผู้ป่วยใหม่"
+        >
+          <Plus size={18} />
+          <span className="hidden sm:inline">รับใหม่</span>
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {patients.map((patient) => {
+          let nextTask: { name: string; time: string; minutesLeft: number } | null = null;
+          let minMinutesLeft = Infinity;
+
+          for (const order of patient.orders) {
+            if (!order.intervalMinutes) continue;
+
+            const lastEvent = order.eventLogs[0];
+            const startTime = lastEvent ? lastEvent.doneAt : order.startTime;
+
+            const nextDueTime = addMinutes(startTime, order.intervalMinutes);
+            const minutesLeft = differenceInMinutes(nextDueTime, new Date());
+
+            if (minutesLeft < minMinutesLeft) {
+              minMinutesLeft = minutesLeft;
+              nextTask = {
+                name: order.name,
+                time: format(nextDueTime, 'HH:mm'),
+                minutesLeft,
+              };
+            }
+          }
+
+          let cardBorder = 'border-slate-100';
+          let statusBg = 'bg-emerald-50 text-emerald-700';
+          let statusLabel = 'ปกติ';
+          let pulseClass = '';
+
+          if (nextTask) {
+            if (nextTask.minutesLeft < 0) {
+              cardBorder = 'border-rose-200 bg-rose-50/20';
+              statusBg = 'bg-rose-500 text-white';
+              statusLabel = 'เลยเวลา!';
+              pulseClass = 'pulse-overdue';
+            } else if (nextTask.minutesLeft <= 15) {
+              cardBorder = 'border-amber-200 bg-amber-50/10';
+              statusBg = 'bg-amber-100 text-amber-800';
+              statusLabel = 'ใกล้ถึงเวลา';
+            } else {
+              cardBorder = 'border-slate-100 bg-white';
+              statusBg = 'bg-indigo-50 text-indigo-700';
+              statusLabel = 'คิวต่อไป';
+            }
+          } else {
+            cardBorder = 'border-slate-100 bg-white';
+            statusBg = 'bg-slate-100 text-slate-600';
+            statusLabel = 'ไม่มีงาน';
+          }
+
+          return (
+            <Link key={patient.id} href={`/patient/${patient.id}/report`} className="block">
+              <div
+                className={`border rounded-2xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] active:scale-[0.99] ${cardBorder} ${pulseClass}`}
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs uppercase font-extrabold tracking-wider px-2 py-0.5 bg-indigo-100 text-indigo-800 rounded-md border border-indigo-200/50">
+                        BED {patient.bedNumber}
+                      </span>
+                      <span className="font-semibold text-slate-800 text-lg">{patient.nickname}</span>
+                    </div>
+                    {patient.dx && (
+                      <p className="text-xs text-slate-500 mt-2 line-clamp-1 bg-slate-50 p-1.5 rounded-lg border border-slate-100/50">
+                        <span className="font-medium text-slate-700">Dx:</span> {patient.dx}
+                      </p>
+                    )}
+                  </div>
+
+                  <span className={`text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full ${statusBg}`}>
+                    {statusLabel}
+                  </span>
+                </div>
+
+                <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between text-sm">
+                  {nextTask ? (
+                    <div className="flex items-center gap-2">
+                      {nextTask.minutesLeft < 0 ? (
+                        <AlertCircle size={16} className="text-rose-500" />
+                      ) : (
+                        <Clock size={16} className="text-indigo-500" />
+                      )}
+                      <span className="font-bold text-slate-800">{nextTask.time} น.</span>
+                      <span className="text-slate-500 truncate max-w-[180px]">- {nextTask.name}</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 text-emerald-600 font-medium">
+                      <CheckCircle2 size={16} />
+                      <span>ไม่มีงานรออยู่</span>
+                    </div>
+                  )}
+
+                  {nextTask && (
+                    <span
+                      className={`text-xs font-semibold ${
+                        nextTask.minutesLeft < 0
+                          ? 'text-rose-600 font-bold'
+                          : nextTask.minutesLeft <= 15
+                          ? 'text-amber-600'
+                          : 'text-slate-400'
+                      }`}
+                    >
+                      {nextTask.minutesLeft < 0
+                        ? `ช้ากว่ากำหนด ${Math.abs(nextTask.minutesLeft)} น.`
+                        : `อีก ${nextTask.minutesLeft} น.`}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

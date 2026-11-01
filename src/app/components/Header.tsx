@@ -24,12 +24,13 @@ import Sidebar from './Sidebar';
 // Page title shown in the top bar. /schedule and /travel return null because
 // those pages portal their own controls into #topbar-slot.
 function getPageTitle(pathname: string): string | null {
-  if (pathname.startsWith('/schedule')) return null;
+  if (pathname === '/' || pathname.startsWith('/schedule')) return null;
   if (pathname.startsWith('/travel')) return null;
   if (pathname.startsWith('/add')) return 'รับผู้ป่วยใหม่';
   if (pathname.startsWith('/timeline')) return 'คิวงานรวม';
   if (pathname.startsWith('/patient')) return 'รายงานผู้ป่วย';
-  return 'เตียงทั้งหมด';
+  if (pathname.startsWith('/beds')) return 'เตียงทั้งหมด';
+  return null;
 }
 
 export default function Header() {

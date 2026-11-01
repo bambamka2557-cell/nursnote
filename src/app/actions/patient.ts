@@ -70,6 +70,7 @@ export async function addPatient(data: {
   });
   
   revalidatePath('/');
+  revalidatePath('/beds');
   revalidatePath('/timeline');
   return patient;
 }
@@ -77,5 +78,6 @@ export async function addPatient(data: {
 export async function dischargePatient(id: string) {
   await prisma.patient.delete({ where: { id } });
   revalidatePath('/');
+  revalidatePath('/beds');
   revalidatePath('/timeline');
 }

@@ -61,13 +61,15 @@ export default function TravelClient({ initialMonth }: TravelClientProps) {
   const topbarControls = (
     <div className="flex items-center justify-between gap-2 w-full">
       <div className="flex items-center gap-2.5 min-w-0">
-        <Link
-          href="/schedule"
+        <button
+          type="button"
+          onClick={() => router.push('/')}
+          onContextMenu={(e) => e.preventDefault()}
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-pink-50 hover:bg-pink-100 text-pink-600 font-black text-xs transition-all border border-pink-200/80 active:scale-95 cursor-pointer shrink-0"
         >
           <ChevronLeft size={15} />
           <span>กลับตารางเวร</span>
-        </Link>
+        </button>
 
         <div className="flex items-center gap-2 min-w-0">
           <span className="w-7 h-7 rounded-xl bg-sky-50 border border-sky-200/80 text-sky-600 inline-flex items-center justify-center shrink-0">
@@ -215,13 +217,15 @@ export default function TravelClient({ initialMonth }: TravelClientProps) {
 
         {/* Bottom Return to Schedule Button */}
         <div className="pt-6 pb-4 text-center">
-          <Link
-            href="/schedule"
+          <button
+            type="button"
+            onClick={() => router.push('/')}
+            onContextMenu={(e) => e.preventDefault()}
             className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-black text-sm shadow-md shadow-pink-200 transition-all active:scale-95 cursor-pointer"
           >
             <ChevronLeft size={18} />
             <span>กลับไปเช็คตารางเวร & วางแผนวันหยุด</span>
-          </Link>
+          </button>
         </div>
       </div>
     </div>

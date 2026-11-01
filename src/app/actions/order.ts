@@ -19,6 +19,7 @@ export async function logEvent(
   });
 
   revalidatePath('/');
+  revalidatePath('/beds');
   revalidatePath('/timeline');
   revalidatePath(`/patient/[id]/report`);
 }
@@ -29,6 +30,7 @@ export async function discontinueOrder(orderId: string) {
   });
   
   revalidatePath('/');
+  revalidatePath('/beds');
   revalidatePath('/timeline');
   revalidatePath(`/patient/[id]/report`);
 }
