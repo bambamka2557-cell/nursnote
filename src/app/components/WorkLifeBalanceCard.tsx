@@ -20,6 +20,7 @@ import {
   calculateWorkLifeBalance,
   WorkLifeBalanceResult,
 } from '@/app/utils/shiftData';
+import { WellnessThemeIcon } from './ThemeIcons';
 
 interface WorkLifeBalanceCardProps {
   shifts: DayShiftData[];
@@ -118,7 +119,7 @@ export default function WorkLifeBalanceCard({
           className={`p-3 sm:p-3.5 rounded-2xl border flex items-center justify-between gap-2.5 transition-all ${stats.statusColor.bg} ${stats.statusColor.border}`}
         >
           <div className="flex items-center gap-2.5">
-            <span className="text-xl sm:text-2xl">{stats.wellnessTip.icon}</span>
+            <WellnessThemeIcon iconKey={stats.wellnessTip.icon} size={18} />
             <div>
               <div className="flex items-center gap-2">
                 <span className={`text-xs sm:text-sm font-black ${stats.statusColor.text}`}>
@@ -231,8 +232,18 @@ export default function WorkLifeBalanceCard({
               </span>
               <span className="text-xs text-slate-400">วัน</span>
             </div>
-            <span className="text-[10px] text-slate-400 block mt-0.5 truncate">
-              {stats.offDaysCount >= 8 ? '✅ พักผ่อนเพียงพอ' : '⚠️ วันพักค่อนข้างน้อย'}
+            <span className="text-[10px] text-slate-500 flex items-center gap-1 mt-0.5 truncate">
+              {stats.offDaysCount >= 8 ? (
+                <>
+                  <CheckCircle2 size={11} className="text-emerald-500 shrink-0" />
+                  <span>พักผ่อนเพียงพอ</span>
+                </>
+              ) : (
+                <>
+                  <AlertTriangle size={11} className="text-amber-500 shrink-0" />
+                  <span>วันพักค่อนข้างน้อย</span>
+                </>
+              )}
             </span>
           </div>
 
@@ -288,7 +299,7 @@ export default function WorkLifeBalanceCard({
             <div className="p-3 rounded-2xl bg-white border border-pink-100 shadow-2xs space-y-2">
               <div className="flex items-center justify-between text-xs font-extrabold text-slate-700">
                 <span className="flex items-center gap-1">
-                  <span>สัดส่วนเวร เช้า 🌸 / บ่าย 🍇 / ดึก 🌙</span>
+                  <span>สัดส่วนเวร เช้า / บ่าย / ดึก</span>
                 </span>
                 <span className="text-xs text-slate-500 font-bold">
                   ทำงานติดกันสูงสุด {stats.maxConsecutiveDays} วัน
@@ -345,7 +356,7 @@ export default function WorkLifeBalanceCard({
 
             {/* Personalized Wellness Tip for Nurse */}
             <div className="p-3 rounded-2xl bg-gradient-to-r from-pink-50/70 via-rose-50/50 to-pink-50/70 border border-pink-200/60 flex items-start gap-2.5">
-              <span className="text-xl sm:text-2xl mt-0.5">{stats.wellnessTip.icon}</span>
+              <WellnessThemeIcon iconKey={stats.wellnessTip.icon} size={18} />
               <div>
                 <h4 className="text-xs sm:text-sm font-black text-pink-700">
                   {stats.wellnessTip.title}

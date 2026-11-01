@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { addPatient } from '../actions/patient';
 import { PRESET_MEDICATIONS, PRESET_ASSESSMENTS } from '@/app/utils/drugData';
-import { AlertTriangle, ChevronLeft, Save, Plus, Trash2, Clock, Info } from 'lucide-react';
+import { AlertTriangle, ChevronLeft, Save, Plus, Trash2, Clock, Info, Baby, Zap, Stethoscope, Pill, Activity } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 
@@ -232,7 +232,7 @@ export default function AddPatient() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Category 1: Tocolytic */}
             <div className="space-y-1.5 p-3.5 bg-pink-50/10 border border-pink-100/30 rounded-2xl">
-              <label className="text-xs font-bold text-pink-700 block">👶 ยาระงับครรภ์ & ลดความดัน (Tocolytics & Anti-HT)</label>
+              <label className="text-xs font-bold text-pink-700 flex items-center gap-1.5"><Baby size={14} className="text-pink-500" /> ยาระงับครรภ์ & ลดความดัน (Tocolytics & Anti-HT)</label>
               <select 
                 onChange={e => {
                   toggleMedicationPreset(e.target.value);
@@ -254,7 +254,7 @@ export default function AddPatient() {
 
             {/* Category 2: Induction */}
             <div className="space-y-1.5 p-3.5 bg-indigo-50/10 border border-indigo-100/30 rounded-2xl">
-              <label className="text-xs font-bold text-indigo-700 block">⚡ ยาเร่งคลอด & ชักนำคลอด (Induction of Labor)</label>
+              <label className="text-xs font-bold text-indigo-700 flex items-center gap-1.5"><Zap size={14} className="text-indigo-500" /> ยาเร่งคลอด & ชักนำคลอด (Induction of Labor)</label>
               <select 
                 onChange={e => {
                   toggleMedicationPreset(e.target.value);
@@ -276,7 +276,7 @@ export default function AddPatient() {
 
             {/* Category 3: Pre-op */}
             <div className="space-y-1.5 p-3.5 bg-sky-50/10 border border-sky-100/30 rounded-2xl">
-              <label className="text-xs font-bold text-sky-700 block">🏥 ยาเตรียมก่อนส่งผ่าตัด OR (Pre-op & OR Prep)</label>
+              <label className="text-xs font-bold text-sky-700 flex items-center gap-1.5"><Stethoscope size={14} className="text-sky-500" /> ยาเตรียมก่อนส่งผ่าตัด OR (Pre-op & OR Prep)</label>
               <select 
                 onChange={e => {
                   toggleMedicationPreset(e.target.value);
@@ -298,7 +298,7 @@ export default function AddPatient() {
 
             {/* Category 4: General */}
             <div className="space-y-1.5 p-3.5 bg-slate-50/30 border border-slate-100/50 rounded-2xl">
-              <label className="text-xs font-bold text-slate-600 block">💊 ยาทั่วไป & ยาปฏิชีวนะ (General & Antibiotics)</label>
+              <label className="text-xs font-bold text-slate-600 flex items-center gap-1.5"><Pill size={14} className="text-slate-500" /> ยาทั่วไป & ยาปฏิชีวนะ (General & Antibiotics)</label>
               <select 
                 onChange={e => {
                   toggleMedicationPreset(e.target.value);
@@ -320,7 +320,7 @@ export default function AddPatient() {
 
             {/* Category 5: Assessments */}
             <div className="space-y-1.5 p-3.5 bg-emerald-50/10 border border-emerald-100/30 rounded-2xl md:col-span-2">
-              <label className="text-xs font-bold text-emerald-700 block">🔍 การเฝ้าระวังและการประเมิน (Assessments)</label>
+              <label className="text-xs font-bold text-emerald-700 flex items-center gap-1.5"><Activity size={14} className="text-emerald-500" /> การเฝ้าระวังและการประเมิน (Assessments)</label>
               <select 
                 onChange={e => {
                   toggleAssessmentPreset(e.target.value);

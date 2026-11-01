@@ -54,7 +54,7 @@ export default function RootLayout({
         <Header />
 
         {/* Content column — shifted right of the pinned side menu on lg+ */}
-        <div className="flex flex-1 flex-col min-w-0 lg:pl-64">
+        <div className="flex flex-1 flex-col min-w-0 lg:pl-[var(--left-sidebar-w,16rem)] transition-[padding-left] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]">
           {/* Top spacer matching fixed Header height + safe area inset */}
           <div className="h-[calc(3.5rem+env(safe-area-inset-top,0px))] shrink-0" />
 

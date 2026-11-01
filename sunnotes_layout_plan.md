@@ -1,51 +1,42 @@
-# แผนงาน: ปรับโครงหน้าแอปให้เหมือน SunNotes (สีคงธีมชมพูเดิม)
+# แผนงานปรับโฉมหน้าตารางเวรและโครงสร้างหน้าจอแบบ SunNotes (ธีมชมพูพาสเทล LR-Helper)
 
-> สถานะ: **เสร็จสมบูรณ์** (2026-11-01) · บิลด์ผ่าน 0 errors (`npm run build`)
-> หลัก: **เติมไม่รื้อ** · แตะเฉพาะหน้าจอ (UI) — **ไม่แตะฐานข้อมูล / Schema / server action**
+**วันที่อัปเดตล่าสุด:** 1 พ.ย. 2569  
+**ผู้รับผิดชอบ:** Antigravity  
+**สถานะ:** ดำเนินการเสร็จสมบูรณ์และตรวจสอบผ่าน (`npm run build` 0 errors)
 
-## สิ่งที่ผู้ใช้ตัดสินใจแล้ว (grill-me 2026-11-01)
-1. ทำทั้งหน้า `/schedule` แบบ SunNotes: เมนูข้าง + แถบบน + ปฏิทิน + แผงขวา · **สีไม่ต้องตาม SunNotes** (คงชมพูพาสเทล)
-2. เมนูข้างใช้ **ทั้งแอป** — แทนเมนูบนแถบบนเดิมทุกหน้า
-3. จอ ≥1024px (`lg`) = เมนูข้างติดค้างซ้าย 256px · จอเล็กกว่า = ปุ่ม ☰ เปิดเมนูข้างเป็นแผ่น (แสดงทันที ไม่มีสไลด์) · **เอาเมนูล่างมือถือ (Navbar) ออก**
-4. เนื้อหาเมนูข้าง: โลโก้ + LR-Helper → ปุ่มใหญ่ "+ รับผู้ป่วยใหม่" → เมนู เตียงทั้งหมด / คิวงานรวม / ตารางเวร / ที่เที่ยว → เครื่องมือ คำนวณ GA / คู่มือ LR → ล่างสุด สถานะฐานข้อมูล · **ไม่มีปฏิทินเล็ก**
-5. แผงขวาเฉพาะ `/schedule`: การ์ดสมดุลชีวิต + สรุปเงินเดือน (โหมดวันหยุด = การ์ดสรุปวันหยุด) · แถบบนหน้านี้ = ☰ · ชื่อเดือน · [วันนี้ ‹ ›] · แท็บ [ตารางเวร | วันหยุด] · ปุ่มที่เที่ยว · หน้าอื่น แถบบน = ☰ + ชื่อหน้า
-6. ระบบใช้งานจริงแล้ว — **ห้ามทำให้ข้อมูลผู้ใช้หาย**
+---
 
-## ความปลอดภัยของข้อมูล
-- ไม่แก้ `prisma/schema.prisma`, `src/app/actions/*`, `src/app/utils/shiftData.ts`
-- `ShiftCalendar`: คงตรรกะ `saveShift` / `deleteShift` / OT แดง-ดำ / ลำดับเวรย่อย (ห้าม sort/reverse) / คีย์ `localStorage` `lr_calendar_mode` เหมือนเดิมทุกตัวอักษร — เปลี่ยนเฉพาะ JSX/className
-- Modal บันทึกเวรคงเดิม (เพิ่มแค่ `data-scroll-lock` ให้พื้นหลังนิ่ง)
+## 1. เป้าหมายหลัก (Scope & Intent)
+ปรับปรุงโครงสร้างหน้าจอ (`AppShell`) และปฏิทินตารางเวร (`/schedule`) รวมถึงหน้าที่เที่ยว (`/travel`) ให้มีเลย์เอาต์และการใช้งานเหมือน **SunNotes** (`Brain/16-sunnotes-design-system.md` และ `Brain/templates/sunnotes-kit/reference/AppShell.tsx`) โดย **คงโทนสีชมพูพาสเทลเดิมของ LR-Helper** (`#fff5f7`, `#fdf4f6`, ชมพู-โรส) และ **ห้ามแตะต้องลอจิกคำนวณเงินเดือน/ชั่วโมงเวร หรือข้อมูลตารางเวรในฐานข้อมูลเด็ดขาด**
 
-## ไฟล์ที่แก้
-| ไฟล์ | สิ่งที่ทำ |
-| :--- | :--- |
-| `src/app/components/Sidebar.tsx` (ใหม่) | เมนูข้าง ใช้ทั้งแบบติดค้าง (lg) และแบบแผ่นบนมือถือ |
-| `src/app/components/ScrollLock.tsx` (ใหม่) | คัดจาก `Brain/templates/mobile-kit/ScrollLock.tsx` — ล็อกพื้นหลังเมื่อมี `data-scroll-lock` |
-| `src/app/components/Header.tsx` | แถบบนใหม่: ☰ (lg:hidden) + ชื่อหน้า + ช่อง `#topbar-slot` · ย้ายปุ่ม GA/คู่มือไปเมนูข้าง (modal GA/คู่มือยังอยู่ไฟล์นี้ เนื้อหาไม่แตะ) · `lg:left-64` |
-| `src/app/layout.tsx` | ครอบเนื้อหาด้วย `lg:pl-64` · เอา `<Navbar />` และ `pb-28` ออก · ใส่ `<ScrollLock />` |
-| `src/app/components/ShiftCalendar.tsx` | ส่วนหัว (ชื่อเดือน/นำทาง/แท็บ/ที่เที่ยว) ส่งขึ้นแถบบนด้วย `createPortal` ไป `#topbar-slot` · บนมือถือแท็บ+ที่เที่ยวอยู่แถวบนของการ์ด · ตารางวันแบบ SunNotes |
-| `src/app/schedule/ScheduleClient.tsx` | เอาแบนเนอร์หัวหน้าออก · จอ ≥1280px (`xl`) วาง 2 คอลัมน์ ปฏิทิน + แผงขวา 360px · จอเล็กกว่าเรียงลงเหมือนเดิม |
-| `src/app/components/Navbar.tsx` | ไม่ลบไฟล์ แค่เลิกใช้ (ย้อนกลับง่าย) |
+---
 
-## สเปกปฏิทินแบบ SunNotes (สีชมพู)
-- การ์ดเดียว `rounded-2xl border border-pink-100 bg-white shadow-sm overflow-hidden` · ตารางมีเส้นคั่น ไม่มีช่องว่างระหว่างช่อง
-- หัวตาราง `bg-pink-50/60`: ชื่อวันไทย (มือถือ `อา จ …` / sm+ `อาทิตย์ จันทร์ …`) + ชื่อย่ออังกฤษ `SUN MON …` ตัวเล็กสีจาง · อาทิตย์สีแดง
-- ช่องวัน `min-h-[76px] sm:min-h-[96px]` · เลขวันมุมซ้ายบน · นอกเดือน = พื้นจาง ตัวจาง
-- วันนี้ = ช่องพื้นชมพูอ่อน + กรอบใน + เลขในวงกลมชมพู + ป้าย "วันนี้" (sm+)
-- วันที่ 1 แสดง "1 พ.ย." · ชี้แล้วมี "+" มุมขวา (เฉพาะจอที่มีเมาส์ และช่องที่ไม่มีสติกเกอร์)
-- เวร = ป้ายเต็มความกว้างใต้เลขวัน (สีตามรูปแบบเวรเดิม, ตัวดำปกติ/ตัวแดง OT เดิม) · โน้ต = แถบซ้ายชมพู ตัวเล็ก
-- โหมดวันหยุด: เลขแดง + ชื่อวันหยุดตัวเล็กสีแดง + ป้าย "ได้หยุด" / "เวร: …" เหมือนเดิม
-- คำอธิบายสัญลักษณ์ย้ายเป็นแถบล่างในการ์ด
+## 2. รายการที่ดำเนินการเสร็จสิ้น (รวมรายการปรับแก้เพิ่มเติม)
 
-## เกณฑ์เสร็จ
-- [x] `npm run build` ผ่าน 0 error (ครบ 8 หน้า)
-- [x] มือถือ 375px: ปุ่ม ☰ เปิดเมนูข้างแบบแผ่น (แสดงทันที), `ScrollLock` ล็อกพื้นหลังนิ่งเมื่อเปิดเมนูหรือหน้าต่างตั้งค่า
-- [x] จอคอม (`lg+` / `xl+`): เมนูข้างติดค้างซ้าย 256px + ปฏิทินตารางเวรแบบ SunNotes + แผงขวาสรุปเงินเดือนและสมดุลชีวิต
-- [x] แก้ `scripts/verify_shift_salary.mjs` ไม่ให้เขียนทับ `NurseSalaryConfig` หรือวันจริงในฐานข้อมูลอีกต่อไป
-- [x] commit & push ขึ้น `main`
+1. **แถบด้านบน (Top Bar) แนบสนิท ไม่ลอย (`Header.tsx`, `layout.tsx`, `TravelClient.tsx`)**
+   - เปลี่ยนแถบด้านบนเป็นพื้นขาวทึบ (`bg-white border-b border-pink-100/90`) แนบชิดขอบบนและเชื่อมต่อกับแถบซ้าย/ขวาอย่างเป็นเนื้อเดียวกัน
+   - นำแถบหัวข้อแบบลอย (`sticky top-2`) ในหน้า `/travel` ออก และย้ายปุ่ม `[< กลับตารางเวร]` + ชื่อเดือนขึ้นไปอยู่ใน `#topbar-slot` บนแถบด้านบนโดยตรง
 
-## บันทึกความคืบหน้า
-- 2026-11-01 14:15 — เขียนแผน เริ่มลงมือ
-- 2026-11-01 14:21 — สร้าง `Sidebar.tsx`, `ScrollLock.tsx`, ปรับ `Header.tsx`, `layout.tsx`, `ShiftCalendar.tsx`, `ScheduleClient.tsx`, `WorkLifeBalanceCard.tsx` เสร็จแล้ว
-- 2026-11-01 14:23 — `npm run build` ผ่าน 0 errors และปรับสคริปต์ตรวจ `scripts/verify_shift_salary.mjs` ให้ไม่เขียนทับค่าตั้งเงินเดือนจริง
+2. **แยกส่วนสรุปเงินเดือนและชั่วโมงทำงานออกจากด้านล่างปฏิทิน (`ShiftCalendar.tsx`)**
+   - นำการ์ดสรุปเงินเดือน (`SalarySummaryCard`), การ์ดสมดุลชีวิต (`WorkLifeBalanceCard`) และการ์ดสรุปวันหยุด (`HolidaySummaryCard`) ออกจากด้านล่างตารางปฏิทินทั้งหมด เพื่อให้หน้าปฏิทินแสดงตารางเวรเต็มพื้นที่เหมือน SunNotes
+   - เพิ่มการเข้าถึงข้อมูลสรุป 2 รูปแบบ:
+     - **แท็บ `[ภาพรวม]` บนแถบด้านบน**: สลับมุมมองเป็นแดชบอร์ดสรุปค่าตอบแทน + ชั่วโมงทำงาน + วันหยุดราชการแบบเต็มหน้าจอ
+     - **แถบด้านขวา (Right Panel)**: เปิดดูสรุปค่าตอบแทนและสมดุลชีวิตควบคู่ไปกับตารางปฏิทินด้านซ้ายได้ทันที
 
+3. **พับเก็บแถบซ้าย (Left Sidebar) และแถบขวา (Right Panel) พร้อมแอนิเมชันยืด-หดนุ่มนวล (`Sidebar.tsx`, `Header.tsx`, `ShiftCalendar.tsx`)**
+   - แถบซ้าย (`Sidebar.tsx`): พับ/กางได้ด้วยปุ่ม `PanelLeftClose` / `PanelLeftOpen` โดยใช้ `transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden` ครอบกล่องความกว้างคงที่ `w-64` และซิงก์ตัวแปร `--left-sidebar-w` ทำให้เนื้อหาหลักขยายตามอย่างลื่นไหล ไม่กระพริบและข้อความไม่หดซ้อนกัน
+   - แถบขวา (`ShiftCalendar.tsx`): พับ/กางได้ด้วยปุ่ม `PanelRightClose` / `PanelRightOpen` บนแถบด้านบน ใช้ `transition-[width,margin] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden` ครอบกล่องความกว้างคงที่ `w-[368px]` (บนมือถือเปิดเป็นลิ้นชักเลื่อนจากขวาอย่างนุ่มนวล)
+
+4. **เปลี่ยนอีโมจิธรรมดาทั้งหมดเป็นไอคอนสัญลักษณ์ประจำธีม (`ThemeIcons.tsx` และทุกคอมโพเนนต์)**
+   - สร้าง [`src/app/components/ThemeIcons.tsx`](file:///c:/Users/rttuser/Project_Atthanop/lr-helper__/src/app/components/ThemeIcons.tsx) รวมไอคอนเวกเตอร์โทนพาสเทล (`StickerThemeIcon`, `HolidayThemeIcon`, `WellnessThemeIcon`, `ShiftAtomicIcon`, `TravelThemeIcon`)
+   - แทนที่อีโมจิ Unicode ธรรมดาทั้งหมดใน `ShiftCalendar.tsx`, `WorkLifeBalanceCard.tsx`, `SalarySummaryCard.tsx`, `SalaryConfigModal.tsx`, `HolidaySummaryCard.tsx`, `TravelClient.tsx`, `Header.tsx`, `Sidebar.tsx`, `page.tsx`, `add/page.tsx` และ `shiftData.ts`
+
+5. **ล็อกพื้นหลังนิ่งเมื่อเปิดหน้าต่าง Modal (`ScrollLock.tsx`)**
+   - ติดตั้ง `ScrollLock.tsx` ใน `src/app/layout.tsx` และใส่ `data-scroll-lock` ให้ทุก Modal/Drawer
+
+---
+
+## 3. การตรวจสอบ (Verification)
+- รัน `npm run build` (Prisma generate + TypeScript + Next.js 16 production build) ผ่าน **0 errors** (ครบทั้ง 8 routes)
+- ตรวจสอบข้อมูลตารางเวรในฐานข้อมูล (`ShiftSchedule` 60 รายการของเดือน ก.ย. และ พ.ย. 2569) อยู่ครบถ้วน 100%
+- เปิดเซิร์ฟเวอร์พัฒนา (`http://localhost:3000/schedule` และ `http://localhost:3000/travel`) ตอบกลับ `200 OK`

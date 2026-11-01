@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { NurseSalaryConfigData } from '@/app/utils/shiftData';
+import { ShiftAtomicIcon } from './ThemeIcons';
 import { saveSalaryConfig } from '@/app/actions/salary';
 import { Settings, Save, X, Coins, Shield, Calendar, DollarSign } from 'lucide-react';
 
@@ -165,7 +166,10 @@ export default function SalaryConfigModal({
             <div className="grid grid-cols-3 gap-2.5 pt-1">
               {/* MORNING */}
               <div className="bg-white/80 border border-pink-100/80 p-3 rounded-xl space-y-2 text-center shadow-xs">
-                <span className="font-extrabold text-pink-600 block text-xs">🌸 เวรเช้า (ช)</span>
+                <span className="font-extrabold text-pink-600 flex items-center justify-center gap-1 text-xs">
+                  <ShiftAtomicIcon code="MORNING" size={13} />
+                  <span>เวรเช้า (ช)</span>
+                </span>
                 <div className="space-y-1.5 text-left">
                   <div>
                     <label className="text-[10px] text-slate-500 font-medium block">ปกติ (ดำ)</label>
@@ -194,7 +198,10 @@ export default function SalaryConfigModal({
 
               {/* AFTERNOON */}
               <div className="bg-white/80 border border-purple-100/80 p-3 rounded-xl space-y-2 text-center shadow-xs">
-                <span className="font-extrabold text-purple-600 block text-xs">🍇 เวรบ่าย (บ)</span>
+                <span className="font-extrabold text-purple-600 flex items-center justify-center gap-1 text-xs">
+                  <ShiftAtomicIcon code="AFTERNOON" size={13} />
+                  <span>เวรบ่าย (บ)</span>
+                </span>
                 <div className="space-y-1.5 text-left">
                   <div>
                     <label className="text-[10px] text-slate-500 font-medium block">ปกติ (ดำ)</label>
@@ -223,7 +230,10 @@ export default function SalaryConfigModal({
 
               {/* NIGHT */}
               <div className="bg-white/80 border border-indigo-100/80 p-3 rounded-xl space-y-2 text-center shadow-xs">
-                <span className="font-extrabold text-indigo-600 block text-xs">🌙 เวรดึก (ด)</span>
+                <span className="font-extrabold text-indigo-600 flex items-center justify-center gap-1 text-xs">
+                  <ShiftAtomicIcon code="NIGHT" size={13} />
+                  <span>เวรดึก (ด)</span>
+                </span>
                 <div className="space-y-1.5 text-left">
                   <div>
                     <label className="text-[10px] text-slate-500 font-medium block">ปกติ (ดำ)</label>

@@ -2,16 +2,32 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { Calculator, BookOpen, Clock, Heart, ShieldAlert, CheckCircle, Info, Copy, Menu } from 'lucide-react';
+import {
+  Calculator,
+  BookOpen,
+  Heart,
+  ShieldAlert,
+  CheckCircle,
+  CheckCircle2,
+  AlertTriangle,
+  MessageCircle,
+  Building2,
+  Info,
+  Copy,
+  Menu,
+  PanelLeftClose,
+  PanelLeftOpen,
+  X,
+} from 'lucide-react';
 import Sidebar from './Sidebar';
 
-// Page title shown in the top bar. /schedule returns null because the
-// calendar portals its own month title + navigation into #topbar-slot.
+// Page title shown in the top bar. /schedule and /travel return null because
+// those pages portal their own controls into #topbar-slot.
 function getPageTitle(pathname: string): string | null {
   if (pathname.startsWith('/schedule')) return null;
+  if (pathname.startsWith('/travel')) return null;
   if (pathname.startsWith('/add')) return 'รับผู้ป่วยใหม่';
   if (pathname.startsWith('/timeline')) return 'คิวงานรวม';
-  if (pathname.startsWith('/travel')) return 'ที่เที่ยวประจำเดือน';
   if (pathname.startsWith('/patient')) return 'รายงานผู้ป่วย';
   return 'เตียงทั้งหมด';
 }
@@ -20,8 +36,34 @@ export default function Header() {
   const pathname = usePathname();
   const pageTitle = getPageTitle(pathname);
 
-  // Side menu sheet (tablet / mobile)
+  // Desktop left sidebar collapse state (lg+)
+  const [leftCollapsed, setLeftCollapsed] = useState(false);
+  // Tablet / mobile drawer state (< lg)
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // Sync saved desktop sidebar state from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('lr_left_collapsed');
+      if (saved === 'true') {
+        setLeftCollapsed(true);
+        document.documentElement.style.setProperty('--left-sidebar-w', '0rem');
+      } else {
+        document.documentElement.style.setProperty('--left-sidebar-w', '16rem');
+      }
+    } catch {}
+  }, []);
+
+  const toggleLeftCollapsed = () => {
+    setLeftCollapsed((prev) => {
+      const next = !prev;
+      document.documentElement.style.setProperty('--left-sidebar-w', next ? '0rem' : '16rem');
+      try {
+        localStorage.setItem('lr_left_collapsed', String(next));
+      } catch {}
+      return next;
+    });
+  };
 
   useEffect(() => {
     if (!drawerOpen) return;
@@ -57,11 +99,8 @@ export default function Header() {
     today.setHours(0, 0, 0, 0);
     edc.setHours(0, 0, 0, 0);
 
-    // Difference in days
     const diffTime = edc.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    // Days of pregnancy today (280 days is full term)
     const pregnancyDays = 280 - diffDays;
 
     if (pregnancyDays < 0 || pregnancyDays > 300) {
@@ -85,60 +124,93 @@ export default function Header() {
 
   return (
     <>
-      {/* Top bar (SunNotes layout): ☰ · page title · page slot (/schedule puts
-          its month navigation here via a portal into #topbar-slot) */}
-      <header className="fixed top-0 left-0 right-0 lg:left-64 z-40 h-[calc(3.5rem+env(safe-area-inset-top,0px))] pt-[env(safe-area-inset-top,0px)] bg-[#fff6f8]/95 border-b border-pink-100 px-2.5 sm:px-4 md:px-5 flex items-center gap-1.5 sm:gap-3">
+      {/* Top bar (SunNotes solid white top bar, flush with sidebar & content) */}
+      <header className="fixed top-0 left-0 right-0 lg:left-[var(--left-sidebar-w,16rem)] z-40 h-[calc(3.5rem+env(safe-area-inset-top,0px))] pt-[env(safe-area-inset-top,0px)] bg-white border-b border-pink-100/90 px-2.5 sm:px-4 flex items-center gap-2 sm:gap-3 transition-[left] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]">
+        {/* Mobile/Tablet menu button (< lg) */}
         <button
           type="button"
           onClick={() => setDrawerOpen(true)}
-          className="lg:hidden shrink-0 rounded-lg p-2 text-slate-600 transition-colors hover:bg-pink-100/60 hover:text-slate-900 cursor-pointer"
+          className="lg:hidden shrink-0 inline-flex h-9 w-9 items-center justify-center rounded-xl border border-pink-100 bg-white text-slate-600 transition-colors hover:bg-pink-50 hover:text-pink-600 cursor-pointer shadow-2xs active:scale-95"
           aria-label="เปิดเมนู"
         >
-          <Menu size={20} />
+          <Menu size={18} />
+        </button>
+
+        {/* Desktop sidebar collapse/expand button (lg+, matches SunNotes top-left toggle) */}
+        <button
+          type="button"
+          onClick={toggleLeftCollapsed}
+          className="hidden lg:inline-flex shrink-0 h-9 w-9 items-center justify-center rounded-xl border border-pink-100 bg-white text-slate-600 transition-colors hover:bg-pink-50 hover:text-pink-600 cursor-pointer shadow-2xs active:scale-95"
+          title={leftCollapsed ? 'ขยายเมนูด้านซ้าย' : 'พับเมนูด้านซ้าย'}
+          aria-label={leftCollapsed ? 'ขยายเมนูด้านซ้าย' : 'พับเมนูด้านซ้าย'}
+        >
+          {leftCollapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
         </button>
 
         {pageTitle && (
-          <h1 className="min-w-0 truncate text-base sm:text-lg font-semibold text-slate-800">{pageTitle}</h1>
+          <h1 className="min-w-0 truncate text-base sm:text-lg font-bold text-slate-800">
+            {pageTitle}
+          </h1>
         )}
 
         <div id="topbar-slot" className="flex min-w-0 flex-1 items-center gap-2" />
       </header>
 
-      {/* Side menu — pinned on desktop */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r border-pink-100 lg:block">
+      {/* Side menu — desktop (lg+) width-animated without content reflow/flicker */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-30 hidden lg:block overflow-hidden transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          leftCollapsed ? 'w-0' : 'w-64'
+        }`}
+      >
         <Sidebar
           pathname={pathname}
           onOpenGa={() => setGaOpen(true)}
           onOpenGuide={() => setGuideOpen(true)}
+          onCollapse={toggleLeftCollapsed}
         />
       </aside>
 
-      {/* Side menu — sheet on tablet / mobile (shows instantly, no slide) */}
-      {drawerOpen && (
-        <div className="fixed inset-0 z-[90] lg:hidden" data-scroll-lock="1024">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setDrawerOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 w-72 max-w-[85vw] overflow-hidden rounded-r-2xl shadow-xl">
-            <Sidebar
-              pathname={pathname}
-              onNavigate={() => setDrawerOpen(false)}
-              onClose={() => setDrawerOpen(false)}
-              onOpenGa={() => setGaOpen(true)}
-              onOpenGuide={() => setGuideOpen(true)}
-            />
-          </aside>
-        </div>
-      )}
+      {/* Side menu — tablet / mobile (< lg) smooth slide-over sheet */}
+      <div
+        className={`fixed inset-0 z-[90] lg:hidden transition-opacity duration-300 ${
+          drawerOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        {...(drawerOpen ? { 'data-scroll-lock': '1024' } : {})}
+      >
+        <div
+          className="absolute inset-0 bg-slate-900/40"
+          onClick={() => setDrawerOpen(false)}
+        />
+        <aside
+          className={`absolute inset-y-0 left-0 w-64 max-w-[85vw] overflow-hidden rounded-r-2xl shadow-xl transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            drawerOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+        >
+          <Sidebar
+            pathname={pathname}
+            onNavigate={() => setDrawerOpen(false)}
+            onClose={() => setDrawerOpen(false)}
+            onOpenGa={() => setGaOpen(true)}
+            onOpenGuide={() => setGuideOpen(true)}
+          />
+        </aside>
+      </div>
 
       {/* Global GA Calculator Modal */}
       {gaOpen && (
         <div className="fixed inset-0 bg-slate-900/50 z-[100] flex items-center justify-center p-4" data-scroll-lock>
-          <div className="bg-white w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-200 text-slate-800">
+          <div className="bg-white w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-4 text-slate-800 border border-pink-100">
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
                 <Calculator size={18} className="text-indigo-500" />
                 <h3 className="font-extrabold text-base text-slate-900">เครื่องคำนวณอายุครรภ์ (GA)</h3>
               </div>
-              <button onClick={() => setGaOpen(false)} className="text-slate-400 hover:text-slate-600 font-bold p-1">✕</button>
+              <button
+                onClick={() => setGaOpen(false)}
+                className="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center cursor-pointer"
+              >
+                <X size={16} />
+              </button>
             </div>
 
             <div className="space-y-4">
@@ -161,7 +233,11 @@ export default function Header() {
                   {calculatedGa !== 'วันที่ไม่ถูกต้อง' && (
                     <button
                       onClick={handleCopyGa}
-                      className={`p-2.5 rounded-lg border transition-all flex items-center justify-center gap-1 active:scale-95 ${copied ? 'bg-emerald-500 border-emerald-500 text-white' : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-600'}`}
+                      className={`p-2.5 rounded-lg border transition-all flex items-center justify-center gap-1 active:scale-95 ${
+                        copied
+                          ? 'bg-emerald-500 border-emerald-500 text-white'
+                          : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-600'
+                      }`}
                       title="คัดลอกเพื่อนำไปกรอกลง Dx"
                     >
                       {copied ? <CheckCircle size={15} /> : <Copy size={15} />}
@@ -175,7 +251,7 @@ export default function Header() {
             <div className="text-center pt-2">
               <button
                 onClick={() => setGaOpen(false)}
-                className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition-all active:scale-95"
+                className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition-all active:scale-95 cursor-pointer"
               >
                 เสร็จสิ้น
               </button>
@@ -187,7 +263,7 @@ export default function Header() {
       {/* Global LR Guidelines Modal */}
       {guideOpen && (
         <div className="fixed inset-0 bg-slate-900/50 z-[100] flex items-center justify-center p-4" data-scroll-lock>
-          <div className="bg-white w-full max-w-2xl rounded-2xl p-5 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200 text-slate-800">
+          <div className="bg-white w-full max-w-2xl rounded-2xl p-5 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto text-slate-800 border border-pink-100">
             <div className="flex justify-between items-start border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
                 <BookOpen size={20} className="text-pink-600" />
@@ -196,38 +272,53 @@ export default function Header() {
                   <p className="text-xs text-slate-400">เกณฑ์การดูแลรักษาและการเฝ้าระวังความปลอดภัยหญิงตั้งครรภ์</p>
                 </div>
               </div>
-              <button onClick={() => setGuideOpen(false)} className="text-slate-400 hover:text-slate-600 font-bold p-1">✕</button>
+              <button
+                onClick={() => setGuideOpen(false)}
+                className="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center cursor-pointer"
+              >
+                <X size={16} />
+              </button>
             </div>
 
             {/* Tab selection buttons */}
             <div className="flex flex-wrap gap-1.5 border-b border-slate-100 pb-2">
               <button
                 onClick={() => setActiveTab('triage')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === 'triage' ? 'bg-pink-100 text-pink-700 font-extrabold shadow-sm' : 'hover:bg-slate-50 text-slate-500'}`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === 'triage' ? 'bg-pink-100 text-pink-700 font-extrabold shadow-sm' : 'hover:bg-slate-50 text-slate-500'
+                }`}
               >
                 แรกรับ Admit/Obs
               </button>
               <button
                 onClick={() => setActiveTab('mgso4')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === 'mgso4' ? 'bg-pink-100 text-pink-700 font-extrabold shadow-sm' : 'hover:bg-slate-50 text-slate-500'}`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === 'mgso4' ? 'bg-pink-100 text-pink-700 font-extrabold shadow-sm' : 'hover:bg-slate-50 text-slate-500'
+                }`}
               >
                 การเฝ้าระวัง MgSO4
               </button>
               <button
                 onClick={() => setActiveTab('tocolytic')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === 'tocolytic' ? 'bg-pink-100 text-pink-700 font-extrabold shadow-sm' : 'hover:bg-slate-50 text-slate-500'}`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === 'tocolytic' ? 'bg-pink-100 text-pink-700 font-extrabold shadow-sm' : 'hover:bg-slate-50 text-slate-500'
+                }`}
               >
                 ยายับยั้งคลอด
               </button>
               <button
                 onClick={() => setActiveTab('nst')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === 'nst' ? 'bg-pink-100 text-pink-700 font-extrabold shadow-sm' : 'hover:bg-slate-50 text-slate-500'}`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === 'nst' ? 'bg-pink-100 text-pink-700 font-extrabold shadow-sm' : 'hover:bg-slate-50 text-slate-500'
+                }`}
               >
                 การอ่าน NST / FHS
               </button>
               <button
                 onClick={() => setActiveTab('psychology')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === 'psychology' ? 'bg-pink-100 text-pink-700 font-extrabold shadow-sm' : 'hover:bg-slate-50 text-slate-500'}`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === 'psychology' ? 'bg-pink-100 text-pink-700 font-extrabold shadow-sm' : 'hover:bg-slate-50 text-slate-500'
+                }`}
               >
                 จิตวิทยาและการสื่อสาร
               </button>
@@ -239,7 +330,8 @@ export default function Header() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2.5 bg-rose-50/30 border border-rose-100/50 rounded-xl p-4">
                     <h4 className="font-extrabold text-rose-700 text-sm flex items-center gap-1.5 border-b border-rose-100 pb-1.5">
-                      🔴 รับเข้าห้องคลอดทันที (Admit to LR)
+                      <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0" />
+                      <span>รับเข้าห้องคลอดทันที (Admit to LR)</span>
                     </h4>
                     <ul className="text-sm text-slate-600 space-y-2.5 list-disc pl-4 leading-relaxed">
                       <li><span className="font-bold text-slate-800">Active Labor:</span> ปากมดลูก dilate &gt;= 4 ซม. (ครรภ์แรก) หรือ &gt;= 3 ซม. (ครรภ์หลัง) ร่วมกับมดลูกบีบตัวสม่ำเสมอทุก 3-5 นาที</li>
@@ -250,9 +342,10 @@ export default function Header() {
                     </ul>
                   </div>
 
-                  <div className="space-y-2.5 bg-sky-50/30 border border-sky-100/50 rounded-xl p-4">
-                    <h4 className="font-extrabold text-sky-700 text-sm flex items-center gap-1.5 border-b border-sky-100 pb-1.5">
-                      🔵 เฝ้าสังเกตอาการ (Observe 2-4 ชม.)
+                  <div className="space-y-2.5 bg-indigo-50/30 border border-indigo-100/50 rounded-xl p-4">
+                    <h4 className="font-extrabold text-indigo-700 text-sm flex items-center gap-1.5 border-b border-indigo-100 pb-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 shrink-0" />
+                      <span>เฝ้าสังเกตอาการ (Observe 2-4 ชม.)</span>
                     </h4>
                     <ul className="text-sm text-slate-600 space-y-2.5 list-disc pl-4 leading-relaxed">
                       <li><span className="font-bold text-slate-800">Latent Phase / False Labor:</span> มดลูกหดตัวไม่สม่ำเสมอ ปากมดลูกเปิด &lt; 3 ซม. ให้เฝ้าสังเกตอาการ 2-4 ชม. ตรวจ NST หากปากมดลูกไม่ก้าวหน้าส่งกลับบ้านได้</li>
@@ -267,12 +360,15 @@ export default function Header() {
                 <div className="space-y-3 bg-indigo-50/20 border border-indigo-100/40 rounded-xl p-4">
                   <h4 className="font-extrabold text-indigo-800 text-sm flex items-center gap-1.5 border-b border-indigo-100 pb-1.5">
                     <ShieldAlert size={16} className="text-indigo-600" />
-                    มาตรฐานการเฝ้าระวังผู้ป่วยได้รับยา MgSO4
+                    <span>มาตรฐานการเฝ้าระวังผู้ป่วยได้รับยา MgSO4</span>
                   </h4>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600 leading-relaxed">
                     <div className="space-y-1.5">
-                      <p className="font-bold text-slate-800">✅ เกณฑ์ประเมินก่อนให้และขณะให้ยา (ทุก 1 ชม.):</p>
+                      <p className="font-bold text-slate-800 flex items-center gap-1.5">
+                        <CheckCircle2 size={15} className="text-emerald-500 shrink-0" />
+                        <span>เกณฑ์ประเมินก่อนให้และขณะให้ยา (ทุก 1 ชม.):</span>
+                      </p>
                       <ul className="list-disc pl-4 space-y-1.5">
                         <li><span className="font-bold">Deep Tendon Reflex (DTR):</span> ต้องเป็นบวก (+2 หรือมีอยู่)</li>
                         <li><span className="font-bold">Respiration Rate (RR):</span> ห้ามต่ำกว่า 14 ครั้ง/นาที</li>
@@ -280,7 +376,10 @@ export default function Header() {
                       </ul>
                     </div>
                     <div className="space-y-1.5">
-                      <p className="font-bold text-rose-700">⚠️ อาการเป็นพิษ (Magnesium Toxicity):</p>
+                      <p className="font-bold text-rose-700 flex items-center gap-1.5">
+                        <AlertTriangle size={15} className="text-rose-500 shrink-0" />
+                        <span>อาการเป็นพิษ (Magnesium Toxicity):</span>
+                      </p>
                       <ul className="list-disc pl-4 space-y-1.5 text-rose-600">
                         <li>สูญเสีย DTR (DTR absent)</li>
                         <li>หายใจช้าลง (RR &lt; 12 ครั้ง/นาที)</li>
@@ -296,25 +395,27 @@ export default function Header() {
                 <div className="space-y-3 bg-pink-50/20 border border-pink-100/40 rounded-xl p-4 text-sm text-slate-600 leading-relaxed">
                   <h4 className="font-extrabold text-pink-700 text-sm flex items-center gap-1.5 border-b border-pink-100 pb-1.5">
                     <Heart size={16} className="text-pink-600" />
-                    การบริหารยายับยั้งครรภ์คลอด (Tocolytics)
+                    <span>การบริหารยายับยั้งครรภ์คลอด (Tocolytics)</span>
                   </h4>
-                  
+
                   <div className="space-y-4">
                     <div className="border-b border-pink-100/30 pb-3">
                       <p className="font-bold text-slate-800 text-[15px]">1. Adalat (Nifedipine 5mg) - แคลเซียมแชนแนลบล็อกเกอร์</p>
                       <p className="mt-1"><span className="font-bold text-slate-700">โดสแรกรับ:</span> กินครั้งละ 2 เม็ด (10 mg) ทุก 15 นาที ติดต่อกัน 4 ครั้ง (รวม 40 mg ใน 1 ชม.)</p>
                       <p className="mt-0.5"><span className="font-bold text-slate-700">โดสประคอง:</span> กินครั้งละ 4 เม็ด (20 mg) ทุก 6 ชม. (สูงสุดไม่เกิน 160 mg/วัน)</p>
-                      <p className="mt-1.5 text-rose-600 font-bold bg-rose-50 border border-rose-100 p-2.5 rounded-lg text-xs">
-                        ⚠️ สิ่งสำคัญ: ต้องวัดความดันโลหิตและชีพจรก่อนให้ยาทุกครั้ง ห้ามให้หากคนไข้มีภาวะความดันต่ำ
+                      <p className="mt-1.5 text-rose-600 font-bold bg-rose-50 border border-rose-100 p-2.5 rounded-lg text-xs flex items-center gap-1.5">
+                        <AlertTriangle size={14} className="text-rose-500 shrink-0" />
+                        <span>สิ่งสำคัญ: ต้องวัดความดันโลหิตและชีพจรก่อนให้ยาทุกครั้ง ห้ามให้หากคนไข้มีภาวะความดันต่ำ</span>
                       </p>
                     </div>
-                    
+
                     <div>
                       <p className="font-bold text-slate-800 text-[15px]">2. Bricanyl (Terbutaline) - เบต้าทูอะโกนิสต์</p>
                       <p className="mt-1"><span className="font-bold text-slate-700">ฉีด SC:</span> 1/2 amp (0.25 mg) ฉีดใต้ผิวหนังทุก 4 ชม. สำหรับ 24 ชม.</p>
                       <p className="mt-0.5"><span className="font-bold text-slate-700">ดริป IV:</span> ผสม Bricanyl 10 amp ใน 5% D/W 500 ml ดริปเริ่มต้น 15 ml/ชม. ปรับเพิ่มขึ้นครั้งละ 15 ml ทุก 15 นาที</p>
-                      <p className="mt-1.5 text-rose-600 font-bold bg-rose-50 border border-rose-100 p-2.5 rounded-lg text-xs">
-                        ⚠️ สิ่งสำคัญ: ห้ามให้หรือห้ามปรับเพิ่มยาเด็ดขาดหากมารดามีชีพจร (Maternal Heart Rate) เกิน 120 ครั้ง/นาที หรือแจ้งอาการเจ็บแน่นหน้าอก
+                      <p className="mt-1.5 text-rose-600 font-bold bg-rose-50 border border-rose-100 p-2.5 rounded-lg text-xs flex items-center gap-1.5">
+                        <AlertTriangle size={14} className="text-rose-500 shrink-0" />
+                        <span>สิ่งสำคัญ: ห้ามให้หรือห้ามปรับเพิ่มยาเด็ดขาดหากมารดามีชีพจร (Maternal Heart Rate) เกิน 120 ครั้ง/นาที หรือแจ้งอาการเจ็บแน่นหน้าอก</span>
                       </p>
                     </div>
                   </div>
@@ -325,20 +426,26 @@ export default function Header() {
                 <div className="space-y-3 bg-sky-50/20 border border-sky-100/40 rounded-xl p-4 text-sm text-slate-600 leading-relaxed">
                   <h4 className="font-extrabold text-sky-700 text-sm flex items-center gap-1.5 border-b border-sky-100 pb-1.5">
                     <Info size={16} className="text-sky-600" />
-                    หลักการอ่านกราฟ NST และอัตราการเต้นหัวใจทารก (FHS)
+                    <span>หลักการอ่านกราฟ NST และอัตราการเต้นหัวใจทารก (FHS)</span>
                   </h4>
-                  
+
                   <div className="space-y-3">
                     <div>
-                      <p className="font-bold text-slate-800">🟢 NST - Reactive (ปกติ):</p>
+                      <p className="font-bold text-slate-800 flex items-center gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0" />
+                        <span>NST - Reactive (ปกติ):</span>
+                      </p>
                       <ul className="list-disc pl-4 space-y-1 mt-1">
                         <li>FHR Baseline อยู่ระหว่าง 110 - 160 ครั้ง/นาที</li>
                         <li>มี Accelerations (อัตราหัวใจเร่งสูงขึ้นอย่างน้อย 15 bpm นาน 15 วินาที) อย่างน้อย 2 ครั้งใน 20 นาที</li>
                       </ul>
                     </div>
-                    
+
                     <div>
-                      <p className="font-bold text-rose-700">🚨 NST - Non-reactive หรือ Fetal Distress (เสี่ยงอันตราย):</p>
+                      <p className="font-bold text-rose-700 flex items-center gap-1.5">
+                        <AlertTriangle size={15} className="text-rose-500 shrink-0" />
+                        <span>NST - Non-reactive หรือ Fetal Distress (เสี่ยงอันตราย):</span>
+                      </p>
                       <ul className="list-disc pl-4 space-y-1 text-rose-600 mt-1">
                         <li>ไม่มี Accelerations เลยในช่วงการทดสอบ 40 นาที</li>
                         <li>มี Late Decelerations (อัตราหัวใจทารกเต้นช้าลงตามหลังจุดบีบตัวของมดลูก) หรือ Severe Variable Decelerations</li>
@@ -351,10 +458,10 @@ export default function Header() {
 
               {activeTab === 'psychology' && (
                 <div className="space-y-4 text-sm text-slate-600 leading-relaxed">
-                  {/* Dilation guidelines */}
                   <div className="bg-pink-50/20 border border-pink-100/40 rounded-xl p-4 space-y-2.5">
                     <h4 className="font-extrabold text-pink-700 text-sm flex items-center gap-1.5 border-b border-pink-100 pb-1.5">
-                      💬 การสื่อสารตามความก้าวหน้าปากมดลูก (Cervical Progression Guide)
+                      <MessageCircle size={16} className="text-pink-500 shrink-0" />
+                      <span>การสื่อสารตามความก้าวหน้าปากมดลูก (Cervical Progression Guide)</span>
                     </h4>
                     <div className="divide-y divide-pink-100/30 space-y-3">
                       <div className="pt-3 first:pt-0">
@@ -395,7 +502,8 @@ export default function Header() {
                   {/* C/S Risks */}
                   <div className="bg-sky-50/20 border border-sky-100/40 rounded-xl p-4 space-y-2.5">
                     <h4 className="font-extrabold text-sky-800 text-sm flex items-center gap-1.5 border-b border-sky-100 pb-1.5">
-                      ⚠️ วิธีแจ้งความเสี่ยงการผ่าตัดคลอด (C/S Risk & Communication)
+                      <AlertTriangle size={16} className="text-amber-500 shrink-0" />
+                      <span>วิธีแจ้งความเสี่ยงการผ่าตัดคลอด (C/S Risk & Communication)</span>
                     </h4>
                     <p className="text-slate-500 text-sm">
                       <span className="font-bold text-slate-700">หลักจิตวิทยา:</span> ห้ามขู่ให้กลัวเด็ดขาด แต่ต้องชี้แจงความเป็นจริงอย่างอ่อนโยน สุภาพ และเน้นว่าเป็นการตัดสินใจเพื่อความปลอดภัยสูงสุดของทั้งแม่และลูก (Benefit Outweighs Risk)
@@ -415,7 +523,8 @@ export default function Header() {
                   {/* Admit Guidelines */}
                   <div className="bg-indigo-50/20 border border-indigo-100/40 rounded-xl p-4 space-y-2.5">
                     <h4 className="font-extrabold text-indigo-800 text-sm flex items-center gap-1.5 border-b border-indigo-100 pb-1.5">
-                      🏥 วิธีให้คำแนะนำคุณแม่แรกรับ Admit (Admit Orientation & Reassurance)
+                      <Building2 size={16} className="text-indigo-600 shrink-0" />
+                      <span>วิธีให้คำแนะนำคุณแม่แรกรับ Admit (Admit Orientation & Reassurance)</span>
                     </h4>
                     <div className="text-slate-500 space-y-2.5 leading-relaxed text-sm">
                       <p>
@@ -435,7 +544,7 @@ export default function Header() {
             <div className="text-center pt-2 border-t border-slate-100">
               <button
                 onClick={() => setGuideOpen(false)}
-                className="px-6 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition-all active:scale-95"
+                className="px-6 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition-all active:scale-95 cursor-pointer"
               >
                 เข้าใจแล้ว
               </button>

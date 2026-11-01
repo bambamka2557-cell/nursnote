@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { Sparkles, Calendar, Coffee, Stethoscope, Info } from 'lucide-react';
+import { Sparkles, Calendar, Coffee, Stethoscope, Info, Flag, Palmtree, Flower2 } from 'lucide-react';
+import { HolidayThemeIcon } from './ThemeIcons';
 import { DayShiftData, THAI_MONTH_NAMES, ATOMIC_SHIFTS } from '@/app/utils/shiftData';
 import {
   getHolidaysForMonth,
@@ -69,8 +70,9 @@ export default function HolidaySummaryCard({
       <div className="grid grid-cols-3 gap-2 sm:gap-3">
         {/* Total Public Holidays */}
         <div className="p-2.5 sm:p-3 rounded-2xl bg-rose-50/60 border border-rose-100/80 text-center">
-          <span className="text-[11px] text-slate-500 font-bold block">
-            🎌 วันหยุดราชการ
+          <span className="text-[11px] text-slate-500 font-bold flex items-center justify-center gap-1">
+            <Flag size={12} className="text-rose-500" />
+            <span>วันหยุดราชการ</span>
           </span>
           <div className="mt-1 flex items-baseline justify-center gap-1">
             <span className="text-lg sm:text-2xl font-black text-rose-600">
@@ -96,7 +98,7 @@ export default function HolidaySummaryCard({
             <span className="text-xs text-slate-400 font-medium">วัน</span>
           </div>
           <span className="text-[10px] text-emerald-600 font-bold block mt-0.5">
-            {stats.offOnHolidays > 0 ? '🌴 ได้พักผ่อน/เที่ยว' : 'ไม่มีวันหยุดที่ตรงกับ OFF'}
+            {stats.offOnHolidays > 0 ? 'ได้พักผ่อน / เที่ยว' : 'ไม่มีวันหยุดที่ตรงกับ OFF'}
           </span>
         </div>
 
@@ -129,7 +131,9 @@ export default function HolidaySummaryCard({
 
         {allHolidays.length === 0 ? (
           <div className="p-6 text-center rounded-2xl bg-slate-50 border border-dashed border-slate-200">
-            <span className="text-2xl block mb-1">🌸</span>
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-pink-50 text-pink-500 mb-1.5">
+              <Flower2 size={20} />
+            </span>
             <p className="text-xs font-bold text-slate-600">
               เดือนนี้ไม่มีวันหยุดราชการหรือวันสำคัญพิเศษ
             </p>
@@ -173,7 +177,13 @@ export default function HolidaySummaryCard({
 
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        {holiday.icon && <span className="text-sm">{holiday.icon}</span>}
+                        {holiday.icon && (
+                          <HolidayThemeIcon
+                            iconKey={holiday.icon}
+                            isPublicHoliday={holiday.isPublicHoliday}
+                            size={14}
+                          />
+                        )}
                         <span className="text-xs sm:text-sm font-black text-slate-800 truncate">
                           {holiday.name}
                         </span>
@@ -222,7 +232,8 @@ export default function HolidaySummaryCard({
                         </div>
                       ) : (
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-100/80 text-emerald-800 border border-emerald-200 text-xs font-black shadow-2xs">
-                          <span>🌴 ได้หยุด</span>
+                          <Palmtree size={12} className="text-emerald-600" />
+                          <span>ได้หยุด</span>
                         </span>
                       )
                     ) : (

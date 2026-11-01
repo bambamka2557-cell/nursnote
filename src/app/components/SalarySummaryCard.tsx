@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { SalarySummaryResult } from '@/app/utils/shiftData';
+import { ShiftAtomicIcon } from './ThemeIcons';
 import {
   Eye,
   EyeOff,
@@ -139,7 +140,10 @@ export default function SalarySummaryCard({
       {/* Quick Shift Counter Chips */}
       <div className="grid grid-cols-3 gap-2 mt-3 text-center">
         <div className="bg-pink-50/70 border border-pink-100 p-2 rounded-xl">
-          <span className="text-[10px] text-pink-600 font-extrabold block">🌸 เช้า (ช)</span>
+          <span className="text-[10px] text-pink-600 font-extrabold flex items-center justify-center gap-1">
+            <ShiftAtomicIcon code="MORNING" size={11} />
+            <span>เช้า (ช)</span>
+          </span>
           <span className="text-xs font-black text-slate-800">
             {shiftCounts.MORNING.totalCount}{' '}
             <span className="text-[9px] font-medium text-slate-400">
@@ -148,7 +152,10 @@ export default function SalarySummaryCard({
           </span>
         </div>
         <div className="bg-purple-50/70 border border-purple-100 p-2 rounded-xl">
-          <span className="text-[10px] text-purple-600 font-extrabold block">🍇 บ่าย (บ)</span>
+          <span className="text-[10px] text-purple-600 font-extrabold flex items-center justify-center gap-1">
+            <ShiftAtomicIcon code="AFTERNOON" size={11} />
+            <span>บ่าย (บ)</span>
+          </span>
           <span className="text-xs font-black text-slate-800">
             {shiftCounts.AFTERNOON.totalCount}{' '}
             <span className="text-[9px] font-medium text-slate-400">
@@ -157,7 +164,10 @@ export default function SalarySummaryCard({
           </span>
         </div>
         <div className="bg-indigo-50/70 border border-indigo-100 p-2 rounded-xl">
-          <span className="text-[10px] text-indigo-600 font-extrabold block">🌙 ดึก (ด)</span>
+          <span className="text-[10px] text-indigo-600 font-extrabold flex items-center justify-center gap-1">
+            <ShiftAtomicIcon code="NIGHT" size={11} />
+            <span>ดึก (ด)</span>
+          </span>
           <span className="text-xs font-black text-slate-800">
             {shiftCounts.NIGHT.totalCount}{' '}
             <span className="text-[9px] font-medium text-slate-400">

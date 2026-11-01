@@ -1,6 +1,6 @@
 import { getPatients } from './actions/patient';
 import Link from 'next/link';
-import { Clock, CheckCircle2, AlertCircle, Plus } from 'lucide-react';
+import { Clock, CheckCircle2, AlertCircle, Plus, BedDouble } from 'lucide-react';
 import { differenceInMinutes, addMinutes } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
@@ -20,7 +20,7 @@ export default async function Dashboard() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4 py-8">
         <div className="w-16 h-16 rounded-2xl bg-white border border-pink-200/80 shadow-xs flex items-center justify-center text-3xl mb-4 text-pink-500">
-          🛏️
+          <BedDouble size={32} />
         </div>
 
         <h2 className="text-xl sm:text-2xl font-black bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">

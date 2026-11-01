@@ -582,7 +582,7 @@ export function calculateWorkLifeBalance(
   };
 
   let status: WorkLifeBalanceStatus = 'HEALTHY';
-  let statusLabel = 'สมดุลยอดเยี่ยม 🌸';
+  let statusLabel = 'สมดุลยอดเยี่ยม';
   let statusDesc = 'ชั่วโมงทำงานและวันพักผ่อนอยู่ในเกณฑ์สุขภาพดีเยี่ยม';
   let statusColor = {
     bg: 'bg-emerald-50/80',
@@ -594,7 +594,7 @@ export function calculateWorkLifeBalance(
 
   if (totalHours > 200 || doubleShiftDays >= 5 || offDaysCount < 5 || maxConsecutiveDays >= 7) {
     status = 'HEAVY';
-    statusLabel = 'งานหนักเสี่ยงล้าสะสม ⚠️';
+    statusLabel = 'งานหนักเสี่ยงล้าสะสม';
     statusDesc = 'มีชั่วโมงทำงานหรือเวรควบค่อนข้างสูง ควรหาเวลาพักผ่อนฟื้นฟูร่างกาย';
     statusColor = {
       bg: 'bg-rose-50/80',
@@ -605,7 +605,7 @@ export function calculateWorkLifeBalance(
     };
   } else if (totalHours > 168 || doubleShiftDays >= 3 || offDaysCount < 8 || maxConsecutiveDays >= 5) {
     status = 'MODERATE';
-    statusLabel = 'งานค่อนข้างแน่น ⚡';
+    statusLabel = 'งานค่อนข้างแน่น';
     statusDesc = 'ภาระงานปานกลาง-แน่น มีวันพักผ่อนกำลังดี ควรดื่มน้ำและนอนหลับให้เพียงพอ';
     statusColor = {
       bg: 'bg-amber-50/80',
@@ -618,26 +618,26 @@ export function calculateWorkLifeBalance(
 
   // Generate personalized wellness advice
   let wellnessTip = {
-    title: 'เคล็ดลับความสดชื่นประจำวัน ✨',
+    title: 'เคล็ดลับความสดชื่นประจำวัน',
     message: 'ดื่มน้ำให้ได้วันละ 2 ลิตร ทานอาหารที่มีโปรตีนและผักผลไม้สด ช่วยให้ร่างกายตื่นตัวและพร้อมดูแลคนไข้เสมอ',
     icon: '💖',
   };
 
   if (nightCount >= 5 || maxConsecutiveNights >= 2) {
     wellnessTip = {
-      title: 'ฟื้นฟูจังหวะร่างกายหลังกะดึก 🌙',
+      title: 'ฟื้นฟูจังหวะร่างกายหลังกะดึก',
       message: 'เดือนนี้มีเวรดึกสะสม แนะนำปรับห้องนอนให้มืดสนิท เลี่ยงคาเฟอีนก่อนนอน 6 ชม. และงีบหลับสั้น 20-30 นาทีเพื่อคืนความสดชื่น',
       icon: '🌙',
     };
   } else if (doubleShiftDays >= 3) {
     wellnessTip = {
-      title: 'ดูแลกล้ามเนื้อจากเวรควบ 16 ชม. ⚡',
+      title: 'ดูแลกล้ามเนื้อจากเวรควบ 16 ชม.',
       message: 'มีเวรควบหลายวัน อย่าลืมยืดเหยียดขาและหลัง ดื่มน้ำบ่อยๆ และสวมถุงน่องซัพพอร์ตเพื่อลดอาการเมื่อยล้าเส้นเลือดขอด',
       icon: '🧘‍♀️',
     };
   } else if (offDaysCount >= 8) {
     wellnessTip = {
-      title: 'ใช้วันหยุดเติมพลังชีวิต 🏖️',
+      title: 'ใช้วันหยุดเติมพลังชีวิต',
       message: 'เดือนนี้มีวันพักผ่อนสมดุลดีมาก เหมาะสำหรับการไปเที่ยว พักผ่อนกับคนที่รัก หรือทำกิจกรรมที่ชอบเพื่อรีชาร์จพลังใจ',
       icon: '🌸',
     };
