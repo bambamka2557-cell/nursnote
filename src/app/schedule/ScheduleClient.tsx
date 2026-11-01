@@ -130,45 +130,44 @@ export default function ScheduleClient({
   const showDesktopRight = activeView === 'calendar' && !rightCollapsed;
 
   const renderRightPanelCards = (onClosePanel?: () => void) => (
-    <div className="space-y-3.5">
-      {/* Right Panel Header Bar (SunNotes style) */}
-      <div className="flex items-center justify-between gap-2 rounded-2xl border border-pink-100 bg-white px-3.5 py-2.5 shadow-2xs">
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-pink-100 text-pink-600">
-            <BarChart3 size={15} />
-          </span>
-          <div className="min-w-0">
-            <h3 className="text-xs sm:text-sm font-bold text-slate-800 truncate">
-              แผงสรุปประจำเดือน
-            </h3>
-            <p className="text-[11px] text-slate-400 truncate">
-              {THAI_MONTH_NAMES[month - 1]} {year + 543}
-            </p>
+    <div className="space-y-3">
+      {/* Mobile Drawer Top Bar (shown only when inside mobile slide-over drawer) */}
+      {onClosePanel && (
+        <div className="flex items-center justify-between gap-2 rounded-2xl border border-[#e8dfdc] bg-white px-3.5 py-2.5 shadow-2xs">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#f6eaec] text-[#a63e54]">
+              <BarChart3 size={15} />
+            </span>
+            <div className="min-w-0">
+              <h3 className="text-xs sm:text-sm font-bold text-[#1d1d1f] truncate">
+                สรุปประจำเดือน {THAI_MONTH_NAMES[month - 1]} {year + 543}
+              </h3>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                onClosePanel();
+                setActiveView('overview');
+              }}
+              className="rounded-lg border border-[#e8dfdc] bg-[#faf6f5] px-2.5 py-1 text-[11px] font-semibold text-[#a63e54] hover:bg-[#f3ecea] transition-colors cursor-pointer"
+            >
+              ขยายเต็มจอ
+            </button>
+            <button
+              type="button"
+              onClick={onClosePanel}
+              className="rounded-lg p-1.5 text-[#78716c] hover:bg-[#f3ecea] hover:text-[#1d1d1f] transition-colors cursor-pointer"
+              title="ปิดแผงสรุปด้านขวา"
+              aria-label="ปิดแผงสรุปด้านขวา"
+            >
+              <X size={16} />
+            </button>
           </div>
         </div>
-
-        <div className="flex items-center gap-1 shrink-0">
-          <button
-            type="button"
-            onClick={() => {
-              onClosePanel?.();
-              setActiveView('overview');
-            }}
-            className="rounded-lg border border-pink-100 bg-pink-50/70 px-2.5 py-1 text-[11px] font-semibold text-pink-600 hover:bg-pink-100 transition-colors cursor-pointer"
-          >
-            ขยายเต็มจอ
-          </button>
-          <button
-            type="button"
-            onClick={onClosePanel ?? handleToggleRightPanel}
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-pink-50 hover:text-pink-600 transition-colors cursor-pointer"
-            title="พับแผงสรุปด้านขวา"
-            aria-label="พับแผงสรุปด้านขวา"
-          >
-            {onClosePanel ? <X size={16} /> : <PanelRightClose size={16} />}
-          </button>
-        </div>
-      </div>
+      )}
 
       {calendarMode === 'shift' ? (
         <>
@@ -310,7 +309,7 @@ export default function ScheduleClient({
           onClick={() => setRightDrawerOpen(false)}
         />
         <aside
-          className={`absolute inset-y-0 right-0 w-[360px] max-w-[92vw] overflow-y-auto bg-[#fdf4f6] border-l border-pink-100 p-3 pt-[calc(0.75rem+env(safe-area-inset-top,0px))] pb-[max(1rem,env(safe-area-inset-bottom,0px))] rounded-l-2xl shadow-xl transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          className={`absolute inset-y-0 right-0 w-[360px] max-w-[92vw] overflow-y-auto bg-[#faf6f5] border-l border-[#e8dfdc] p-3 pt-[calc(0.75rem+env(safe-area-inset-top,0px))] pb-[max(1rem,env(safe-area-inset-bottom,0px))] rounded-l-2xl shadow-xl transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
             rightDrawerOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >

@@ -54,11 +54,11 @@ export default function Sidebar({
 
   return (
     <div
-      className="flex h-full w-64 shrink-0 flex-col bg-[#fdf4f6] border-r border-pink-100/90 pt-[env(safe-area-inset-top,0px)] select-none"
+      className="flex h-full w-64 shrink-0 flex-col bg-[#f3ecea] border-r border-[#e8dfdc] pt-[env(safe-area-inset-top,0px)] select-none"
       onContextMenu={(e) => e.preventDefault()}
     >
       {/* Brand header (h-14 = 56px, aligns flush with Top Bar border-b) */}
-      <div className="flex h-14 shrink-0 items-center justify-between gap-2 px-4 border-b border-pink-100/90">
+      <div className="flex h-14 shrink-0 items-center justify-between gap-2 px-4 border-b border-[#e8dfdc]">
         <button
           type="button"
           onClick={() => handleGo('/')}
@@ -161,7 +161,7 @@ export default function Sidebar({
                 : 'font-medium text-slate-600 hover:bg-white/70 hover:text-slate-900'
             }`}
           >
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-400 text-white shadow-2xs">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#558263] text-white shadow-2xs">
               <Compass size={15} strokeWidth={2.25} />
             </span>
             <span className="truncate">ที่เที่ยวรายเดือน</span>
@@ -239,9 +239,9 @@ export default function Sidebar({
       </div>
 
       {/* Footer: database status */}
-      <div className="flex items-center gap-2 border-t border-pink-100/90 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] bg-white/50">
-        <span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-emerald-500" title="Database Connected" />
-        <span className="text-[11px] font-medium text-slate-500">ฐานข้อมูลพร้อมใช้งาน</span>
+      <div className="flex items-center gap-2 border-t border-[#e8dfdc] px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] bg-[#faf6f5]/60">
+        <span className="h-2 w-2 shrink-0 rounded-full bg-[#558263]" title="Database Connected" />
+        <span className="text-[11px] font-medium text-[#78716c]">ฐานข้อมูลพร้อมใช้งาน</span>
       </div>
     </div>
   );

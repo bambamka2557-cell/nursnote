@@ -2,44 +2,69 @@
 
 @theme {
   --font-sans: var(--font-prompt), sans-serif;
-  /* Swap Mapping: Indigo now maps to Periwinkle Blue, Sky now maps to Strawberry Pink */
-  --color-indigo-50: #f0f5fc;
-  --color-indigo-100: #e1ecf9;
-  --color-indigo-200: #b6cef2; /* Periwinkle Blue */
-  --color-indigo-300: #93b4e6;
-  --color-indigo-400: #7199da;
-  --color-indigo-500: #5882c4; /* Main Blue accent */
-  --color-indigo-600: #466ca8;
-  --color-indigo-700: #38568c;
-  
-  --color-sky-50: #fdf2f4;
-  --color-sky-100: #fce7eb;
-  --color-sky-200: #fbcfe0;
-  --color-sky-300: #f9a8d4;
-  --color-sky-400: #f472b6;
-  --color-sky-500: #f9a0b3; /* Strawberry Pink */
-  --color-sky-600: #f07b94;
+
+  /* Warm Calm Rose-Cream Palette (SunNotes Tonal equivalent in Warm Pink/Rosewood — zero neon pastel glare) */
+  --color-pink-50: #faf6f5;   /* Warm paper blush-cream (matches SunNotes #faf8f4) */
+  --color-pink-100: #f3ecea;  /* Warm stone-blush container (matches SunNotes #f4f1ea) */
+  --color-pink-200: #e8dfdc;  /* Soft warm stone-taupe border (matches SunNotes #ece7dd) */
+  --color-pink-300: #d6c5c1;  /* Strong warm border (matches SunNotes #ddd6c8) */
+  --color-pink-400: #b85d70;  /* Muted dusty rose */
+  --color-pink-500: #a63e54;  /* Primary Deep Rosewood (matches SunNotes #1b5cad contrast) */
+  --color-pink-600: #8e3246;  /* Deep Rosewood hover (matches SunNotes #0a3a78) */
+  --color-pink-700: #732637;  /* Deep Rosewood ink */
+  --color-pink-800: #591d2b;
+  --color-pink-900: #421520;
+
+  /* Warm Brick / Terracotta Rose for Holidays, Sunday & OT */
+  --color-rose-50: #f9f1ef;
+  --color-rose-100: #f2e2de;
+  --color-rose-200: #e4cbc5;
+  --color-rose-300: #d1a399;
+  --color-rose-400: #bf6558;
+  --color-rose-500: #b84239;  /* Warm brick red (matches SunNotes urgent ink) */
+  --color-rose-600: #a3332b;  /* Deep brick red for OT */
+  --color-rose-700: #822720;
+  --color-rose-800: #661f19;
+  --color-rose-900: #4d1713;
+
+  /* Muted Slate-Blue & Warm Neutral Accents */
+  --color-indigo-50: #f4f5f7;
+  --color-indigo-100: #e6e9ef;
+  --color-indigo-200: #cfd5e2;
+  --color-indigo-300: #adb7cc;
+  --color-indigo-400: #7e8da8;
+  --color-indigo-500: #5b6b88;
+  --color-indigo-600: #485670;
+  --color-indigo-700: #394459;
+
+  --color-sky-50: #faf6f5;
+  --color-sky-100: #f3ecea;
+  --color-sky-200: #e8dfdc;
+  --color-sky-300: #d6c5c1;
+  --color-sky-400: #b85d70;
+  --color-sky-500: #a63e54;
+  --color-sky-600: #8e3246;
 }
 
 :root {
-  /* Main Background is now a soft pink pastel (Strawberry milk vibe) */
-  --background: #fff3f5;
-  --foreground: #2d1f22; /* Dark brownish pink for readable text */
-  
-  --primary: #5882c4; /* Periwinkle Blue is now the primary action color */
-  --primary-hover: #466ca8;
+  /* Warm Calm Rose-Cream base */
+  --background: #faf6f5;
+  --foreground: #1d1d1f;
+
+  --primary: #a63e54;
+  --primary-hover: #8e3246;
   --primary-foreground: #ffffff;
-  
-  --secondary: #f9a0b3; /* Strawberry Pink is now secondary */
-  --secondary-hover: #f07b94;
-  
-  --accent: #fcd34d; /* Straw Cream Yellow */
-  
+
+  --secondary: #b85d70;
+  --secondary-hover: #a63e54;
+
+  --accent: #c98a2c;
+
   --card: #ffffff;
-  --card-border: rgba(249, 160, 179, 0.25); /* Soft pink border for cards */
-  --shadow-sm: 0 2px 4px 0 rgba(249, 160, 179, 0.03);
-  --shadow-md: 0 4px 12px -2px rgba(249, 160, 179, 0.08), 0 2px 6px -1px rgba(249, 160, 179, 0.04);
-  --shadow-lg: 0 12px 20px -3px rgba(249, 160, 179, 0.1), 0 4px 8px -2px rgba(249, 160, 179, 0.05);
+  --card-border: #e8dfdc;
+  --shadow-sm: 0 1px 3px 0 rgba(29, 29, 31, 0.04);
+  --shadow-md: 0 4px 12px -2px rgba(29, 29, 31, 0.06);
+  --shadow-lg: 0 12px 24px -4px rgba(29, 29, 31, 0.08);
 }
 
 html {
@@ -85,11 +110,6 @@ button,
   display: none;
 }
 
-/* iOS Safari renders type="date"/type="time" with its own native chrome,
-   which can ignore the Tailwind width classes on the input and render wider
-   than its container (reported: the GA calculator's due-date field sticking
-   out past its box on an iPhone). This resets that native styling so the
-   input is sized like a normal text input instead. */
 input[type="date"],
 input[type="time"] {
   -webkit-appearance: none;
@@ -98,32 +118,25 @@ input[type="time"] {
   width: 100%;
 }
 
-/* Glassmorphism Navigation with Pink/Strawberry Tint */
-.glass-nav {
-  background: rgba(255, 243, 245, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-top: 1px solid rgba(249, 160, 179, 0.3);
-}
-
-/* Header style override */
+/* Header border in warm stone-taupe */
 header {
-  border-bottom: 1px solid rgba(249, 160, 179, 0.25) !important;
+  border-bottom: 1px solid #e8dfdc !important;
 }
 
-/* Custom Scrollbar with Pink/Blue styling */
+/* Subtle Warm Scrollbar (matches SunNotes custom-scroll) */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #f9a0b3;
-  border-radius: 3px;
+  background: #d8ccc8;
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #5882c4;
+  background: #b8a6a0;
 }
 
 /* Pulse Animation for Overdue */

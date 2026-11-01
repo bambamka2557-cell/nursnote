@@ -784,31 +784,39 @@ export default function ShiftCalendar({
                         <div className="w-full my-auto pt-1">
                           {shifts.length > 0 ? (
                             <div
-                              className={`w-full py-0.5 sm:py-1 px-1 rounded-lg border text-center font-black text-xs sm:text-sm md:text-base shadow-2xs flex items-center justify-center gap-0.5 ${
+                              className={`w-full py-0.5 sm:py-1 px-1.5 rounded-lg border text-center font-bold text-xs sm:text-sm shadow-2xs flex items-center justify-center gap-1.5 ${
                                 pattern && patternId !== 'OFF'
                                   ? `${pattern.badgeBg} ${pattern.badgeBorder}`
-                                  : 'bg-pink-50/90 border-pink-200'
+                                  : 'bg-[#f6efed] border-[#e4d8d5]'
                               }`}
                             >
-                              {shifts.map((s, sIdx) => (
-                                <span key={sIdx} className="flex items-center">
-                                  {sIdx > 0 && <span className="text-slate-400 text-xs mx-0.5">/</span>}
-                                  <span
-                                    className={
-                                      s.ot
-                                        ? 'text-rose-600 font-black'
-                                        : 'text-slate-800 font-black'
-                                    }
-                                    title={`${ATOMIC_SHIFTS[s.code]?.fullLabel ?? s.code} (${s.ot ? 'OT สีแดง' : 'ปกติ สีดำ'})`}
-                                  >
-                                    {ATOMIC_SHIFTS[s.code]?.shortLabel ?? s.code}
+                              <span
+                                className={`w-2 h-2 rounded-full shrink-0 ${
+                                  pattern?.dotColor || 'bg-[#b85d70]'
+                                }`}
+                              />
+                              <span className="inline-flex items-center">
+                                {shifts.map((s, sIdx) => (
+                                  <span key={sIdx} className="inline-flex items-center">
+                                    {sIdx > 0 && <span className="text-[#9c918e] text-xs mx-0.5">/</span>}
+                                    <span
+                                      className={
+                                        s.ot
+                                          ? 'text-[#a3332b] font-black'
+                                          : 'text-[#1d1d1f] font-extrabold'
+                                      }
+                                      title={`${ATOMIC_SHIFTS[s.code]?.fullLabel ?? s.code} (${s.ot ? 'OT สีแดง' : 'ปกติ สีดำ'})`}
+                                    >
+                                      {ATOMIC_SHIFTS[s.code]?.shortLabel ?? s.code}
+                                    </span>
                                   </span>
-                                </span>
-                              ))}
+                                ))}
+                              </span>
                             </div>
                           ) : shiftData ? (
-                            <div className="text-[11px] sm:text-xs text-slate-400 text-center font-extrabold py-0.5 rounded-md bg-slate-50/80 border border-slate-200/60">
-                              OFF
+                            <div className="text-[11px] sm:text-xs text-[#8e8886] text-center font-bold py-0.5 px-1.5 rounded-lg bg-[#f4f0ef]/75 border border-[#e6dedc] flex items-center justify-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#b5aba8] shrink-0" />
+                              <span>OFF</span>
                             </div>
                           ) : null}
                         </div>
@@ -995,20 +1003,27 @@ export default function ShiftCalendar({
                             {shifts.length > 0 ? (
                               <>
                                 <div
-                                  className={`w-full py-1.5 px-2 rounded-xl border text-center font-black text-sm shadow-2xs flex items-center justify-center gap-1 ${
+                                  className={`w-full py-1.5 px-2 rounded-xl border text-center font-bold text-sm shadow-2xs flex items-center justify-center gap-1.5 ${
                                     pattern && patternId !== 'OFF'
                                       ? `${pattern.badgeBg} ${pattern.badgeBorder}`
-                                      : 'bg-pink-50 border-pink-200'
+                                      : 'bg-[#f6efed] border-[#e4d8d5]'
                                   }`}
                                 >
-                                  {shifts.map((s, sIdx) => (
-                                    <span key={sIdx} className="flex items-center">
-                                      {sIdx > 0 && <span className="text-slate-400 text-xs mx-0.5">/</span>}
-                                      <span className={s.ot ? 'text-rose-600 font-black' : 'text-slate-800 font-black'}>
-                                        {ATOMIC_SHIFTS[s.code]?.shortLabel ?? s.code}
+                                  <span
+                                    className={`w-2 h-2 rounded-full shrink-0 ${
+                                      pattern?.dotColor || 'bg-[#b85d70]'
+                                    }`}
+                                  />
+                                  <span className="inline-flex items-center">
+                                    {shifts.map((s, sIdx) => (
+                                      <span key={sIdx} className="inline-flex items-center">
+                                        {sIdx > 0 && <span className="text-[#9c918e] text-xs mx-0.5">/</span>}
+                                        <span className={s.ot ? 'text-[#a3332b] font-black' : 'text-[#1d1d1f] font-extrabold'}>
+                                          {ATOMIC_SHIFTS[s.code]?.shortLabel ?? s.code}
+                                        </span>
                                       </span>
-                                    </span>
-                                  ))}
+                                    ))}
+                                  </span>
                                 </div>
 
                                 <div className="space-y-1.5">
@@ -1215,20 +1230,27 @@ export default function ShiftCalendar({
                             <div className="flex items-center gap-2 flex-wrap">
                               {shifts.length > 0 ? (
                                 <span
-                                  className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg border text-xs sm:text-sm font-black shadow-2xs ${
+                                  className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg border text-xs sm:text-sm font-bold shadow-2xs ${
                                     pattern && patternId !== 'OFF'
                                       ? `${pattern.badgeBg} ${pattern.badgeBorder}`
-                                      : 'bg-pink-50 border-pink-200'
+                                      : 'bg-[#f6efed] border-[#e4d8d5]'
                                   }`}
                                 >
-                                  {shifts.map((s, sIdx) => (
-                                    <span key={sIdx} className="inline-flex items-center">
-                                      {sIdx > 0 && <span className="text-slate-400 mx-0.5">/</span>}
-                                      <span className={s.ot ? 'text-rose-600' : 'text-slate-800'}>
-                                        {ATOMIC_SHIFTS[s.code]?.shortLabel ?? s.code}
+                                  <span
+                                    className={`w-2 h-2 rounded-full shrink-0 ${
+                                      pattern?.dotColor || 'bg-[#b85d70]'
+                                    }`}
+                                  />
+                                  <span className="inline-flex items-center">
+                                    {shifts.map((s, sIdx) => (
+                                      <span key={sIdx} className="inline-flex items-center">
+                                        {sIdx > 0 && <span className="text-[#9c918e] mx-0.5">/</span>}
+                                        <span className={s.ot ? 'text-[#a3332b] font-black' : 'text-[#1d1d1f] font-extrabold'}>
+                                          {ATOMIC_SHIFTS[s.code]?.shortLabel ?? s.code}
+                                        </span>
                                       </span>
-                                    </span>
-                                  ))}
+                                    ))}
+                                  </span>
                                 </span>
                               ) : shiftData ? (
                                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 text-xs font-black">
@@ -1311,61 +1333,61 @@ export default function ShiftCalendar({
 
           {/* Mode-Specific Legend Bar inside Card Footer */}
           {calendarMode === 'shift' ? (
-            <div className="flex flex-wrap items-center justify-center gap-2.5 md:gap-4 px-3 py-3 bg-pink-50/35 text-xs sm:text-sm text-slate-700">
-              <span className="font-extrabold text-pink-600 flex items-center gap-1">
+            <div className="flex flex-wrap items-center justify-center gap-2.5 md:gap-4 px-3 py-3 bg-[#f3ecea]/65 border-t border-[#e8dfdc] text-xs sm:text-sm text-[#57534e]">
+              <span className="font-bold text-[#a63e54] flex items-center gap-1">
                 <Sparkles size={14} />
                 <span>สัญลักษณ์เวร:</span>
               </span>
-              <div className="flex items-center gap-1.5 font-bold">
-                <span className="w-2.5 h-2.5 rounded-full bg-pink-400" />
+              <div className="flex items-center gap-1.5 font-semibold text-[#1d1d1f]">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#b85d70]" />
                 <span>ช (เช้า)</span>
               </div>
-              <div className="flex items-center gap-1.5 font-bold">
-                <span className="w-2.5 h-2.5 rounded-full bg-purple-400" />
+              <div className="flex items-center gap-1.5 font-semibold text-[#1d1d1f]">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#8a6d96]" />
                 <span>บ (บ่าย)</span>
               </div>
-              <div className="flex items-center gap-1.5 font-bold">
-                <span className="w-2.5 h-2.5 rounded-full bg-indigo-400" />
+              <div className="flex items-center gap-1.5 font-semibold text-[#1d1d1f]">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#5b6b88]" />
                 <span>ด (ดึก)</span>
               </div>
-              <div className="flex items-center gap-1.5 font-bold">
-                <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+              <div className="flex items-center gap-1.5 font-semibold text-[#1d1d1f]">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#c4843d]" />
                 <span>ช/บ</span>
               </div>
-              <div className="flex items-center gap-1.5 font-bold">
-                <span className="w-2.5 h-2.5 rounded-full bg-teal-500" />
+              <div className="flex items-center gap-1.5 font-semibold text-[#1d1d1f]">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#4d827a]" />
                 <span>บ/ด</span>
               </div>
-              <div className="flex items-center gap-1.5 font-bold">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+              <div className="flex items-center gap-1.5 font-semibold text-[#1d1d1f]">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#558263]" />
                 <span>ด/บ</span>
               </div>
-              <div className="flex items-center gap-1.5 pl-2 sm:pl-3 border-l border-pink-200">
-                <span className="text-slate-900 font-black">ตัวดำ: ปกติ</span>
-                <span className="text-slate-300">|</span>
-                <span className="text-rose-600 font-black">ตัวแดง: OT</span>
+              <div className="flex items-center gap-1.5 pl-2 sm:pl-3 border-l border-[#e4d8d5]">
+                <span className="text-[#1d1d1f] font-bold">ตัวดำ: ปกติ</span>
+                <span className="text-[#c5b8b4]">|</span>
+                <span className="text-[#a3332b] font-bold">ตัวแดง: OT</span>
               </div>
             </div>
           ) : (
-            <div className="flex flex-wrap items-center justify-center gap-2.5 md:gap-4 px-3 py-3 bg-pink-50/35 text-xs sm:text-sm text-slate-700">
-              <span className="font-extrabold text-rose-600 flex items-center gap-1">
+            <div className="flex flex-wrap items-center justify-center gap-2.5 md:gap-4 px-3 py-3 bg-[#f3ecea]/65 border-t border-[#e8dfdc] text-xs sm:text-sm text-[#57534e]">
+              <span className="font-bold text-[#a63e54] flex items-center gap-1">
                 <Flag size={13} />
                 <span>สัญลักษณ์วันหยุด:</span>
               </span>
-              <div className="flex items-center gap-1.5 font-bold">
-                <span className="w-2.5 h-2.5 rounded-full bg-rose-400" />
+              <div className="flex items-center gap-1.5 font-semibold text-[#1d1d1f]">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#b85d70]" />
                 <span>วันหยุดราชการ</span>
               </div>
-              <div className="flex items-center gap-1.5 font-bold">
-                <Palmtree size={13} className="text-emerald-600" />
+              <div className="flex items-center gap-1.5 font-semibold text-[#1d1d1f]">
+                <Palmtree size={13} className="text-[#558263]" />
                 <span>ได้หยุดจริง (OFF)</span>
               </div>
-              <div className="flex items-center gap-1.5 font-bold">
-                <Stethoscope size={13} className="text-amber-600" />
+              <div className="flex items-center gap-1.5 font-semibold text-[#1d1d1f]">
+                <Stethoscope size={13} className="text-[#c4843d]" />
                 <span>ติดเวร</span>
               </div>
-              <div className="flex items-center gap-1.5 font-bold">
-                <Sparkles size={13} className="text-slate-400" />
+              <div className="flex items-center gap-1.5 font-semibold text-[#1d1d1f]">
+                <Sparkles size={13} className="text-[#8e8886]" />
                 <span>วันสำคัญทั่วไป</span>
               </div>
             </div>

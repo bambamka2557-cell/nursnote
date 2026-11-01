@@ -57,225 +57,220 @@ export default function SalarySummaryCard({
   const { breakdown, shiftCounts, windowText } = summary;
 
   return (
-    <div className="bg-white/95 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5 shadow-[0_4px_20px_rgba(244,114,182,0.12)] border border-pink-100 transition-all text-slate-800">
-      {/* Top Bar: Title & Actions */}
-      <div className="flex items-center justify-between gap-2 pb-3 border-b border-pink-50">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-pink-500/10 text-pink-600 flex items-center justify-center font-bold">
-            <Wallet size={18} />
+    <div className="bg-white rounded-2xl p-4 shadow-2xs border border-[#e8dfdc] transition-all text-[#1d1d1f]">
+      {/* Top Bar: Title & Actions (SunNotes Right-Panel Card Header Style) */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="min-w-0">
+          <div className="flex items-center gap-1.5 text-sm font-bold text-[#1d1d1f]">
+            <Wallet size={15} className="text-[#a63e54] shrink-0" />
+            <span className="truncate">สรุปค่าตอบแทนรอบนี้</span>
           </div>
-          <div>
-            <h2 className="text-sm md:text-base font-extrabold text-slate-800 flex items-center gap-1.5">
-              <span>สรุปค่าตอบแทนรอบนี้</span>
-            </h2>
-            <div className="flex items-center gap-1 text-[11px] text-slate-400 font-medium">
-              <Calendar size={12} className="text-pink-400" />
-              <span>{windowText}</span>
-            </div>
+          <div className="flex items-center gap-1 text-[11px] text-[#78716c] font-medium mt-0.5">
+            <Calendar size={11} className="text-[#a63e54]/80 shrink-0" />
+            <span className="truncate">{windowText}</span>
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1 shrink-0">
           {/* Privacy Toggle Button */}
           <button
+            type="button"
             onClick={togglePrivacy}
-            className={`p-2 rounded-xl border transition-all cursor-pointer ${
+            className={`p-1.5 rounded-xl border transition-all cursor-pointer ${
               privacyHidden
-                ? 'bg-slate-50 border-slate-200 text-slate-400 hover:text-slate-600'
-                : 'bg-pink-50 border-pink-200 text-pink-600'
+                ? 'bg-[#faf6f5] border-[#e8dfdc] text-[#78716c] hover:text-[#1d1d1f]'
+                : 'bg-[#f6eaec] border-[#d6c5c1] text-[#a63e54]'
             }`}
             title={privacyHidden ? 'แสดงตัวเลขเงิน' : 'ซ่อนตัวเลขเงิน (Privacy)'}
           >
-            {privacyHidden ? <EyeOff size={16} /> : <Eye size={16} />}
+            {privacyHidden ? <EyeOff size={15} /> : <Eye size={15} />}
           </button>
 
           {/* Config Settings Button */}
           <button
+            type="button"
             onClick={onOpenConfig}
-            className="p-2 rounded-xl bg-pink-500/10 hover:bg-pink-500/20 text-pink-600 border border-pink-100 transition-all cursor-pointer"
+            className="p-1.5 rounded-xl bg-[#faf6f5] hover:bg-[#f3ecea] text-[#57534e] border border-[#e8dfdc] transition-all cursor-pointer"
             title="ตั้งค่าอัตราค่าตอบแทน"
           >
-            <Settings size={16} />
+            <Settings size={15} />
           </button>
         </div>
       </div>
 
-      {/* Main Highlights Card */}
-      <div className="mt-3.5 p-4 rounded-2xl bg-gradient-to-r from-pink-500 via-rose-500 to-pink-600 text-white shadow-md relative overflow-hidden">
-        {/* Kitty background glow accent */}
-        <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/10 rounded-full blur-xl pointer-events-none" />
-
-        <div className="flex justify-between items-start">
+      {/* Calm Warm-Cream Net Income Box (No bright neon pink block) */}
+      <div className="mt-3 p-3.5 rounded-xl bg-[#f6efed] border border-[#e4d8d5]">
+        <div className="flex items-start justify-between gap-2">
           <div>
-            <span className="text-[11px] uppercase tracking-wider text-pink-100 font-bold block">
+            <span className="text-[11px] text-[#78716c] font-semibold block">
               รายรับสุทธิ (Net Income)
             </span>
-            <div className="text-2xl md:text-3xl font-black mt-0.5 tracking-tight flex items-baseline gap-1">
-              <span className="text-base md:text-lg font-bold">฿</span>
+            <div className="text-xl sm:text-2xl font-extrabold text-[#a63e54] mt-0.5 tracking-tight flex items-baseline gap-1">
+              <span className="text-sm sm:text-base font-bold">฿</span>
               <span>{isLoading ? '...' : formatMoney(breakdown.netIncome)}</span>
             </div>
           </div>
-          <div className="text-right">
-            <span className="text-[10px] bg-white/20 text-white px-2 py-0.5 rounded-full font-bold">
-              ขึ้น {shiftCounts.totalWorkedDays} วัน ({shiftCounts.totalShifts} เวรย่อย)
-            </span>
-          </div>
+          <span className="text-[10px] bg-white text-[#57534e] border border-[#e4d8d5] px-2 py-0.5 rounded-full font-semibold shrink-0">
+            {shiftCounts.totalWorkedDays} วัน • {shiftCounts.totalShifts} เวรย่อย
+          </span>
         </div>
 
-        {/* Mini stats inside banner */}
-        <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-white/15 text-[11px]">
-          <div className="flex items-center gap-1.5">
-            <TrendingUp size={13} className="text-emerald-200" />
-            <span className="text-pink-100">รวมรายรับ:</span>
-            <span className="font-bold">{formatMoney(breakdown.totalIncome)}</span>
+        <div className="grid grid-cols-2 gap-2 mt-2.5 pt-2.5 border-t border-[#e4d8d5]/80 text-[11px] text-[#57534e]">
+          <div className="flex items-center gap-1 min-w-0">
+            <TrendingUp size={12} className="text-[#457a58] shrink-0" />
+            <span className="text-[#78716c]">รายรับ:</span>
+            <span className="font-bold text-[#1d1d1f] truncate">{formatMoney(breakdown.totalIncome)}</span>
           </div>
-          <div className="flex items-center gap-1.5 justify-end">
-            <TrendingDown size={13} className="text-rose-200" />
-            <span className="text-pink-100">รวมหัก:</span>
-            <span className="font-bold">{formatMoney(breakdown.totalDeductions)}</span>
+          <div className="flex items-center gap-1 justify-end min-w-0">
+            <TrendingDown size={12} className="text-[#a3332b] shrink-0" />
+            <span className="text-[#78716c]">หัก:</span>
+            <span className="font-bold text-[#1d1d1f] truncate">{formatMoney(breakdown.totalDeductions)}</span>
           </div>
         </div>
       </div>
 
-      {/* Quick Shift Counter Chips */}
-      <div className="grid grid-cols-3 gap-2 mt-3 text-center">
-        <div className="bg-pink-50/70 border border-pink-100 p-2 rounded-xl">
-          <span className="text-[10px] text-pink-600 font-extrabold flex items-center justify-center gap-1">
-            <ShiftAtomicIcon code="MORNING" size={11} />
+      {/* 3 SunNotes-Style StatTiles for Morning / Afternoon / Night */}
+      <div className="grid grid-cols-3 gap-2 mt-2.5 text-center">
+        <div className="rounded-xl border border-[#eadcdf] bg-[#f7eeef]/80 px-2 py-2.5">
+          <div className="text-base font-bold text-[#a63e54] leading-tight">
+            {shiftCounts.MORNING.totalCount}
+          </div>
+          <div className="mt-0.5 text-[11px] font-semibold text-[#57534e] flex items-center justify-center gap-0.5">
+            <ShiftAtomicIcon code="MORNING" size={10} />
             <span>เช้า (ช)</span>
-          </span>
-          <span className="text-xs font-black text-slate-800">
-            {shiftCounts.MORNING.totalCount}{' '}
-            <span className="text-[9px] font-medium text-slate-400">
-              (ปกติ {shiftCounts.MORNING.normalCount} / OT {shiftCounts.MORNING.otCount})
-            </span>
-          </span>
+          </div>
+          <div className="text-[9px] text-[#78716c] font-medium mt-0.5">
+            ปกติ {shiftCounts.MORNING.normalCount} • OT {shiftCounts.MORNING.otCount}
+          </div>
         </div>
-        <div className="bg-purple-50/70 border border-purple-100 p-2 rounded-xl">
-          <span className="text-[10px] text-purple-600 font-extrabold flex items-center justify-center gap-1">
-            <ShiftAtomicIcon code="AFTERNOON" size={11} />
+
+        <div className="rounded-xl border border-[#e4dce8] bg-[#f3eff6]/80 px-2 py-2.5">
+          <div className="text-base font-bold text-[#6e527a] leading-tight">
+            {shiftCounts.AFTERNOON.totalCount}
+          </div>
+          <div className="mt-0.5 text-[11px] font-semibold text-[#57534e] flex items-center justify-center gap-0.5">
+            <ShiftAtomicIcon code="AFTERNOON" size={10} />
             <span>บ่าย (บ)</span>
-          </span>
-          <span className="text-xs font-black text-slate-800">
-            {shiftCounts.AFTERNOON.totalCount}{' '}
-            <span className="text-[9px] font-medium text-slate-400">
-              (ปกติ {shiftCounts.AFTERNOON.normalCount} / OT {shiftCounts.AFTERNOON.otCount})
-            </span>
-          </span>
+          </div>
+          <div className="text-[9px] text-[#78716c] font-medium mt-0.5">
+            ปกติ {shiftCounts.AFTERNOON.normalCount} • OT {shiftCounts.AFTERNOON.otCount}
+          </div>
         </div>
-        <div className="bg-indigo-50/70 border border-indigo-100 p-2 rounded-xl">
-          <span className="text-[10px] text-indigo-600 font-extrabold flex items-center justify-center gap-1">
-            <ShiftAtomicIcon code="NIGHT" size={11} />
+
+        <div className="rounded-xl border border-[#dce2ea] bg-[#eff2f6]/80 px-2 py-2.5">
+          <div className="text-base font-bold text-[#495872] leading-tight">
+            {shiftCounts.NIGHT.totalCount}
+          </div>
+          <div className="mt-0.5 text-[11px] font-semibold text-[#57534e] flex items-center justify-center gap-0.5">
+            <ShiftAtomicIcon code="NIGHT" size={10} />
             <span>ดึก (ด)</span>
-          </span>
-          <span className="text-xs font-black text-slate-800">
-            {shiftCounts.NIGHT.totalCount}{' '}
-            <span className="text-[9px] font-medium text-slate-400">
-              (ปกติ {shiftCounts.NIGHT.normalCount} / OT {shiftCounts.NIGHT.otCount})
-            </span>
-          </span>
+          </div>
+          <div className="text-[9px] text-[#78716c] font-medium mt-0.5">
+            ปกติ {shiftCounts.NIGHT.normalCount} • OT {shiftCounts.NIGHT.otCount}
+          </div>
         </div>
       </div>
 
       {/* Breakdown Toggle Accordion */}
-      <div className="mt-3 border-t border-slate-100 pt-2">
+      <div className="mt-2.5 border-t border-[#e8dfdc] pt-2">
         <button
+          type="button"
           onClick={() => setShowBreakdown(!showBreakdown)}
-          className="w-full flex items-center justify-between py-1 px-2 text-[11px] font-bold text-slate-500 hover:text-pink-600 transition-colors cursor-pointer"
+          className="w-full flex items-center justify-between py-1 px-1 text-[11px] font-semibold text-[#78716c] hover:text-[#a63e54] transition-colors cursor-pointer"
         >
           <span>ดูรายละเอียดแจกแจงรายรับ & รายหัก</span>
           {showBreakdown ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
         </button>
 
         {showBreakdown && (
-          <div className="mt-2 space-y-3 p-3 bg-slate-50/70 rounded-2xl border border-slate-100 text-xs animate-in fade-in duration-150">
+          <div className="mt-2 space-y-3 p-3 bg-[#faf6f5] rounded-xl border border-[#e8dfdc] text-xs animate-in fade-in duration-150">
             {/* รายรับ */}
             <div>
-              <span className="text-[11px] font-black text-emerald-600 flex items-center gap-1 mb-1.5">
+              <span className="text-[11px] font-bold text-[#457a58] flex items-center gap-1 mb-1.5">
                 <TrendingUp size={12} />
                 <span>รายการรายรับ (Earnings)</span>
               </span>
-              <div className="space-y-1 text-slate-600 pl-1">
+              <div className="space-y-1 text-[#57534e] pl-1">
                 <div className="flex justify-between">
                   <span>เงินเดือนพื้นฐาน</span>
-                  <span className="font-bold text-slate-800">฿{formatMoney(breakdown.baseSalary)}</span>
+                  <span className="font-bold text-[#1d1d1f]">฿{formatMoney(breakdown.baseSalary)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>ค่าเวร & OT (ตามจำนวนเวรที่ขึ้น)</span>
-                  <span className="font-bold text-pink-600">฿{formatMoney(breakdown.totalShiftAllowance)}</span>
+                  <span className="font-bold text-[#a63e54]">฿{formatMoney(breakdown.totalShiftAllowance)}</span>
                 </div>
                 {breakdown.ptsAllowance > 0 && (
                   <div className="flex justify-between">
                     <span>ค่า พ.ต.ส. (วิชาชีพ)</span>
-                    <span className="font-bold text-slate-800">฿{formatMoney(breakdown.ptsAllowance)}</span>
+                    <span className="font-bold text-[#1d1d1f]">฿{formatMoney(breakdown.ptsAllowance)}</span>
                   </div>
                 )}
                 {breakdown.noPrivatePractice > 0 && (
                   <div className="flex justify-between">
                     <span>ไม่ทำเวชปฏิบัติส่วนตัว / ฉ.11</span>
-                    <span className="font-bold text-slate-800">฿{formatMoney(breakdown.noPrivatePractice)}</span>
+                    <span className="font-bold text-[#1d1d1f]">฿{formatMoney(breakdown.noPrivatePractice)}</span>
                   </div>
                 )}
                 {breakdown.inChargeAllowance > 0 && (
                   <div className="flex justify-between">
                     <span>ค่าหัวหน้าเวร / ตรวจการ</span>
-                    <span className="font-bold text-slate-800">฿{formatMoney(breakdown.inChargeAllowance)}</span>
+                    <span className="font-bold text-[#1d1d1f]">฿{formatMoney(breakdown.inChargeAllowance)}</span>
                   </div>
                 )}
                 {breakdown.otherAllowance > 0 && (
                   <div className="flex justify-between">
                     <span>ค่าตอบแทนพิเศษอื่นๆ</span>
-                    <span className="font-bold text-slate-800">฿{formatMoney(breakdown.otherAllowance)}</span>
+                    <span className="font-bold text-[#1d1d1f]">฿{formatMoney(breakdown.otherAllowance)}</span>
                   </div>
                 )}
-                <div className="flex justify-between pt-1 border-t border-slate-200 font-bold text-slate-800">
+                <div className="flex justify-between pt-1 border-t border-[#e8dfdc] font-bold text-[#1d1d1f]">
                   <span>รวมรายรับทั้งสิ้น</span>
-                  <span className="text-emerald-600">฿{formatMoney(breakdown.totalIncome)}</span>
+                  <span className="text-[#457a58]">฿{formatMoney(breakdown.totalIncome)}</span>
                 </div>
               </div>
             </div>
 
             {/* รายหัก */}
             {breakdown.totalDeductions > 0 && (
-              <div className="pt-2 border-t border-slate-200/60">
-                <span className="text-[11px] font-black text-rose-600 flex items-center gap-1 mb-1.5">
+              <div className="pt-2 border-t border-[#e8dfdc]">
+                <span className="text-[11px] font-bold text-[#a3332b] flex items-center gap-1 mb-1.5">
                   <TrendingDown size={12} />
                   <span>รายการหัก (Deductions)</span>
                 </span>
-                <div className="space-y-1 text-slate-600 pl-1">
+                <div className="space-y-1 text-[#57534e] pl-1">
                   {breakdown.taxDeduction > 0 && (
                     <div className="flex justify-between">
                       <span>ภาษี ณ ที่จ่าย</span>
-                      <span className="font-bold text-rose-600">-฿{formatMoney(breakdown.taxDeduction)}</span>
+                      <span className="font-bold text-[#a3332b]">-฿{formatMoney(breakdown.taxDeduction)}</span>
                     </div>
                   )}
                   {breakdown.socialSecurity > 0 && (
                     <div className="flex justify-between">
                       <span>ประกันสังคม</span>
-                      <span className="font-bold text-rose-600">-฿{formatMoney(breakdown.socialSecurity)}</span>
+                      <span className="font-bold text-[#a3332b]">-฿{formatMoney(breakdown.socialSecurity)}</span>
                     </div>
                   )}
                   {breakdown.providentFund > 0 && (
                     <div className="flex justify-between">
                       <span>กบข.</span>
-                      <span className="font-bold text-rose-600">-฿{formatMoney(breakdown.providentFund)}</span>
+                      <span className="font-bold text-[#a3332b]">-฿{formatMoney(breakdown.providentFund)}</span>
                     </div>
                   )}
                   {breakdown.coopDeduction > 0 && (
                     <div className="flex justify-between">
                       <span>สหกรณ์</span>
-                      <span className="font-bold text-rose-600">-฿{formatMoney(breakdown.coopDeduction)}</span>
+                      <span className="font-bold text-[#a3332b]">-฿{formatMoney(breakdown.coopDeduction)}</span>
                     </div>
                   )}
                   {breakdown.otherDeduction > 0 && (
                     <div className="flex justify-between">
                       <span>หักอื่นๆ</span>
-                      <span className="font-bold text-rose-600">-฿{formatMoney(breakdown.otherDeduction)}</span>
+                      <span className="font-bold text-[#a3332b]">-฿{formatMoney(breakdown.otherDeduction)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between pt-1 border-t border-slate-200 font-bold text-slate-800">
+                  <div className="flex justify-between pt-1 border-t border-[#e8dfdc] font-bold text-[#1d1d1f]">
                     <span>รวมรายหักทั้งสิ้น</span>
-                    <span className="text-rose-600">-฿{formatMoney(breakdown.totalDeductions)}</span>
+                    <span className="text-[#a3332b]">-฿{formatMoney(breakdown.totalDeductions)}</span>
                   </div>
                 </div>
               </div>
