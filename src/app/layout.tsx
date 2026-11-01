@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Prompt } from "next/font/google";
 import "./globals.css";
-import Navbar from "./components/Navbar";
 import ReminderEngine from "./components/ReminderEngine";
 import Header from "./components/Header";
 import SplashScreen from "./components/SplashScreen";
+import { ScrollLock } from "./components/ScrollLock";
 
 const prompt = Prompt({
   weight: ["300", "400", "500", "600", "700", "800", "900"],
@@ -43,28 +43,31 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="th" className="h-full antialiased overscroll-none">
-      <body className={`${prompt.className} ${prompt.variable} min-h-full flex flex-col pb-28 md:pb-0 bg-[#fff3f5] text-slate-900 overflow-x-hidden overscroll-none`}>
+      <body className={`${prompt.className} ${prompt.variable} min-h-full flex flex-col bg-[#fff3f5] text-slate-900 overflow-x-hidden overscroll-none`}>
         {/* App launch transition / splash screen (shows cover image on opening) */}
         <SplashScreen />
 
-        {/* Top Header Navigation & Tools (Fixed to top of viewport) */}
+        {/* Keeps the page still while an overlay with data-scroll-lock is open */}
+        <ScrollLock />
+
+        {/* Top bar + side menu (SunNotes layout; side menu pinned on lg+, ☰ sheet below) */}
         <Header />
 
-        {/* Top spacer matching fixed Header height + safe area inset */}
-        <div className="h-[calc(3.5rem+env(safe-area-inset-top,0px))] shrink-0" />
+        {/* Content column — shifted right of the pinned side menu on lg+ */}
+        <div className="flex flex-1 flex-col min-w-0 lg:pl-64">
+          {/* Top spacer matching fixed Header height + safe area inset */}
+          <div className="h-[calc(3.5rem+env(safe-area-inset-top,0px))] shrink-0" />
 
-        {/* Reminder engine: notification permission banner + foreground
-            due-time alerts (sound/vibration). Was imported but never
-            rendered after the Header refactor — re-mounted here. */}
-        <ReminderEngine />
+          {/* Reminder engine: notification permission banner + foreground
+              due-time alerts (sound/vibration). Was imported but never
+              rendered after the Header refactor — re-mounted here. */}
+          <ReminderEngine />
 
-        {/* Main Content Area */}
-        <main className="flex-1 p-5 max-w-md md:max-w-6xl mx-auto w-full">
-          {children}
-        </main>
-
-        {/* Bottom Navigation (Mobile Only) */}
-        <Navbar />
+          {/* Main Content Area */}
+          <main className="flex-1 p-3 sm:p-4 md:p-5 pb-[max(1.25rem,env(safe-area-inset-bottom,0px))] max-w-md md:max-w-7xl mx-auto w-full">
+            {children}
+          </main>
+        </div>
       </body>
     </html>
   );

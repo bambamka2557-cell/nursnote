@@ -201,7 +201,7 @@ export default function WorkLifeBalanceCard({
         </div>
 
         {/* 4 Quick Stat Tiles */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5">
+        <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-2 gap-2 sm:gap-2.5">
           {/* Tile 1: Total Working Days */}
           <div className="p-2.5 sm:p-3 rounded-2xl bg-white border border-pink-100 shadow-2xs">
             <div className="flex items-center gap-1.5 text-slate-500 text-xs font-bold">

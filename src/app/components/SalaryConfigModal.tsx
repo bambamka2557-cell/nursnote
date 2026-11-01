@@ -115,7 +115,10 @@ export default function SalaryConfigModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-[100] flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
+    <div
+      className="fixed inset-0 bg-slate-900/50 z-[100] flex items-center justify-center p-3 sm:p-4"
+      data-scroll-lock
+    >
       <div className="bg-white w-full max-w-lg rounded-3xl p-5 md:p-6 shadow-2xl border border-pink-100 max-h-[90vh] flex flex-col text-slate-800">
         {/* Header */}
         <div className="flex justify-between items-center border-b border-pink-100 pb-3 shrink-0">

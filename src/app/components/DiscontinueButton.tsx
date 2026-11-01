@@ -47,7 +47,7 @@ export default function DiscontinueButton({
       </button>
 
       {open && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-[100] flex items-end sm:items-center justify-center p-4">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-[100] flex items-end sm:items-center justify-center p-4" data-scroll-lock>
           <div className="bg-white w-full max-w-sm rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl space-y-5 animate-in slide-in-from-bottom duration-250">
             <div className="flex items-start gap-3 text-rose-600">
               <div className="w-11 h-11 rounded-full bg-rose-50 flex items-center justify-center shrink-0">

@@ -1,13 +1,36 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
+import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { Activity, PlusCircle, ListTodo, CalendarDays, Calculator, BookOpen, Clock, Heart, ShieldAlert, CheckCircle, Info, Copy } from 'lucide-react';
+import { Calculator, BookOpen, Clock, Heart, ShieldAlert, CheckCircle, Info, Copy, Menu } from 'lucide-react';
+import Sidebar from './Sidebar';
+
+// Page title shown in the top bar. /schedule returns null because the
+// calendar portals its own month title + navigation into #topbar-slot.
+function getPageTitle(pathname: string): string | null {
+  if (pathname.startsWith('/schedule')) return null;
+  if (pathname.startsWith('/add')) return 'รับผู้ป่วยใหม่';
+  if (pathname.startsWith('/timeline')) return 'คิวงานรวม';
+  if (pathname.startsWith('/travel')) return 'ที่เที่ยวประจำเดือน';
+  if (pathname.startsWith('/patient')) return 'รายงานผู้ป่วย';
+  return 'เตียงทั้งหมด';
+}
 
 export default function Header() {
   const pathname = usePathname();
+  const pageTitle = getPageTitle(pathname);
+
+  // Side menu sheet (tablet / mobile)
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setDrawerOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [drawerOpen]);
 
   // Modals state
   const [gaOpen, setGaOpen] = useState(false);
@@ -62,92 +85,53 @@ export default function Header() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-40 bg-sky-100/95 backdrop-blur-md border-b border-sky-200/40 px-4 md:px-6 py-3 pt-[calc(0.75rem+env(safe-area-inset-top,0px))] flex items-center justify-between shadow-sm">
-        <div className="flex items-center gap-4 md:gap-6">
-          <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
-            <div className="relative w-8 h-8 rounded-lg overflow-hidden shadow-xs border border-pink-200/60 bg-white shrink-0">
-              <Image
-                src="/LOGO_App.png"
-                alt="LR-Helper Logo"
-                width={32}
-                height={32}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                priority
-              />
-            </div>
-            <span className="text-lg md:text-xl font-black bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent group-hover:scale-102 transition-transform">LR-Helper</span>
-            <span className="text-[9px] uppercase font-extrabold tracking-wider px-1.5 py-0.5 bg-pink-100 text-pink-700 rounded-full border border-pink-200/20">LR</span>
-          </Link>
-          
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-2 text-sm font-medium text-slate-600">
-            <Link href="/" className={`flex items-center gap-1.5 transition-all ${
-              pathname === '/' 
-                ? 'bg-gradient-to-b from-indigo-500 to-indigo-600 text-white font-black shadow-[0_4px_10px_rgba(99,102,241,0.25)] border-b-3 border-indigo-700 px-3 py-1.5 rounded-xl active:translate-y-0.5 active:border-b-0' 
-                : 'bg-white/60 text-slate-700 hover:bg-white hover:text-indigo-600 hover:shadow-sm border border-slate-200/50 px-3 py-1.5 rounded-xl active:translate-y-0.5'
-            }`}>
-              <Activity size={16} />
-              <span>เตียงทั้งหมด</span>
-            </Link>
-            <Link href="/add" className={`flex items-center gap-1.5 transition-all ${
-              pathname === '/add' 
-                ? 'bg-gradient-to-b from-pink-400 to-pink-500 text-white font-black shadow-[0_4px_10px_rgba(244,114,182,0.25)] border-b-3 border-pink-600 px-3 py-1.5 rounded-xl active:translate-y-0.5 active:border-b-0' 
-                : 'bg-white/60 text-slate-700 hover:bg-white hover:text-pink-600 hover:shadow-sm border border-slate-200/50 px-3 py-1.5 rounded-xl active:translate-y-0.5'
-            }`}>
-              <PlusCircle size={16} />
-              <span>รับใหม่</span>
-            </Link>
-            <Link href="/timeline" className={`flex items-center gap-1.5 transition-all ${
-              pathname === '/timeline' 
-                ? 'bg-gradient-to-b from-indigo-500 to-indigo-600 text-white font-black shadow-[0_4px_10px_rgba(99,102,241,0.25)] border-b-3 border-indigo-700 px-3 py-1.5 rounded-xl active:translate-y-0.5 active:border-b-0' 
-                : 'bg-white/60 text-slate-700 hover:bg-white hover:text-indigo-600 hover:shadow-sm border border-slate-200/50 px-3 py-1.5 rounded-xl active:translate-y-0.5'
-            }`}>
-              <ListTodo size={16} />
-              <span>คิวงานรวม</span>
-            </Link>
-            <Link href="/schedule" className={`flex items-center gap-1.5 transition-all ${
-              pathname === '/schedule' 
-                ? 'bg-gradient-to-b from-pink-400 to-pink-500 text-white font-black shadow-[0_4px_10px_rgba(244,114,182,0.25)] border-b-3 border-pink-600 px-3 py-1.5 rounded-xl active:translate-y-0.5 active:border-b-0' 
-                : 'bg-white/60 text-slate-700 hover:bg-white hover:text-pink-600 hover:shadow-sm border border-slate-200/50 px-3 py-1.5 rounded-xl active:translate-y-0.5'
-            }`}>
-              <CalendarDays size={16} />
-              <span>ตารางเวร</span>
-            </Link>
-          </nav>
-        </div>
+      {/* Top bar (SunNotes layout): ☰ · page title · page slot (/schedule puts
+          its month navigation here via a portal into #topbar-slot) */}
+      <header className="fixed top-0 left-0 right-0 lg:left-64 z-40 h-[calc(3.5rem+env(safe-area-inset-top,0px))] pt-[env(safe-area-inset-top,0px)] bg-[#fff6f8]/95 border-b border-pink-100 px-2.5 sm:px-4 md:px-5 flex items-center gap-1.5 sm:gap-3">
+        <button
+          type="button"
+          onClick={() => setDrawerOpen(true)}
+          className="lg:hidden shrink-0 rounded-lg p-2 text-slate-600 transition-colors hover:bg-pink-100/60 hover:text-slate-900 cursor-pointer"
+          aria-label="เปิดเมนู"
+        >
+          <Menu size={20} />
+        </button>
 
-        {/* Global Toolbar & Status */}
-        <div className="flex items-center gap-2 md:gap-3">
-          {/* GA Calculator Trigger */}
-          <button
-            onClick={() => setGaOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-2 bg-gradient-to-b from-sky-400 to-sky-500 hover:from-sky-500 hover:to-sky-600 text-white text-xs font-black rounded-xl border-b-3 border-sky-600 shadow-[0_4px_10px_rgba(56,189,248,0.25)] hover:shadow-[0_6px_14px_rgba(56,189,248,0.35)] transition-all active:translate-y-0.5 active:border-b-0 shrink-0 cursor-pointer"
-            title="เครื่องคำนวณ GA"
-          >
-            <Calculator size={14} className="text-white" />
-            <span className="hidden sm:inline">คำนวณ GA</span>
-          </button>
+        {pageTitle && (
+          <h1 className="min-w-0 truncate text-base sm:text-lg font-semibold text-slate-800">{pageTitle}</h1>
+        )}
 
-          {/* LR Guidelines Trigger */}
-          <button
-            onClick={() => setGuideOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-2 bg-gradient-to-b from-pink-400 to-pink-500 hover:from-pink-500 hover:to-pink-600 text-white text-xs font-black rounded-xl border-b-3 border-pink-600 shadow-[0_4px_10px_rgba(244,114,182,0.25)] hover:shadow-[0_6px_14px_rgba(244,114,182,0.35)] transition-all active:translate-y-0.5 active:border-b-0 shrink-0 cursor-pointer"
-            title="คู่มือพยาบาลใหม่"
-          >
-            <BookOpen size={14} className="text-white" />
-            <span className="hidden sm:inline">คู่มือ LR</span>
-          </button>
-
-          <div className="flex items-center gap-1.5 pl-1 md:pl-2 border-l border-sky-200/30">
-            <span className="hidden lg:inline text-[10px] text-slate-400 font-medium">DB Active</span>
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Database Connected"></div>
-          </div>
-        </div>
+        <div id="topbar-slot" className="flex min-w-0 flex-1 items-center gap-2" />
       </header>
+
+      {/* Side menu — pinned on desktop */}
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r border-pink-100 lg:block">
+        <Sidebar
+          pathname={pathname}
+          onOpenGa={() => setGaOpen(true)}
+          onOpenGuide={() => setGuideOpen(true)}
+        />
+      </aside>
+
+      {/* Side menu — sheet on tablet / mobile (shows instantly, no slide) */}
+      {drawerOpen && (
+        <div className="fixed inset-0 z-[90] lg:hidden" data-scroll-lock="1024">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setDrawerOpen(false)} />
+          <aside className="absolute inset-y-0 left-0 w-72 max-w-[85vw] overflow-hidden rounded-r-2xl shadow-xl">
+            <Sidebar
+              pathname={pathname}
+              onNavigate={() => setDrawerOpen(false)}
+              onClose={() => setDrawerOpen(false)}
+              onOpenGa={() => setGaOpen(true)}
+              onOpenGuide={() => setGuideOpen(true)}
+            />
+          </aside>
+        </div>
+      )}
 
       {/* Global GA Calculator Modal */}
       {gaOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-slate-900/50 z-[100] flex items-center justify-center p-4" data-scroll-lock>
           <div className="bg-white w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-200 text-slate-800">
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
@@ -202,7 +186,7 @@ export default function Header() {
 
       {/* Global LR Guidelines Modal */}
       {guideOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-slate-900/50 z-[100] flex items-center justify-center p-4" data-scroll-lock>
           <div className="bg-white w-full max-w-2xl rounded-2xl p-5 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200 text-slate-800">
             <div className="flex justify-between items-start border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
