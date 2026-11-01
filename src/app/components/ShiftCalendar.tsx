@@ -353,13 +353,13 @@ export default function ShiftCalendar({
 
   // Mode segmented control + Overview button + Travel link + Right Panel toggle
   const renderModeAndActionControls = () => (
-    <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+    <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
       {/* Segmented tabs: [ตารางเวร | วันหยุด] (SunNotes style) */}
       <div className="inline-flex items-center rounded-xl border border-pink-200/80 bg-pink-50/70 p-0.5">
         <button
           type="button"
           onClick={() => handleModeChange('shift')}
-          className={`px-2.5 sm:px-3 py-1 rounded-lg text-xs sm:text-sm transition-all cursor-pointer ${
+          className={`px-2 sm:px-3 py-1 rounded-lg text-[11px] sm:text-sm transition-all cursor-pointer ${
             activeView === 'calendar' && calendarMode === 'shift'
               ? 'bg-white text-pink-600 font-bold shadow-2xs border border-pink-200/60'
               : 'text-slate-600 hover:text-slate-900 font-medium'
@@ -370,7 +370,7 @@ export default function ShiftCalendar({
         <button
           type="button"
           onClick={() => handleModeChange('holiday')}
-          className={`px-2.5 sm:px-3 py-1 rounded-lg text-xs sm:text-sm transition-all cursor-pointer ${
+          className={`px-2 sm:px-3 py-1 rounded-lg text-[11px] sm:text-sm transition-all cursor-pointer ${
             activeView === 'calendar' && calendarMode === 'holiday'
               ? 'bg-white text-rose-600 font-bold shadow-2xs border border-rose-200/60'
               : 'text-slate-600 hover:text-slate-900 font-medium'
@@ -385,7 +385,7 @@ export default function ShiftCalendar({
         <button
           type="button"
           onClick={() => onViewChange(activeView === 'overview' ? 'calendar' : 'overview')}
-          className={`inline-flex items-center gap-1.5 rounded-xl border px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-semibold shadow-2xs transition-all cursor-pointer active:scale-[0.98] ${
+          className={`inline-flex items-center gap-1 sm:gap-1.5 rounded-xl border px-2 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-sm font-semibold shadow-2xs transition-all cursor-pointer active:scale-[0.98] ${
             activeView === 'overview'
               ? 'border-pink-400 bg-pink-500 text-white'
               : 'border-pink-200/80 bg-white text-slate-700 hover:bg-pink-50 hover:text-pink-600'
@@ -400,7 +400,7 @@ export default function ShiftCalendar({
       {/* Travel guide shortcut */}
       <Link
         href={`/travel?month=${currentMonth}`}
-        className="inline-flex items-center gap-1.5 rounded-xl border border-pink-200/80 bg-white hover:bg-pink-50 px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-semibold text-slate-700 hover:text-pink-600 shadow-2xs transition-colors active:scale-[0.98]"
+        className="inline-flex items-center gap-1 sm:gap-1.5 rounded-xl border border-pink-200/80 bg-white hover:bg-pink-50 px-2 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-sm font-semibold text-slate-700 hover:text-pink-600 shadow-2xs transition-colors active:scale-[0.98]"
         title={`แนะนำที่เที่ยวไทยประจำเดือน ${THAI_MONTH_NAMES[currentMonth - 1]}`}
       >
         <Compass size={14} className="text-pink-500" />
@@ -484,6 +484,12 @@ export default function ShiftCalendar({
   return (
     <>
       {topbarSlot && createPortal(topbarControls, topbarSlot)}
+
+      {activeView === 'overview' && (
+        <div className="mb-3 flex md:hidden items-center justify-between gap-2 rounded-2xl border border-pink-100 bg-white px-2.5 py-2 shadow-2xs">
+          {renderModeAndActionControls()}
+        </div>
+      )}
 
       {activeView === 'calendar' && (
         <div className="rounded-2xl border border-pink-200/80 bg-white shadow-sm overflow-hidden text-slate-800">

@@ -70,6 +70,14 @@ export default function ScheduleClient({
       setRightDrawerOpen((prev) => !prev);
       return;
     }
+    if (activeView === 'overview') {
+      setActiveView('calendar');
+      setRightCollapsed(false);
+      try {
+        localStorage.setItem('lr_right_collapsed', 'false');
+      } catch {}
+      return;
+    }
     setRightCollapsed((prev) => {
       const next = !prev;
       try {
@@ -208,7 +216,7 @@ export default function ScheduleClient({
             onModeChange={setCalendarMode}
             activeView={activeView}
             onViewChange={setActiveView}
-            rightPanelOpen={showDesktopRight}
+            rightPanelOpen={showDesktopRight || rightDrawerOpen}
             onToggleRightPanel={handleToggleRightPanel}
           />
 

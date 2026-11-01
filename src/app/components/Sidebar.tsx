@@ -10,7 +10,6 @@ import {
   Plus,
   Calculator,
   BookOpen,
-  PanelLeftClose,
   X,
   type LucideIcon,
 } from 'lucide-react';
@@ -68,28 +67,27 @@ export default function Sidebar({
   onNavigate,
   onOpenGa,
   onOpenGuide,
-  onCollapse,
   onClose,
 }: SidebarProps) {
   const isAddActive = pathname.startsWith('/add');
 
   return (
     <div className="flex h-full w-64 shrink-0 flex-col bg-[#fdf4f6] border-r border-pink-100/90 pt-[env(safe-area-inset-top,0px)] select-none">
-      {/* Brand header (matches SunNotes 52px tile + title + collapse button) */}
-      <div className="flex items-center justify-between gap-2 px-4 pt-3.5 pb-3 border-b border-pink-100/80">
+      {/* Brand header (h-14 = 56px, aligns flush with Top Bar border-b) */}
+      <div className="flex h-14 shrink-0 items-center justify-between gap-2 px-4 border-b border-pink-100/90">
         <Link href="/" onClick={onNavigate} className="flex min-w-0 flex-1 items-center gap-2.5">
-          <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-pink-200/70 bg-white shadow-2xs">
+          <span className="relative h-9 w-9 shrink-0 overflow-hidden rounded-xl border border-pink-200/70 bg-white shadow-2xs">
             <Image
               src="/LOGO_App.png"
               alt="LR-Helper"
-              width={40}
-              height={40}
+              width={36}
+              height={36}
               className="h-full w-full object-cover"
               priority
             />
           </span>
           <span className="min-w-0">
-            <span className="block truncate text-base font-extrabold tracking-wide text-pink-600 leading-tight">
+            <span className="block truncate text-sm font-extrabold tracking-wide text-pink-600 leading-tight">
               LR-Helper
             </span>
             <span className="block truncate text-[11px] font-medium text-slate-500">
@@ -97,18 +95,6 @@ export default function Sidebar({
             </span>
           </span>
         </Link>
-
-        {onCollapse && (
-          <button
-            type="button"
-            onClick={onCollapse}
-            className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-pink-100/60 hover:text-pink-600 cursor-pointer"
-            title="พับเมนูด้านซ้าย"
-            aria-label="พับเมนูด้านซ้าย"
-          >
-            <PanelLeftClose size={18} />
-          </button>
-        )}
 
         {onClose && (
           <button
