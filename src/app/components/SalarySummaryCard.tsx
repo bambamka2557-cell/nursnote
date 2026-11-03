@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { SalarySummaryResult } from '@/app/utils/shiftData';
+import { SalarySummaryResult, DayShiftData, summarizeSideJobs } from '@/app/utils/shiftData';
 import { ShiftAtomicIcon } from './ThemeIcons';
 import {
   Eye,
@@ -13,19 +13,24 @@ import {
   TrendingUp,
   TrendingDown,
   Calendar,
+  Briefcase,
 } from 'lucide-react';
 
 interface SalarySummaryCardProps {
   summary: SalarySummaryResult;
   onOpenConfig: () => void;
   isLoading?: boolean;
+  // Only for the separate side-job total; never mixed into the salary numbers.
+  shifts?: DayShiftData[];
 }
 
 export default function SalarySummaryCard({
   summary,
   onOpenConfig,
   isLoading = false,
+  shifts,
 }: SalarySummaryCardProps) {
+  const sideJobs = summarizeSideJobs(shifts || [], summary.startDate, summary.endDate);
   const [privacyHidden, setPrivacyHidden] = useState<boolean>(true);
   const [showBreakdown, setShowBreakdown] = useState<boolean>(false);
   const [mounted, setMounted] = useState<boolean>(false);
@@ -132,6 +137,24 @@ export default function SalarySummaryCard({
           </div>
         </div>
       </div>
+
+      {/* Side-job income — its own total, NOT part of รายรับสุทธิ above */}
+      {sideJobs.jobCount > 0 && (
+        <div className="mt-2.5 flex items-center justify-between gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-amber-500 text-white">
+              <Briefcase size={14} />
+            </span>
+            <div className="min-w-0">
+              <div className="text-[11px] font-semibold text-amber-900 truncate">รายได้จ็อบนอกรอบนี้</div>
+              <div className="text-[10px] text-amber-700 truncate">
+                {sideJobs.dayCount} วัน · {sideJobs.jobCount} จ็อบ · แยกจากเงินเดือน
+              </div>
+            </div>
+          </div>
+          <span className="shrink-0 text-sm font-bold text-amber-800">฿{formatMoney(sideJobs.income)}</span>
+        </div>
+      )}
 
       {/* 3 SunNotes-Style StatTiles for Morning / Afternoon / Night */}
       <div className="grid grid-cols-3 gap-2 mt-2.5 text-center">

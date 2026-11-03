@@ -3,7 +3,7 @@
 import { prisma } from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
-import { SubShift, DayShiftData } from '@/app/utils/shiftData';
+import { SubShift, DayShiftData, SideJob, sanitizeSideJobs } from '@/app/utils/shiftData';
 
 /**
  * Get all shifts within a specific date range [startDate, endDate] inclusive
@@ -29,6 +29,7 @@ export async function getShiftsByDateRange(startDate: string, endDate: string): 
       shifts: (Array.isArray(record.shifts) ? record.shifts : []) as unknown as SubShift[],
       note: record.note,
       sticker: record.sticker,
+      jobs: sanitizeSideJobs(record.jobs),
     }));
   } catch (error) {
     console.error('Failed to get shifts by date range:', error);
@@ -44,12 +45,16 @@ export async function saveShift(data: {
   shifts: SubShift[];
   note?: string | null;
   sticker?: string | null;
+  jobs?: SideJob[];
 }): Promise<{ success: boolean; error?: string }> {
   try {
     const cleanShifts = (data.shifts || []).map((s) => ({
       code: s.code,
       ot: Boolean(s.ot),
     }));
+    // Side jobs are stored as-is for display + their own income total only.
+    const cleanJobs = sanitizeSideJobs(data.jobs);
+    const jobsValue = cleanJobs.length > 0 ? (cleanJobs as unknown as Prisma.InputJsonValue) : Prisma.DbNull;
 
     await prisma.shiftSchedule.upsert({
       where: {
@@ -59,12 +64,14 @@ export async function saveShift(data: {
         shifts: cleanShifts as unknown as Prisma.InputJsonValue,
         note: data.note ? data.note.trim() : null,
         sticker: data.sticker || null,
+        jobs: jobsValue,
       },
       create: {
         date: data.date,
         shifts: cleanShifts as unknown as Prisma.InputJsonValue,
         note: data.note ? data.note.trim() : null,
         sticker: data.sticker || null,
+        jobs: jobsValue,
       },
     });
 

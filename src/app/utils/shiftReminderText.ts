@@ -3,7 +3,11 @@ import {
   SHIFT_PATTERNS,
   STICKER_OPTIONS,
   THAI_MONTH_NAMES_SHORT,
+  SIDE_JOB_TYPES,
   matchShiftPattern,
+  sanitizeSideJobs,
+  sideJobLabel,
+  sideJobTimeText,
   type SubShift,
 } from '@/app/utils/shiftData';
 
@@ -53,12 +57,19 @@ export function buildShiftReminderPayload(
   dateStr: string,
   rawShifts: unknown,
   note?: string | null,
-  sticker?: string | null
+  sticker?: string | null,
+  rawJobs?: unknown
 ): ShiftReminderPayload {
   const shifts = parseShifts(rawShifts);
   const when = thaiShortDate(dateStr);
   const stickerEmoji = STICKER_OPTIONS.find((s) => s.key === sticker)?.emoji;
   const noteLine = note?.trim() ? `📝 ${note.trim()}` : null;
+  // Side jobs: place + time only — income is never put on the lock screen.
+  const jobLines = sanitizeSideJobs(rawJobs).map((j) => {
+    const emoji = SIDE_JOB_TYPES.find((t) => t.key === j.type)?.emoji ?? '💼';
+    const time = sideJobTimeText(j);
+    return `${emoji} จ็อบ ${sideJobLabel(j)}${time ? ` ${time}` : ''}`;
+  });
 
   const base = {
     tag: `shift-${dateStr}`,
@@ -69,6 +80,14 @@ export function buildShiftReminderPayload(
     requireInteraction: false,
     renotify: false,
   };
+
+  if (shifts.length === 0 && jobLines.length > 0) {
+    return {
+      ...base,
+      title: `💼 พรุ่งนี้ไปจ็อบ · ${when}${stickerEmoji ? ` ${stickerEmoji}` : ''}`,
+      body: [...jobLines, noteLine].filter(Boolean).join('\n'),
+    };
+  }
 
   if (shifts.length === 0) {
     return {
@@ -93,6 +112,7 @@ export function buildShiftReminderPayload(
     const a = ATOMIC_SHIFTS[s.code];
     lines.push(`${SUB_EMOJI[s.code]} ${a.fullLabel} ${a.timeRange.replace(/\s/g, '')}${s.ot ? ' · OT' : ''}`);
   }
+  lines.push(...jobLines);
   if (noteLine) lines.push(noteLine);
 
   return {

@@ -174,6 +174,7 @@ export default function ScheduleClient({
           <SalarySummaryCard
             summary={summary}
             onOpenConfig={() => setIsConfigOpen(true)}
+            shifts={shifts}
             isLoading={isPending}
           />
           <WorkLifeBalanceCard
@@ -193,6 +194,7 @@ export default function ScheduleClient({
           <SalarySummaryCard
             summary={summary}
             onOpenConfig={() => setIsConfigOpen(true)}
+            shifts={shifts}
             isLoading={isPending}
           />
         </>
@@ -264,6 +266,7 @@ export default function ScheduleClient({
                   <SalarySummaryCard
                     summary={summary}
                     onOpenConfig={() => setIsConfigOpen(true)}
+                    shifts={shifts}
                     isLoading={isPending}
                   />
                   <HolidaySummaryCard

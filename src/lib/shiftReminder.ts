@@ -86,7 +86,7 @@ export async function runShiftReminder(now = new Date(), opts: { test?: boolean 
     if (claim.count === 0) return { status: 'already-sent', tomorrow };
   }
 
-  const payload = buildShiftReminderPayload(tomorrow, day.shifts, day.note, day.sticker);
+  const payload = buildShiftReminderPayload(tomorrow, day.shifts, day.note, day.sticker, day.jobs);
 
   let pushesSent = 0;
   let pushesFailed = 0;

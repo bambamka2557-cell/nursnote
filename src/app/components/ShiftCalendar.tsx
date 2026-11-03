@@ -13,6 +13,11 @@ import {
   THAI_MONTH_NAMES,
   THAI_MONTH_NAMES_SHORT,
   getCycleForDate,
+  SideJob,
+  SideJobType,
+  SIDE_JOB_TYPES,
+  sideJobLabel,
+  sideJobTimeText,
 } from '@/app/utils/shiftData';
 import { saveShift, deleteShift } from '@/app/actions/shift';
 import {
@@ -32,6 +37,7 @@ import {
   PanelRightOpen,
   Clock,
   Plus,
+  Briefcase,
 } from 'lucide-react';
 import { getThaiHoliday } from '@/app/utils/thaiHolidays';
 import { StickerThemeIcon, HolidayThemeIcon, ShiftAtomicIcon } from './ThemeIcons';
@@ -159,6 +165,9 @@ export default function ShiftCalendar({
   const [editShifts, setEditShifts] = useState<SubShift[]>([]);
   const [editNote, setEditNote] = useState<string>('');
   const [editSticker, setEditSticker] = useState<string | null>(null);
+  const [editJobs, setEditJobs] = useState<SideJob[]>([]);
+  // income is edited as text so a half-typed value doesn't snap to 0
+  const [editJobIncome, setEditJobIncome] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [confirmClear, setConfirmClear] = useState(false);
 
@@ -321,10 +330,15 @@ export default function ShiftCalendar({
       setEditShifts(existing.shifts ? [...existing.shifts] : []);
       setEditNote(existing.note || '');
       setEditSticker(existing.sticker || null);
+      const jobs = existing.jobs ? existing.jobs.map((j) => ({ ...j })) : [];
+      setEditJobs(jobs);
+      setEditJobIncome(jobs.map((j) => (j.income ? String(j.income) : '')));
     } else {
       setEditShifts([]);
       setEditNote('');
       setEditSticker(null);
+      setEditJobs([]);
+      setEditJobIncome([]);
     }
   };
 
@@ -359,15 +373,34 @@ export default function ShiftCalendar({
     );
   };
 
+  const addJob = () => {
+    setEditJobs((prev) => [...prev, { type: 'FACTORY', place: '', start: '', end: '', income: 0 }]);
+    setEditJobIncome((prev) => [...prev, '']);
+  };
+  const updateJob = (idx: number, patch: Partial<SideJob>) => {
+    setEditJobs((prev) => prev.map((j, i) => (i === idx ? { ...j, ...patch } : j)));
+  };
+  const removeJob = (idx: number) => {
+    setEditJobs((prev) => prev.filter((_, i) => i !== idx));
+    setEditJobIncome((prev) => prev.filter((_, i) => i !== idx));
+  };
+  const jobsForSave = (): SideJob[] =>
+    editJobs.map((j, i) => {
+      const n = Number((editJobIncome[i] || '').replace(/[,\s]/g, ''));
+      return { ...j, place: j.place.trim(), income: Number.isFinite(n) && n > 0 ? n : 0 };
+    });
+
   const handleSaveModal = async () => {
     if (!selectedDate) return;
     setIsSaving(true);
+    const savedJobs = jobsForSave();
     try {
       const res = await saveShift({
         date: selectedDate,
         shifts: editShifts,
         note: editNote,
         sticker: editSticker,
+        jobs: savedJobs,
       });
 
       if (res.success) {
@@ -378,6 +411,7 @@ export default function ShiftCalendar({
             shifts: editShifts,
             note: editNote || null,
             sticker: editSticker || null,
+            jobs: savedJobs,
           },
         }));
         onShiftUpdated();
@@ -625,7 +659,7 @@ export default function ShiftCalendar({
     return currentMonthCells.filter((c) => {
       const sd = shiftsMap[c.dateStr];
       const hol = getThaiHoliday(c.dateStr);
-      return Boolean((sd && (sd.shifts.length > 0 || sd.note || sd.sticker)) || hol);
+      return Boolean((sd && (sd.shifts.length > 0 || sd.note || sd.sticker || (sd.jobs?.length ?? 0) > 0)) || hol);
     });
   }, [currentMonthCells, listFilter, shiftsMap]);
 
@@ -870,7 +904,17 @@ export default function ShiftCalendar({
                       )}
 
                       {/* Bottom Note Indicator */}
-                      <div className="w-full min-h-[14px] flex items-center justify-start pt-0.5">
+                      <div className="w-full min-h-[14px] flex flex-col items-stretch justify-start gap-0.5 pt-0.5">
+                        {shiftData?.jobs && shiftData.jobs.length > 0 && (
+                          <div
+                            className="w-full border-l-2 border-amber-400 bg-amber-50 rounded-r px-1 py-0.5 text-[9px] sm:text-[11px] text-amber-800 font-semibold truncate"
+                            title={shiftData.jobs.map((j) => sideJobLabel(j)).join(', ')}
+                          >
+                            {SIDE_JOB_TYPES.find((t) => t.key === shiftData.jobs![0].type)?.emoji}{' '}
+                            {shiftData.jobs[0].place || 'จ็อบ'}
+                            {shiftData.jobs.length > 1 ? ` +${shiftData.jobs.length - 1}` : ''}
+                          </div>
+                        )}
                         {shiftData?.note ? (
                           <div
                             className="w-full border-l-2 border-pink-400 bg-pink-50/75 rounded-r px-1 py-0.5 text-[9px] sm:text-[11px] text-pink-700 font-medium truncate"
@@ -1074,6 +1118,22 @@ export default function ShiftCalendar({
                               </div>
                             )}
 
+                            {/* Side jobs */}
+                            {shiftData?.jobs && shiftData.jobs.length > 0 && (
+                              <div className="rounded-xl border border-amber-200 bg-amber-50 p-2 space-y-1">
+                                {shiftData.jobs.map((j, i) => (
+                                  <div key={i} className="text-[11px] leading-snug text-amber-900">
+                                    <span className="font-bold">
+                                      {SIDE_JOB_TYPES.find((t) => t.key === j.type)?.emoji} {sideJobLabel(j)}
+                                    </span>
+                                    {sideJobTimeText(j) && (
+                                      <span className="block text-[10px] text-amber-700">{sideJobTimeText(j)}</span>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
                             {/* Sticker & Note */}
                             {(shiftData?.sticker || shiftData?.note) && (
                               <div className="rounded-xl border border-pink-100 bg-pink-50/40 p-2 space-y-1">
@@ -1267,8 +1327,17 @@ export default function ShiftCalendar({
                             </div>
 
                             {/* Holiday or Note Row */}
-                            {(thaiHoliday || shiftData?.note) && (
+                            {(thaiHoliday || shiftData?.note || (shiftData?.jobs?.length ?? 0) > 0) && (
                               <div className="flex items-center gap-2 flex-wrap text-xs">
+                                {shiftData?.jobs?.map((j, i) => (
+                                  <span
+                                    key={i}
+                                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200/70 text-[11px] font-bold max-w-full truncate"
+                                  >
+                                    {SIDE_JOB_TYPES.find((t) => t.key === j.type)?.emoji} {sideJobLabel(j)}
+                                    {sideJobTimeText(j) ? ` · ${sideJobTimeText(j)}` : ''}
+                                  </span>
+                                ))}
                                 {thaiHoliday && (
                                   <span
                                     className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-bold text-[11px] ${
@@ -1551,6 +1620,102 @@ export default function ShiftCalendar({
                 </div>
               </div>
             )}
+
+            {/* Side jobs (จ็อบนอก) — any day, separate from hospital pay */}
+            <div className="space-y-2">
+              <label className="text-xs sm:text-sm font-extrabold text-slate-700 flex items-center justify-between">
+                <span className="flex items-center gap-1">
+                  <Briefcase size={15} className="text-amber-600" />
+                  <span>จ็อบนอก</span>
+                </span>
+                <span className="text-xs text-slate-400 font-normal">แยกจากเงินเดือน รพ.</span>
+              </label>
+
+              {editJobs.map((job, idx) => (
+                <div key={idx} className="rounded-2xl border border-amber-200 bg-amber-50/60 p-3 space-y-2">
+                  <div className="flex items-center gap-1.5">
+                    <div className="grid flex-1 grid-cols-3 gap-1.5">
+                      {SIDE_JOB_TYPES.map((t) => (
+                        <button
+                          key={t.key}
+                          type="button"
+                          onClick={() => updateJob(idx, { type: t.key as SideJobType })}
+                          className={`min-h-10 rounded-xl border px-1 text-xs font-bold transition-colors cursor-pointer ${
+                            job.type === t.key
+                              ? 'bg-white border-amber-400 ring-2 ring-amber-300 text-amber-800'
+                              : 'bg-white/60 border-amber-100 text-slate-600 hover:bg-white'
+                          }`}
+                        >
+                          {t.emoji} {t.label}
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeJob(idx)}
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-rose-500 hover:bg-rose-50 cursor-pointer"
+                      title="ลบจ็อบนี้"
+                      aria-label="ลบจ็อบนี้"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={job.place}
+                    maxLength={80}
+                    placeholder="ชื่อที่ เช่น โรงงานพี่อ๊พ, รพ.เอกชน"
+                    onChange={(e) => updateJob(idx, { place: e.target.value })}
+                    className="w-full px-3 py-2 bg-white border border-amber-200 rounded-xl text-base sm:text-sm font-medium text-slate-800 focus:border-amber-500 focus:outline-hidden"
+                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    <label className="block space-y-0.5 min-w-0">
+                      <span className="text-[11px] font-bold text-slate-500">เริ่ม</span>
+                      <input
+                        type="time"
+                        value={job.start}
+                        onChange={(e) => updateJob(idx, { start: e.target.value })}
+                        className="w-full min-w-0 px-2.5 py-2 bg-white border border-amber-200 rounded-xl text-base sm:text-sm font-semibold text-slate-800 focus:border-amber-500 focus:outline-hidden"
+                      />
+                    </label>
+                    <label className="block space-y-0.5 min-w-0">
+                      <span className="text-[11px] font-bold text-slate-500">เลิก</span>
+                      <input
+                        type="time"
+                        value={job.end}
+                        onChange={(e) => updateJob(idx, { end: e.target.value })}
+                        className="w-full min-w-0 px-2.5 py-2 bg-white border border-amber-200 rounded-xl text-base sm:text-sm font-semibold text-slate-800 focus:border-amber-500 focus:outline-hidden"
+                      />
+                    </label>
+                  </div>
+                  <label className="flex items-center gap-2">
+                    <span className="shrink-0 text-[11px] font-bold text-slate-500">รายได้</span>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={editJobIncome[idx] ?? ''}
+                      placeholder="0"
+                      onChange={(e) =>
+                        setEditJobIncome((prev) => prev.map((v, i) => (i === idx ? e.target.value : v)))
+                      }
+                      className="w-full min-w-0 px-3 py-2 bg-white border border-amber-200 rounded-xl text-base sm:text-sm font-semibold text-slate-800 focus:border-amber-500 focus:outline-hidden"
+                    />
+                    <span className="shrink-0 text-xs font-bold text-slate-500">บาท</span>
+                  </label>
+                </div>
+              ))}
+
+              {editJobs.length < 5 && (
+                <button
+                  type="button"
+                  onClick={addJob}
+                  className="w-full min-h-10 rounded-xl border border-dashed border-amber-300 bg-white text-xs sm:text-sm font-bold text-amber-700 hover:bg-amber-50 flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <Plus size={15} />
+                  <span>{editJobs.length ? 'เพิ่มจ็อบอีก' : 'เพิ่มจ็อบนอก (โรงงาน / รพ.)'}</span>
+                </button>
+              )}
+            </div>
 
             {/* Themed Sticker Selector */}
             <div className="space-y-1.5">

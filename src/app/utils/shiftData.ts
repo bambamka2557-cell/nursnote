@@ -13,6 +13,78 @@ export interface DayShiftData {
   shifts: SubShift[];
   note?: string | null;
   sticker?: string | null;
+  jobs?: SideJob[];
+}
+
+// จ็อบนอก (โรงงาน / รพ.อื่น) — separate from hospital shifts on purpose:
+// never fed into calculateSalarySummary / calculateDayShiftAllowance /
+// calculateWorkLifeBalance. Its income is shown as its own total only.
+export type SideJobType = 'FACTORY' | 'HOSPITAL' | 'OTHER';
+
+export interface SideJob {
+  type: SideJobType;
+  place: string;
+  start: string; // "HH:mm" (may be empty)
+  end: string; // "HH:mm" (may be empty; earlier than start = ends next day)
+  income: number; // บาท, 0 = not entered
+}
+
+export const SIDE_JOB_TYPES: Array<{ key: SideJobType; label: string; emoji: string }> = [
+  { key: 'FACTORY', label: 'โรงงาน', emoji: '🏭' },
+  { key: 'HOSPITAL', label: 'รพ.', emoji: '🏥' },
+  { key: 'OTHER', label: 'อื่นๆ', emoji: '💼' },
+];
+
+const HHMM = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+// Shared by the save action (server) and readers — drops anything malformed
+// instead of trusting stored/posted JSON.
+export function sanitizeSideJobs(raw: unknown): SideJob[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((j) => {
+      const o = (j ?? {}) as Record<string, unknown>;
+      const type = SIDE_JOB_TYPES.some((t) => t.key === o.type) ? (o.type as SideJobType) : 'OTHER';
+      const place = typeof o.place === 'string' ? o.place.trim().slice(0, 80) : '';
+      const start = typeof o.start === 'string' && HHMM.test(o.start) ? o.start : '';
+      const end = typeof o.end === 'string' && HHMM.test(o.end) ? o.end : '';
+      const n = Number(String(o.income ?? '').replace(/,/g, ''));
+      const income = Number.isFinite(n) && n > 0 ? Math.round(n * 100) / 100 : 0;
+      return { type, place, start, end, income };
+    })
+    .slice(0, 5);
+}
+
+export function sideJobLabel(job: SideJob): string {
+  // The place name usually already says what it is ("โรงงานพี่อ๊พ"), and the
+  // type is shown by its emoji, so prefer the name alone.
+  const t = SIDE_JOB_TYPES.find((x) => x.key === job.type) ?? SIDE_JOB_TYPES[2];
+  return job.place || t.label;
+}
+
+export function sideJobTimeText(job: SideJob): string {
+  if (job.start && job.end) return `${job.start}–${job.end}`;
+  return job.start || job.end || '';
+}
+
+// Totals for the side-job card, over a YYYY-MM-DD range (inclusive).
+export function summarizeSideJobs(
+  days: DayShiftData[],
+  startDate: string,
+  endDate: string
+): { dayCount: number; jobCount: number; income: number } {
+  let dayCount = 0;
+  let jobCount = 0;
+  let income = 0;
+  for (const d of days || []) {
+    if (d.date < startDate || d.date > endDate) continue;
+    const jobs = d.jobs || [];
+    if (jobs.length === 0) continue;
+    dayCount++;
+    jobCount += jobs.length;
+    for (const j of jobs) income += j.income || 0;
+  }
+  return { dayCount, jobCount, income: Math.round(income * 100) / 100 };
 }
 
 export type ShiftPatternId = 'M' | 'A' | 'N' | 'M_A' | 'A_N' | 'N_A' | 'OFF';

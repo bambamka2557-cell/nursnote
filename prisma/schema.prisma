@@ -74,6 +74,9 @@ model ShiftSchedule {
   shifts    Json     // [{ "code":"MORNING","ot":false }, { "code":"AFTERNOON","ot":true }]
   note      String?
   sticker   String?  // "bow", "cherry", "flower", "kitty", "heart"
+  // จ็อบนอก (โรงงาน/รพ.อื่น) ของวันนั้น — แยกจากเวร รพ. โดยสิ้นเชิง ไม่เข้าสูตรเงินเดือน/ค่าเวร/ชั่วโมงสมดุล
+  // [{ "type":"FACTORY"|"HOSPITAL"|"OTHER", "place":"…", "start":"08:00", "end":"17:00", "income":1500 }]
+  jobs      Json?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

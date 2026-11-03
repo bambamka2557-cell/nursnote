@@ -94,7 +94,7 @@ export default function ShiftReminderCard({ shifts }: { shifts?: DayShiftData[] 
   };
 
   const preview =
-    tomorrowDay && buildShiftReminderPayload(tomorrow, tomorrowDay.shifts, tomorrowDay.note, tomorrowDay.sticker);
+    tomorrowDay && buildShiftReminderPayload(tomorrow, tomorrowDay.shifts, tomorrowDay.note, tomorrowDay.sticker, tomorrowDay.jobs);
   const minuteOptions = MINUTES.includes(minute) ? MINUTES : [...MINUTES, minute].sort((a, b) => a - b);
   const selectCls =
     'rounded-xl border border-card-border bg-white px-2.5 py-1.5 text-[16px] sm:text-sm font-semibold text-text-primary focus:border-pink-500 focus:outline-hidden disabled:opacity-50';
