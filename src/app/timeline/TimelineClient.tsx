@@ -82,6 +82,7 @@ export default function TimelineClient({ initialPatients }: { initialPatients: a
   const [rr, setRr] = useState('');
   const [urine, setUrine] = useState('');
   const [reflex, setReflex] = useState('');
+  const [mgErr, setMgErr] = useState<string | null>(null);
 
   const loadTasks = async () => {
     const patients = await getPatients();
@@ -96,6 +97,7 @@ export default function TimelineClient({ initialPatients }: { initialPatients: a
   const handleDone = (task: any) => {
     if (task.isMgso4) {
       setActiveTask(task);
+      setMgErr(null);
       setMgso4ModalOpen(true);
       return;
     }
@@ -121,9 +123,10 @@ export default function TimelineClient({ initialPatients }: { initialPatients: a
 
   const submitMgso4 = async () => {
     if (!rr || !urine || !reflex) {
-      alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+      setMgErr('กรุณากรอกข้อมูลให้ครบทั้ง 3 ช่อง');
       return;
     }
+    setMgErr(null);
     if (submittingRef.current === activeTask.orderId) return; // already in flight
 
     submittingRef.current = activeTask.orderId;
@@ -255,8 +258,8 @@ export default function TimelineClient({ initialPatients }: { initialPatients: a
 
       {/* Confirm-before-log modal (non-MgSO4 tasks) */}
       {confirmTask && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-[100] flex items-end sm:items-center justify-center p-4" data-scroll-lock>
-          <div className="bg-white w-full max-w-sm rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl space-y-5 animate-in slide-in-from-bottom duration-250">
+        <div className="fixed inset-0 bg-black/45 z-[100] flex items-end sm:items-center justify-center p-4" data-scroll-lock>
+          <div className="bg-white w-full max-w-sm rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl space-y-5">
             <div className="flex items-start gap-3 text-emerald-600">
               <div className="w-11 h-11 rounded-full bg-emerald-50 flex items-center justify-center shrink-0">
                 <Check size={22} strokeWidth={3} />
@@ -297,8 +300,8 @@ export default function TimelineClient({ initialPatients }: { initialPatients: a
 
       {/* MgSO4 Checklist Modal */}
       {mgso4ModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-[100] flex items-end sm:items-center justify-center p-4" data-scroll-lock>
-          <div className="bg-white w-full max-w-md rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl space-y-4 animate-in slide-in-from-bottom duration-250">
+        <div className="fixed inset-0 bg-black/45 z-[100] flex items-end sm:items-center justify-center p-4" data-scroll-lock>
+          <div className="bg-white w-full max-w-md rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl space-y-4">
             <div className="flex items-start gap-3 text-rose-600">
               <div className="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center shrink-0">
                 <AlertTriangle size={20} />
@@ -317,7 +320,7 @@ export default function TimelineClient({ initialPatients }: { initialPatients: a
                   value={rr}
                   onChange={e => setRr(e.target.value)}
                   placeholder="เช่น 18, 20 (ปกติ >= 14)"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:outline-hidden text-sm transition-all"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:outline-hidden text-[16px] sm:text-sm transition-all"
                 />
               </div>
 
@@ -328,7 +331,7 @@ export default function TimelineClient({ initialPatients }: { initialPatients: a
                   value={urine}
                   onChange={e => setUrine(e.target.value)}
                   placeholder="เช่น 50, 100 (ปกติ >= 30ml/hr)"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:outline-hidden text-sm transition-all"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:outline-hidden text-[16px] sm:text-sm transition-all"
                 />
               </div>
 
@@ -337,7 +340,7 @@ export default function TimelineClient({ initialPatients }: { initialPatients: a
                 <select
                   value={reflex}
                   onChange={e => setReflex(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:outline-hidden text-sm transition-all"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:outline-hidden text-[16px] sm:text-sm transition-all"
                 >
                   <option value="" disabled>เลือกผลการประเมิน...</option>
                   <option value="2+">2+ (ปกติ / Normal)</option>
@@ -346,6 +349,12 @@ export default function TimelineClient({ initialPatients }: { initialPatients: a
                 </select>
               </div>
             </div>
+
+            {mgErr && (
+              <p role="alert" className="rounded-xl border border-rose-100 bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-700">
+                {mgErr}
+              </p>
+            )}
 
             <div className="flex gap-3 pt-4 border-t border-slate-100">
               <button

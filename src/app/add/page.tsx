@@ -11,7 +11,8 @@ import { format } from 'date-fns';
 export default function AddPatient() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  
+  const [saveErr, setSaveErr] = useState<string | null>(null);
+
   // Patient details
   const [bedNumber, setBedNumber] = useState('');
   const [nickname, setNickname] = useState('');
@@ -108,6 +109,7 @@ export default function AddPatient() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setSaveErr(null);
     
     // Parse lastGivenTime for each order
     const parsedOrders = selectedOrders.map(order => {
@@ -146,7 +148,7 @@ export default function AddPatient() {
       router.push('/beds');
     } catch (error) {
       console.error(error);
-      alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+      setSaveErr('บันทึกไม่สำเร็จ กรุณาลองใหม่อีกครั้ง');
       setLoading(false);
     }
   };
@@ -452,8 +454,14 @@ export default function AddPatient() {
           </div>
         )}
 
+        {saveErr && (
+          <p role="alert" className="rounded-xl border border-rose-100 bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-700">
+            {saveErr}
+          </p>
+        )}
+
         {/* Submit Button */}
-        <button 
+        <button
           type="submit" 
           disabled={loading || selectedOrders.length === 0} 
           className="w-full py-4 bg-gradient-to-b from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 disabled:from-slate-200 disabled:to-slate-200 disabled:text-slate-400 text-white font-extrabold rounded-2xl shadow-lg border-b-3 border-indigo-700 active:translate-y-0.5 active:border-b-0 flex items-center justify-center gap-2 transition-all text-md cursor-pointer"

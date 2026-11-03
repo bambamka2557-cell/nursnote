@@ -22,15 +22,17 @@ export default function DiscontinueButton({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
 
   const onConfirm = async () => {
     setBusy(true);
+    setErr(null);
     try {
       await discontinueOrder(orderId);
       router.refresh();
       setOpen(false);
     } catch {
-      alert('หยุดการเตือนไม่สำเร็จ กรุณาลองใหม่อีกครั้ง');
+      setErr('หยุดการเตือนไม่สำเร็จ กรุณาลองใหม่อีกครั้ง');
     } finally {
       setBusy(false);
     }
@@ -40,15 +42,18 @@ export default function DiscontinueButton({
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setErr(null);
+          setOpen(true);
+        }}
         className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-xs font-bold transition-all cursor-pointer active:scale-95 border border-rose-100/50"
       >
         หยุดการเตือน
       </button>
 
       {open && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-[100] flex items-end sm:items-center justify-center p-4" data-scroll-lock>
-          <div className="bg-white w-full max-w-sm rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl space-y-5 animate-in slide-in-from-bottom duration-250">
+        <div className="fixed inset-0 bg-black/45 z-[100] flex items-end sm:items-center justify-center p-4" data-scroll-lock>
+          <div className="bg-white w-full max-w-sm rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl space-y-5">
             <div className="flex items-start gap-3 text-rose-600">
               <div className="w-11 h-11 rounded-full bg-rose-50 flex items-center justify-center shrink-0">
                 <AlertTriangle size={22} />
@@ -67,6 +72,12 @@ export default function DiscontinueButton({
                 <span className="font-bold">ย้อนกลับไม่ได้</span>
               </p>
             </div>
+
+            {err && (
+              <p role="alert" className="text-xs font-semibold text-rose-700">
+                {err}
+              </p>
+            )}
 
             <div className="flex gap-3 pt-1">
               <button

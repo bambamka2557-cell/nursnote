@@ -43,7 +43,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="th" className="h-full antialiased overscroll-none">
-      <body className={`${prompt.className} ${prompt.variable} min-h-full flex flex-col bg-[#faf8f4] text-[#1d1d1f] overflow-x-hidden overscroll-none`}>
+      <body className={`${prompt.className} ${prompt.variable} min-h-full flex flex-col bg-surface text-text-primary overflow-x-hidden overscroll-none`}>
         {/* App launch transition / splash screen (shows cover image on opening) */}
         <SplashScreen />
 

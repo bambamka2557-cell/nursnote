@@ -44,6 +44,15 @@
   --color-sky-500: #0ea5e9;
   --color-sky-600: #0284c7;
 
+  /* SunNotes neutral tokens (Brain 16) — use these instead of bg-[#hex]. */
+  --color-surface: #faf8f4;
+  --color-surface-container-low: #f4f1ea;
+  --color-surface-container: #efece4;
+  --color-card-border: #ece7dd;
+  --color-text-primary: #1d1d1f;
+  --color-text-secondary: #6e6e73;
+  --color-text-muted: #8e8e93;
+
   --font-sans: var(--font-prompt), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
@@ -74,7 +83,18 @@ header button {
   user-select: none;
 }
 
+/* Mobile baseline (Brain 19): Safari ignores user-scalable=no, but honours
+   touch-action — this is what actually blocks pinch/double-tap zoom. The
+   stable gutter stops the page widening when ScrollLock hides the scrollbar. */
+html {
+  touch-action: pan-x pan-y;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scrollbar-gutter: stable;
+}
+
 body {
+  overflow-x: clip;
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-prompt), sans-serif;

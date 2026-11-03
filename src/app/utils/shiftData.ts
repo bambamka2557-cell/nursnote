@@ -41,7 +41,7 @@ export const ATOMIC_SHIFTS: Record<AtomicShiftCode, {
     shortLabel: 'ช',
     fullLabel: 'เวรเช้า',
     timeRange: '08:00 - 16:00',
-    defaultBg: 'bg-[#fdf2f8] text-[#db2777] border-[#fbcfe8]',
+    defaultBg: 'bg-[#fdf2f8] text-pink-600 border-[#fbcfe8]',
   },
   AFTERNOON: {
     code: 'AFTERNOON',
@@ -55,7 +55,7 @@ export const ATOMIC_SHIFTS: Record<AtomicShiftCode, {
     shortLabel: 'ด',
     fullLabel: 'เวรดึก',
     timeRange: '00:00 - 08:00',
-    defaultBg: 'bg-[#eef2ff] text-[#4f46e5] border-[#c7d2fe]',
+    defaultBg: 'bg-indigo-50 text-indigo-500 border-indigo-200',
   },
 };
 
@@ -68,8 +68,8 @@ export const SHIFT_PATTERNS: ShiftPatternDef[] = [
     subShifts: ['MORNING'],
     badgeBg: 'bg-[#fdf2f8]',
     badgeBorder: 'border-[#fbcfe8]',
-    badgeTextColor: 'text-[#1d1d1f]',
-    dotColor: 'bg-[#ec4899]',
+    badgeTextColor: 'text-text-primary',
+    dotColor: 'bg-pink-500',
   },
   {
     id: 'A',
@@ -79,7 +79,7 @@ export const SHIFT_PATTERNS: ShiftPatternDef[] = [
     subShifts: ['AFTERNOON'],
     badgeBg: 'bg-[#f5f3ff]',
     badgeBorder: 'border-[#ddd6fe]',
-    badgeTextColor: 'text-[#1d1d1f]',
+    badgeTextColor: 'text-text-primary',
     dotColor: 'bg-[#8b5cf6]',
   },
   {
@@ -88,10 +88,10 @@ export const SHIFT_PATTERNS: ShiftPatternDef[] = [
     shortLabel: 'ด',
     fullLabel: 'ดึก (ด)',
     subShifts: ['NIGHT'],
-    badgeBg: 'bg-[#eef2ff]',
-    badgeBorder: 'border-[#c7d2fe]',
-    badgeTextColor: 'text-[#1d1d1f]',
-    dotColor: 'bg-[#4f46e5]',
+    badgeBg: 'bg-indigo-50',
+    badgeBorder: 'border-indigo-200',
+    badgeTextColor: 'text-text-primary',
+    dotColor: 'bg-indigo-500',
   },
   {
     id: 'M_A',
@@ -101,7 +101,7 @@ export const SHIFT_PATTERNS: ShiftPatternDef[] = [
     subShifts: ['MORNING', 'AFTERNOON'],
     badgeBg: 'bg-[#fffbeb]',
     badgeBorder: 'border-[#fde68a]',
-    badgeTextColor: 'text-[#1d1d1f]',
+    badgeTextColor: 'text-text-primary',
     dotColor: 'bg-[#f59e0b]',
   },
   {
@@ -112,7 +112,7 @@ export const SHIFT_PATTERNS: ShiftPatternDef[] = [
     subShifts: ['AFTERNOON', 'NIGHT'],
     badgeBg: 'bg-[#f0fdfa]',
     badgeBorder: 'border-[#99f6e4]',
-    badgeTextColor: 'text-[#1d1d1f]',
+    badgeTextColor: 'text-text-primary',
     dotColor: 'bg-[#14b8a6]',
   },
   {
@@ -123,7 +123,7 @@ export const SHIFT_PATTERNS: ShiftPatternDef[] = [
     subShifts: ['NIGHT', 'AFTERNOON'],
     badgeBg: 'bg-[#ecfdf5]',
     badgeBorder: 'border-[#a7f3d0]',
-    badgeTextColor: 'text-[#1d1d1f]',
+    badgeTextColor: 'text-text-primary',
     dotColor: 'bg-[#10b981]',
   },
   {
@@ -132,9 +132,9 @@ export const SHIFT_PATTERNS: ShiftPatternDef[] = [
     shortLabel: 'OFF',
     fullLabel: 'วันหยุด (OFF)',
     subShifts: [],
-    badgeBg: 'bg-[#f4f1ea]/85',
-    badgeBorder: 'border-[#ece7dd]',
-    badgeTextColor: 'text-[#8e8e93]',
+    badgeBg: 'bg-surface-container-low/85',
+    badgeBorder: 'border-card-border',
+    badgeTextColor: 'text-text-muted',
     dotColor: 'bg-[#c7c2b8]',
   },
 ];

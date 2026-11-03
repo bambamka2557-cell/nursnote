@@ -38,18 +38,18 @@ export default function HolidaySummaryCard({
   const isAccurateYear = isYearHolidayDataAccurate(year);
 
   return (
-    <div className="bg-white rounded-2xl p-4 shadow-2xs border border-[#ece7dd] transition-all text-[#1d1d1f] space-y-3">
+    <div className="bg-white rounded-2xl p-4 shadow-2xs border border-card-border transition-all text-text-primary space-y-3">
       {/* Header (SunNotes Right-Panel Card Header Style with Vibrant Icon Chip) */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2.5 min-w-0">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#f43f5e] text-white shadow-2xs">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-rose-500 text-white shadow-2xs">
             <Calendar size={16} />
           </span>
           <div className="min-w-0">
-            <div className="text-sm font-bold text-[#1d1d1f] truncate">
+            <div className="text-sm font-bold text-text-primary truncate">
               วันหยุด & วันสำคัญประจำเดือน
             </div>
-            <p className="text-[11px] text-[#6e6e73] font-medium truncate">
+            <p className="text-[11px] text-text-secondary font-medium truncate">
               {monthName} {thaiYear} • สถานะการขึ้นเวรในวันหยุดราชการ
             </p>
           </div>
@@ -66,14 +66,14 @@ export default function HolidaySummaryCard({
       {/* 3 SunNotes-Style StatTiles */}
       <div className="grid grid-cols-3 gap-2 text-center">
         {/* Total Public Holidays */}
-        <div className="rounded-xl border border-[#fecdd3] bg-[#fff1f2] px-2 py-2.5">
-          <div className="text-base font-extrabold text-[#f43f5e] leading-tight">
+        <div className="rounded-xl border border-rose-200 bg-rose-50 px-2 py-2.5">
+          <div className="text-base font-extrabold text-rose-500 leading-tight">
             {stats.totalPublicHolidays} <span className="text-[11px] font-semibold">วัน</span>
           </div>
-          <div className="mt-0.5 text-[11px] font-bold text-[#1d1d1f]">
+          <div className="mt-0.5 text-[11px] font-bold text-text-primary">
             วันหยุดราชการ
           </div>
-          <div className="text-[9px] text-[#6e6e73] font-medium mt-0.5 truncate">
+          <div className="text-[9px] text-text-secondary font-medium mt-0.5 truncate">
             เดือน{monthName}
           </div>
         </div>
@@ -83,7 +83,7 @@ export default function HolidaySummaryCard({
           <div className="text-base font-extrabold text-[#10b981] leading-tight">
             {stats.offOnHolidays} <span className="text-[11px] font-semibold">วัน</span>
           </div>
-          <div className="mt-0.5 text-[11px] font-bold text-[#1d1d1f]">
+          <div className="mt-0.5 text-[11px] font-bold text-text-primary">
             ได้หยุดจริง
           </div>
           <div className="text-[9px] text-[#059669] font-semibold mt-0.5 truncate">
@@ -96,7 +96,7 @@ export default function HolidaySummaryCard({
           <div className="text-base font-extrabold text-[#d99a00] leading-tight">
             {stats.workedOnHolidays} <span className="text-[11px] font-semibold">วัน</span>
           </div>
-          <div className="mt-0.5 text-[11px] font-bold text-[#1d1d1f]">
+          <div className="mt-0.5 text-[11px] font-bold text-text-primary">
             ติดเวรวันหยุด
           </div>
           <div className="text-[9px] text-[#b45309] font-medium mt-0.5 truncate">
@@ -106,20 +106,20 @@ export default function HolidaySummaryCard({
       </div>
 
       {/* List of Holidays in this month */}
-      <div className="space-y-2 pt-1 border-t border-[#ece7dd]">
-        <h4 className="text-xs font-bold text-[#6e6e73] flex items-center justify-between pt-1">
+      <div className="space-y-2 pt-1 border-t border-card-border">
+        <h4 className="text-xs font-bold text-text-secondary flex items-center justify-between pt-1">
           <span>รายการวันหยุด & วันสำคัญ</span>
-          <span className="text-[11px] text-[#8e8e93] font-normal">
+          <span className="text-[11px] text-text-muted font-normal">
             {allHolidays.length} วัน
           </span>
         </h4>
 
         {allHolidays.length === 0 ? (
-          <div className="p-4 text-center rounded-xl bg-[#faf8f4] border border-dashed border-[#ece7dd]">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-[#fdf2f8] text-[#ec4899] mb-1">
+          <div className="p-4 text-center rounded-xl bg-surface border border-dashed border-card-border">
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-[#fdf2f8] text-pink-500 mb-1">
               <Flower2 size={16} />
             </span>
-            <p className="text-xs font-bold text-[#6e6e73]">
+            <p className="text-xs font-bold text-text-secondary">
               เดือนนี้ไม่มีวันหยุดราชการหรือวันสำคัญพิเศษ
             </p>
           </div>
@@ -140,8 +140,8 @@ export default function HolidaySummaryCard({
                   key={holiday.date}
                   className={`p-2.5 rounded-xl border transition-all flex items-center justify-between gap-2 ${
                     holiday.isPublicHoliday
-                      ? 'bg-[#fff1f2]/70 border-[#fecdd3]'
-                      : 'bg-[#faf8f4] border-[#ece7dd]'
+                      ? 'bg-rose-50/70 border-rose-200'
+                      : 'bg-surface border-card-border'
                   }`}
                 >
                   {/* Left: Date badge + Name */}
@@ -149,12 +149,12 @@ export default function HolidaySummaryCard({
                     <div
                       className={`w-9 h-9 rounded-lg flex flex-col items-center justify-center shrink-0 font-bold leading-tight border ${
                         holiday.isPublicHoliday
-                          ? 'bg-[#ffe4e6] border-[#fecdd3] text-[#e11d48]'
-                          : 'bg-white border-[#ece7dd] text-[#6e6e73]'
+                          ? 'bg-rose-100 border-rose-200 text-rose-600'
+                          : 'bg-white border-card-border text-text-secondary'
                       }`}
                     >
                       <span className="text-xs">{dayNum}</span>
-                      <span className="text-[9px] font-semibold text-[#6e6e73]">{dayOfWeek}</span>
+                      <span className="text-[9px] font-semibold text-text-secondary">{dayOfWeek}</span>
                     </div>
 
                     <div className="min-w-0">
@@ -166,12 +166,12 @@ export default function HolidaySummaryCard({
                             size={13}
                           />
                         )}
-                        <span className="text-xs font-bold text-[#1d1d1f] truncate">
+                        <span className="text-xs font-bold text-text-primary truncate">
                           {holiday.name}
                         </span>
                       </div>
                       {holiday.description && (
-                        <p className="text-[10px] text-[#6e6e73] truncate mt-0.5">
+                        <p className="text-[10px] text-text-secondary truncate mt-0.5">
                           {holiday.description}
                         </p>
                       )}
@@ -182,17 +182,17 @@ export default function HolidaySummaryCard({
                   <div className="shrink-0 text-right">
                     {holiday.isPublicHoliday ? (
                       hasShifts ? (
-                        <div className="flex items-center gap-1 bg-white px-2 py-0.5 rounded-lg border border-[#ece7dd] shadow-2xs">
-                          <span className="text-[10px] text-[#6e6e73] font-semibold">เวร:</span>
+                        <div className="flex items-center gap-1 bg-white px-2 py-0.5 rounded-lg border border-card-border shadow-2xs">
+                          <span className="text-[10px] text-text-secondary font-semibold">เวร:</span>
                           <div className="flex items-center gap-0.5">
                             {shifts.map((s, idx) => {
                               const info = ATOMIC_SHIFTS[s.code];
                               return (
                                 <span key={idx} className="flex items-center">
-                                  {idx > 0 && <span className="text-[#8e8e93] text-xs">/</span>}
+                                  {idx > 0 && <span className="text-text-muted text-xs">/</span>}
                                   <span
                                     className={`text-xs font-bold ${
-                                      s.ot ? 'text-[#e11d48]' : 'text-[#1d1d1f]'
+                                      s.ot ? 'text-rose-600' : 'text-text-primary'
                                     }`}
                                   >
                                     {info ? info.shortLabel : s.code}
@@ -209,11 +209,11 @@ export default function HolidaySummaryCard({
                         </span>
                       )
                     ) : hasShifts ? (
-                      <span className="text-[11px] text-[#6e6e73] font-medium">
+                      <span className="text-[11px] text-text-secondary font-medium">
                         เวร {shifts.map((s) => ATOMIC_SHIFTS[s.code]?.shortLabel ?? s.code).join('/')}
                       </span>
                     ) : (
-                      <span className="text-[11px] text-[#8e8e93]">วันสำคัญ</span>
+                      <span className="text-[11px] text-text-muted">วันสำคัญ</span>
                     )}
                   </div>
                 </div>

@@ -1,11 +1,16 @@
 import { Suspense } from 'react';
+import { redirect } from 'next/navigation';
 import TravelClient from './TravelClient';
+import { FEATURE_TRAVEL } from '../utils/features';
 
 interface PageProps {
   searchParams: Promise<{ month?: string }>;
 }
 
 export default async function TravelPage({ searchParams }: PageProps) {
+  // Hidden for now — old bookmarks / home-screen links land on the schedule.
+  if (!FEATURE_TRAVEL) redirect('/');
+
   const resolvedParams = await searchParams;
 
   // Bangkok local month default (Audit Note #4)

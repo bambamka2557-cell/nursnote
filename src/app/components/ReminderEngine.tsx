@@ -53,6 +53,8 @@ export default function ReminderEngine() {
   const beep = useCallback((times = 3) => {
     const ctx = audioCtxRef.current;
     if (!ctx) return;
+    // iOS suspends the context when the tab is backgrounded; best-effort wake.
+    if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
     let t = ctx.currentTime;
     for (let i = 0; i < times; i++) {
       const osc = ctx.createOscillator();
@@ -158,6 +160,35 @@ export default function ReminderEngine() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Audio can only start from a user gesture. The AudioContext used to be
+  // created solely by the "เปิดแจ้งเตือน" button — which is hidden once
+  // permission is granted — so after any reload the foreground beep was
+  // silent. Unlock it on the first tap/keypress anywhere instead.
+  useEffect(() => {
+    const events = ['pointerdown', 'touchend', 'keydown'] as const;
+    const unlock = () => {
+      try {
+        if (!audioCtxRef.current) {
+          const AC =
+            window.AudioContext ||
+            (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+          if (!AC) return detach();
+          audioCtxRef.current = new AC();
+        }
+        const ctx = audioCtxRef.current!;
+        if (ctx.state === 'running') return detach();
+        ctx.resume().then(() => {
+          if (ctx.state === 'running') detach();
+        }).catch(() => {});
+      } catch {
+        /* try again on the next gesture */
+      }
+    };
+    const detach = () => events.forEach((e) => window.removeEventListener(e, unlock, true));
+    events.forEach((e) => window.addEventListener(e, unlock, { capture: true, passive: true }));
+    return detach;
+  }, []);
+
   // Permission + audio must be unlocked from a user gesture (button tap).
   const enable = async () => {
     try {
@@ -189,7 +220,11 @@ export default function ReminderEngine() {
     pathname.startsWith('/add') ||
     pathname.startsWith('/patient');
 
-  if (!isBedRoute || perm === 'unsupported') return null;
+  if (perm === 'unsupported') return null;
+  // Off the bed pages keep the screen clean, but never hide the one-tap
+  // "turn on alerts" prompt: `/` is now the shift calendar, so a fresh device
+  // would otherwise never see it unless the nurse happened to open /beds.
+  if (!isBedRoute && perm !== 'default') return null;
 
   if (perm !== 'granted') {
     return (
