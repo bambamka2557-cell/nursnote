@@ -30,6 +30,7 @@ function getPageTitle(pathname: string): string | null {
   if (pathname.startsWith('/timeline')) return 'คิวงานรวม';
   if (pathname.startsWith('/patient')) return 'รายงานผู้ป่วย';
   if (pathname.startsWith('/beds')) return 'เตียงทั้งหมด';
+  if (pathname.startsWith('/settings')) return 'ตั้งค่า';
   return null;
 }
 

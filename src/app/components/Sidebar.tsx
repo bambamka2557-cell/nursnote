@@ -9,6 +9,7 @@ import {
   ListTodo,
   CalendarDays,
   Compass,
+  Settings,
   Plus,
   Calculator,
   BookOpen,
@@ -40,6 +41,7 @@ export default function Sidebar({
     router.prefetch('/beds');
     router.prefetch('/timeline');
     router.prefetch('/add');
+    router.prefetch('/settings');
   }, [router]);
 
   const handleGo = (href: string) => {
@@ -52,6 +54,7 @@ export default function Sidebar({
   const isBedsActive = pathname.startsWith('/beds') || pathname.startsWith('/patient');
   const isTimelineActive = pathname.startsWith('/timeline');
   const isAddActive = pathname.startsWith('/add');
+  const isSettingsActive = pathname.startsWith('/settings');
 
   return (
     <div
@@ -239,6 +242,25 @@ export default function Sidebar({
             <span className="truncate">รับผู้ป่วยใหม่</span>
           </button>
         </div>
+      </div>
+
+      {/* Settings (SunNotes keeps it pinned above the footer) */}
+      <div className="border-t border-card-border px-3 py-2">
+        <button
+          type="button"
+          onClick={() => handleGo('/settings')}
+          onContextMenu={(e) => e.preventDefault()}
+          className={`flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm transition-colors cursor-pointer ${
+            isSettingsActive
+              ? 'bg-white font-bold text-text-primary shadow-2xs border border-card-border'
+              : 'font-medium text-text-secondary hover:bg-surface-container hover:text-text-primary'
+          }`}
+        >
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#6b7280] text-white shadow-2xs">
+            <Settings size={15} strokeWidth={2.25} />
+          </span>
+          <span className="truncate">ตั้งค่า</span>
+        </button>
       </div>
 
       {/* Footer: database status */}

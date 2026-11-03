@@ -6,7 +6,6 @@ import WorkLifeBalanceCard from '@/app/components/WorkLifeBalanceCard';
 import SalarySummaryCard from '@/app/components/SalarySummaryCard';
 import SalaryConfigModal from '@/app/components/SalaryConfigModal';
 import HolidaySummaryCard from '@/app/components/HolidaySummaryCard';
-import ShiftReminderCard from '@/app/components/ShiftReminderCard';
 import {
   DayShiftData,
   SalarySummaryResult,
@@ -183,7 +182,6 @@ export default function ScheduleClient({
             month={month}
             cycleStartDay={config.cycleStartDay}
           />
-          <ShiftReminderCard shifts={shifts} />
         </>
       ) : (
         <>
@@ -274,14 +272,13 @@ export default function ScheduleClient({
                     month={month}
                   />
                 </div>
-                <div className="space-y-4">
+                <div>
                   <WorkLifeBalanceCard
                     shifts={shifts}
                     year={year}
                     month={month}
                     cycleStartDay={config.cycleStartDay}
                   />
-                  <ShiftReminderCard shifts={shifts} />
                 </div>
               </div>
             </div>

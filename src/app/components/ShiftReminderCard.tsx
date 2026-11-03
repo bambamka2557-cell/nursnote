@@ -18,8 +18,9 @@ const MINUTES = [0, 15, 30, 45];
 const pad = (n: number) => String(n).padStart(2, '0');
 
 // Settings + live preview for the evening "tomorrow's shift" push.
-// `shifts` is only used to refresh the preview when the calendar changes.
-export default function ShiftReminderCard({ shifts }: { shifts: DayShiftData[] }) {
+// `shifts` (optional) only re-triggers the preview fetch when a calendar on the
+// same screen changes; the settings page renders it without one.
+export default function ShiftReminderCard({ shifts }: { shifts?: DayShiftData[] } = {}) {
   const [enabled, setEnabled] = useState(true);
   const [hour, setHour] = useState(18);
   const [minute, setMinute] = useState(0);
