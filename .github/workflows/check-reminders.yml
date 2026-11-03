@@ -1,5 +1,11 @@
 name: Check reminders
 
+# BACKUP ONLY (2026-11-03). The primary scheduler is Supabase pg_cron + pg_net
+# (jobs lr-check-reminders / lr-shift-reminder, every 5 min). Despite the
+# */5 below, GitHub actually ran this only every 3–7 hours on this free repo,
+# which is far too slow for medication reminders. Extra runs are harmless:
+# overdue orders just re-alert, and the shift reminder sends once per day.
+
 # Pings /api/check-reminders on a schedule so due medication/assessment
 # reminders get pushed to subscribed devices even while LR-Helper isn't open.
 # This is the "scheduler" half of the push system in src/app/api/check-reminders

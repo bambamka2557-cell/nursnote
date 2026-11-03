@@ -66,7 +66,8 @@ Deploy จริงแล้วที่ `https://nursnote.vercel.app` (Vercel p
 | Foreground (แอปเปิดค้าง จอไม่ดับ) — สั่น+เสียง+notification | ✅ **verify แล้วบน production จริง** (เห็น toast แจ้งเตือนจริงจาก nursnote.vercel.app) | `ReminderEngine.tsx`, `lib/reminders.ts` |
 | Background push (จอล็อก/แอปปิด) — โครงสร้าง | ✅ สร้างแล้ว, verify เฉพาะ backend logic | `lib/webpush.ts`, `app/api/check-reminders/route.ts`, `PushSubscription` model |
 | Background push — end-to-end จริงบนมือถือ | ❌ **ยังไม่เคย verify** (sandbox แอปทดสอบไม่ได้เพราะ browser auto-deny permission) | ต้องทดสอบจริงบนมือถือ |
-| Scheduler ที่ยิง `/api/check-reminders` เป็นระยะ | ✅ ตั้ง secrets แล้ว + manual run เขียว (curl ยิงถูก endpoint จริง) รันอัตโนมัติทุก 5 นาทีแล้ว | `.github/workflows/check-reminders.yml` |
+| Scheduler หลัก (2026-11-03) | ✅ **Supabase pg_cron + pg_net** ยิง `/api/check-reminders` และ `/api/shift-reminder` ทุก 5 นาที (job `lr-check-reminders`, `lr-shift-reminder`) — รหัสลับอยู่ใน Supabase Vault ชื่อ `lr_cron_secret` (ต้องตรงกับ `CRON_SECRET` บน Vercel ถ้าหมุนรหัสต้องแก้ทั้งสองที่) · ดูผล: `select * from cron.job_run_details order by start_time desc` + `select status_code from net._http_response order by created desc` | Supabase (ไม่มีไฟล์ในโค้ด) |
+| Scheduler สำรอง | ⚠️ GitHub Actions ตั้ง `*/5` แต่**รันจริงแค่ทุก 3–7 ชม.** (GitHub ลดรอบงานตั้งเวลาของ repo ฟรี — เช็กประวัติรันจริง 30 รอบแล้ว 2026-11-03) **ห้ามใช้เป็นตัวหลักของงานที่ต้องตรงเวลา** เก็บไว้เป็นสำรองเท่านั้น (ยิงซ้ำไม่เป็นไร: เตือนยาที่เลยเวลาแค่เด้งซ้ำ, เตือนเวรกันส่งซ้ำด้วย `lastSentDate`) | `.github/workflows/check-reminders.yml` |
 
 **เหลือขั้นตอนเดียวก่อนระบบแจ้งเตือนพื้นหลังจะ verify ครบ:**
 1. ~~Push repo ขึ้น GitHub~~ ✅ เสร็จแล้ว
