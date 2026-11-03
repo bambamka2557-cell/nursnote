@@ -30,3 +30,15 @@ jobs:
           curl --fail --silent --show-error \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             "${{ secrets.CHECK_REMINDERS_URL }}"
+
+      # Evening "tomorrow's shift" push (/api/shift-reminder). Its own step so
+      # it can never delay or break the medication step above; `always()`
+      # keeps it running even if the medication step failed. The route itself
+      # does nothing until the configured time and sends once per day.
+      - name: Call shift-reminder
+        if: always()
+        run: |
+          url="${{ secrets.CHECK_REMINDERS_URL }}"
+          curl --fail --silent --show-error \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${url%/check-reminders}/shift-reminder"

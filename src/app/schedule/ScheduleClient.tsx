@@ -6,6 +6,7 @@ import WorkLifeBalanceCard from '@/app/components/WorkLifeBalanceCard';
 import SalarySummaryCard from '@/app/components/SalarySummaryCard';
 import SalaryConfigModal from '@/app/components/SalaryConfigModal';
 import HolidaySummaryCard from '@/app/components/HolidaySummaryCard';
+import ShiftReminderCard from '@/app/components/ShiftReminderCard';
 import {
   DayShiftData,
   SalarySummaryResult,
@@ -135,11 +136,11 @@ export default function ScheduleClient({
       {onClosePanel && (
         <div className="flex items-center justify-between gap-2 rounded-2xl border border-[#e8dfdc] bg-white px-3.5 py-2.5 shadow-2xs">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#ec4899] text-white">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-pink-500 text-white">
               <BarChart3 size={15} />
             </span>
             <div className="min-w-0">
-              <h3 className="text-xs sm:text-sm font-bold text-[#1d1d1f] truncate">
+              <h3 className="text-xs sm:text-sm font-bold text-text-primary truncate">
                 สรุปประจำเดือน {THAI_MONTH_NAMES[month - 1]} {year + 543}
               </h3>
             </div>
@@ -152,14 +153,14 @@ export default function ScheduleClient({
                 onClosePanel();
                 setActiveView('overview');
               }}
-              className="rounded-lg border border-[#fbcfe8] bg-[#fdf2f8] px-2.5 py-1 text-[11px] font-semibold text-[#ec4899] hover:bg-[#fce7f3] transition-colors cursor-pointer"
+              className="rounded-lg border border-[#fbcfe8] bg-[#fdf2f8] px-2.5 py-1 text-[11px] font-semibold text-pink-500 hover:bg-[#fce7f3] transition-colors cursor-pointer"
             >
               ขยายเต็มจอ
             </button>
             <button
               type="button"
               onClick={onClosePanel}
-              className="rounded-lg p-1.5 text-[#78716c] hover:bg-[#f3ecea] hover:text-[#1d1d1f] transition-colors cursor-pointer"
+              className="rounded-lg p-1.5 text-[#78716c] hover:bg-[#f3ecea] hover:text-text-primary transition-colors cursor-pointer"
               title="ปิดแผงสรุปด้านขวา"
               aria-label="ปิดแผงสรุปด้านขวา"
             >
@@ -182,6 +183,7 @@ export default function ScheduleClient({
             month={month}
             cycleStartDay={config.cycleStartDay}
           />
+          <ShiftReminderCard shifts={shifts} />
         </>
       ) : (
         <>
@@ -272,13 +274,14 @@ export default function ScheduleClient({
                     month={month}
                   />
                 </div>
-                <div>
+                <div className="space-y-4">
                   <WorkLifeBalanceCard
                     shifts={shifts}
                     year={year}
                     month={month}
                     cycleStartDay={config.cycleStartDay}
                   />
+                  <ShiftReminderCard shifts={shifts} />
                 </div>
               </div>
             </div>
@@ -309,7 +312,7 @@ export default function ScheduleClient({
           onClick={() => setRightDrawerOpen(false)}
         />
         <aside
-          className={`absolute inset-y-0 right-0 w-[360px] max-w-[92vw] overflow-y-auto bg-[#faf8f4] border-l border-[#ece7dd] p-3 pt-[calc(0.75rem+env(safe-area-inset-top,0px))] pb-[max(1rem,env(safe-area-inset-bottom,0px))] rounded-l-2xl shadow-xl transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          className={`absolute inset-y-0 right-0 w-[360px] max-w-[92vw] overflow-y-auto bg-surface border-l border-card-border p-3 pt-[calc(0.75rem+env(safe-area-inset-top,0px))] pb-[max(1rem,env(safe-area-inset-bottom,0px))] rounded-l-2xl shadow-xl transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
             rightDrawerOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >

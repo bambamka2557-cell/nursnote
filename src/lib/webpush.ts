@@ -21,6 +21,13 @@ export type PushPayload = {
   title: string;
   body: string;
   tag?: string;
+  // Optional display hints read by public/sw.js. Medication pushes leave
+  // these unset, so they keep the sw.js defaults (sticky + re-alert + open
+  // /timeline) exactly as before.
+  url?: string;
+  icon?: string;
+  requireInteraction?: boolean;
+  renotify?: boolean;
 };
 
 // Result discriminates "gone" (404/410 — the browser unsubscribed or the

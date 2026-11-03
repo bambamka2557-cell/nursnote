@@ -15,22 +15,30 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim());
 });
 
-// Tapping a reminder focuses the open app (or opens the queue page).
+// Tapping a notification focuses the open app (or opens it). Medication
+// reminders carry no url and keep the old behaviour (focus, else /timeline);
+// the evening shift reminder carries url '/' and takes the app to the shift
+// calendar.
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
+  const url = event.notification.data && event.notification.data.url;
   event.waitUntil(
     self.clients
       .matchAll({ type: 'window', includeUncontrolled: true })
       .then((clientList) => {
         for (const client of clientList) {
-          if ('focus' in client) return client.focus();
+          if ('focus' in client) {
+            if (url && 'navigate' in client) {
+              return client.navigate(url).then((c) => (c || client).focus()).catch(() => client.focus());
+            }
+            return client.focus();
+          }
         }
-        if (self.clients.openWindow) return self.clients.openWindow('/timeline');
+        if (self.clients.openWindow) return self.clients.openWindow(url || '/timeline');
       })
   );
 });
 
-// Placeholder for the future push-server half. Harmless until pushes are sent.
 self.addEventListener('push', (event) => {
   let payload = { title: 'LR-Helper', body: 'ถึงเวลาทำรายการ' };
   try {
@@ -42,12 +50,16 @@ self.addEventListener('push', (event) => {
     self.registration.showNotification(payload.title, {
       body: payload.body,
       tag: payload.tag,
-      requireInteraction: true,
+      icon: payload.icon,
+      data: { url: payload.url },
+      // Defaults are the medication-reminder behaviour; only the shift
+      // reminder overrides them (one calm, non-sticky alert per evening).
+      requireInteraction: payload.requireInteraction !== false,
       vibrate: [500, 250, 500, 250, 500],
       // Without this, repeat pushes for the same still-overdue order (same
       // tag) would silently replace the notification with no new alert —
       // renotify makes each 5-min repeat actually re-sound/vibrate.
-      renotify: true,
+      renotify: payload.renotify !== false,
     })
   );
 });

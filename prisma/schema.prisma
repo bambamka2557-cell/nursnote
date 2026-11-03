@@ -99,3 +99,14 @@ model NurseSalaryConfig {
   updatedAt             DateTime @updatedAt
 }
 
+
+// ตั้งค่าแจ้งเตือน "เวรพรุ่งนี้" ตอนเย็น (แถวเดียว id = "default")
+// แยกจากระบบเตือนรอบยาโดยสิ้นเชิง — ไม่อ่าน/เขียน Patient/Order ใดๆ
+model ShiftReminderSetting {
+  id           String   @id @default("default")
+  enabled      Boolean  @default(true)
+  hour         Int      @default(18) // เวลาไทย
+  minute       Int      @default(0)
+  lastSentDate String?  // "YYYY-MM-DD" (เวลาไทย) วันที่ส่งไปแล้ว — กันส่งซ้ำในวันเดียวกัน
+  updatedAt    DateTime @updatedAt
+}
